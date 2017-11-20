@@ -1,0 +1,18 @@
+[
+  {
+    "defaults": {
+      "link": {
+        "create": true,
+        "relink": true,
+        "force": true
+      }
+    }
+  },
+  {
+    "link": {
+      "~/.spacemacs": "editors/emacs/spacemacs",
+      "~/bin/edit": "editors/emacs/bin/edit",
+      "~/.emacs.d/private/sonic-pi": "editors/emacs/emacs.d/private/sonic-pi"
+    }
+  }
+]

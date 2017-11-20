@@ -1,0 +1,16 @@
+[
+  {
+    "defaults": {
+      "link": {
+        "create": true,
+        "relink": true,
+        "force": true
+      }
+    }
+  },
+  {
+    "link": {
+      "~/Library/Application Support/Spectacle/Shortcuts.json": "apps/spectacle/spectacle.json"
+    }
+  }
+]

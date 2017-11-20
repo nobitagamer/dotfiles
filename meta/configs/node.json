@@ -1,0 +1,17 @@
+[
+  {
+    "defaults": {
+      "link": {
+        "create": true,
+        "relink": true,
+        "force": true
+      }
+    }
+  },
+  {
+    "link": {
+      "~/.node-version": "development/node/node-version",
+      "~/.npmrc": "development/node/npmrc"
+    }
+  }
+]

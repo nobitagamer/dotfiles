@@ -1,0 +1,9 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+- link:
+    ~/.Brewfile: Brewfile
+- brewfile:
+    file: Brewfile

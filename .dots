@@ -1,0 +1,409 @@
+#!/usr/bin/env bash
+
+# Colors as per: http://www.tldp.org/LDP/abs/html/colorizing.html
+
+echoerrcolor() {
+	if (( $colors )); then
+		case $1 in
+			none)
+				str="\e[0;37m"
+				;;
+			green)
+				str="\e[0;32m"
+				;;
+			red)
+				str="\e[0;31m"
+				;;
+			blue)
+				str="\e[1;34m"
+				;;
+			darkcyan)
+				str="\e[0;36m"
+				;;
+			darkgreen)
+				str="\e[1;32m"
+				;;
+			darkred)
+				str="\e[1;31m"
+				;;
+			magenta)
+				str="\e[0;35m"
+				;;
+			darkmagenta)
+				str="\e[1;35m"
+				;;
+
+		esac
+		echo -ne $str >&2;
+	fi
+}
+
+echoerrnocolor() {
+	if (( $colors )); then
+		echo -ne "\e[0m" >&2;
+	fi
+}
+
+echoerr() {
+	if [ $# -gt 1 ]; then
+		color=$1
+		shift
+		echoerrcolor $color
+	fi
+	echo "$@" >&2;
+	if [ $color ]; then
+		echoerrnocolor
+	fi
+}
+
+printferr() { printf "$@" >&2; }
+
+$(which git >& /dev/null)
+
+if [ $? -eq 1 ]; then
+	echoerr red "Git not found! Confirm it is indeed installed and reachable."
+	exit;
+fi
+
+appendshell() {
+	case "$1" in
+		start)
+			add='echo "Setting up Dotbot. Please do not ^C." >&2;'
+			;;
+		mkprefix)
+			add="mkdir -p $2; cd $2;"
+			;;
+		gitclone)
+			add="git clone --recursive https://github.com/nobitagamer/dotfiles .;"
+			;;
+		gitinit)
+			add='git init;'
+			;;
+		gitaddsub)
+			add='git submodule add https://github.com/anishathalye/dotbot;'
+			;;
+		gitinstallinstall)
+			add='cp dotbot/tools/git-submodule/install .;'
+			;;
+		ensureparentdirs)
+			add="mkdir -p $2; rmdir $2;"
+			;;
+		mv)
+			add="mv $2 $3;"
+			;;
+		echoconfig)
+			add='echo -e "'$2'" >> '$3';'
+			;;
+		runinstaller)
+			add="./install-profile $2;"
+			;;
+		gitsetname)
+			if (( $3 )); then
+				global=' --global '
+			else
+				global=' '
+			fi
+			add='git config'$global'user.name "'$2'";'
+			;;
+		gitsetemail)
+			if (( $3 )); then
+				global=' --global '
+			else
+				global=' '
+			fi
+			add='git config'$global'user.email "'$2'";'
+			;;
+		gitinitialcommit)
+			add='git add -A; git commit -m "Initial commit";'
+			;;
+
+	esac
+	setupshell=$setupshell' '$add
+}
+
+testmode=0;
+verboseconf=0;
+preview=1;
+colors=1;
+installprofile=''
+
+while [ $# -ne 0 ]; do
+	case "$1" in
+		test)
+			testmode=1;
+			echoerr darkcyan "Test mode enabled."
+			;;
+		no-test)
+			testmode=0;
+			echoerr darkcyan "Test mode disabled."
+			;;
+    verbose-config)
+			verboseconf=1;
+			echoerr darkcyan "Verbose configuration file active."
+			;;
+		no-verbose-config)
+			verboseconf=0;
+			echoerr darkcyan "Concise configuration file active."
+			;;
+		preview)
+			preview=1;
+			echoerr darkcyan "Will show commands to be executed."
+			;;
+		no-preview)
+			preview=0;
+			echoerr darkcyan "Will not show commands to be executed."
+			;;
+		colors)
+			colors=1;
+			echoerr darkcyan "Will print with colors."
+			;;
+		no-colors)
+			colors=0;
+			echoerr darkcyan "No color."
+			;;
+		*)
+      installprofile=$installprofile' '$2
+			# echoerr red "Unfamiliar configuration option"
+	esac
+	shift
+done
+
+setupshell=''
+installerrun=1;
+
+echoerr blue "Welcome to nobitagamer's dotfiles installer powered by Dotbot"
+echoerr blue "Please be aware that if you have a complicated setup, you may need more customization than this script offers."
+echoerr;
+echoerr blue "At any time, press ^C to quit. No changes will be made until you confirm."
+echoerr;
+
+appendshell start
+
+prefix="~/.dotfiles"
+prefixfull="${prefix/\~/${HOME}}"
+
+if ! [ -d $prefixfull ]; then
+	echoerr darkcyan "${prefix} is not in use."
+else
+	echoerr darkcyan "${prefix} exists and may have another purpose than ours."
+fi
+
+
+while true; do
+	read -p "Where do you want your dotfiles repository to be? ($prefix) " answer
+	if [ -z "$answer" ]; then
+		break
+	else
+		echoerr red "FEATURE NOT YET SUPPORTED."
+		echoerr red "Sorry for misleading you."
+		echoerr;
+	fi
+done
+
+appendshell mkprefix $prefix
+appendshell gitclone
+
+getgitinfo=0
+gitinfoglobal=0
+if (( $installerrun )); then
+	$(git config user.name >& /dev/null && git config user.email >& /dev/null)
+
+	if [ $? -ne 0 ]; then
+		echoerr darkred "Please note you do not have a name or email set for git."
+		echoerr darkred "I shall not be able to commit unless you set the missing variables."
+		while [ 1 ]; do
+			read -p "Do you want to set them? (Y/n) " answer
+			if [ -z "$answer" ]; then
+				answer='y'
+			fi
+			case "$answer" in
+				Y*|y*)
+					getgitinfo=1
+          while [ 1 ]; do
+            read -p "Do you want these settings to be global? (Y/n) " answer
+            if [ -z "$answer" ]; then
+              answer='y'
+            fi
+            case "$answer" in
+              Y*|y*)
+                echoerr green "Adding --global to the set commands."
+                gitinfoglobal=1
+                break
+                ;;
+              N*|n*)
+                echoerr green "Okay, I shall make them local."
+                gitinfoglobal=0;
+                break
+                ;;
+              *)
+                echoerr red "Answer not understood: ${answer}"
+                ;;
+            esac
+          done
+					break
+					;;
+				N*|n*)
+					echoerr darkgreen "Okay, I shall not."
+					getgitinfo=0;
+					installerrun=0;
+					break
+					;;
+				*)
+					echoerr red "Answer not understood: ${answer}"
+					;;
+			esac
+		done
+	fi
+fi
+if (( $getgitinfo )); then
+	$(git config user.name >& /dev/null)
+	if [ $? -ne 0 ]; then
+		gitname="Nguyen Khac Trieu"
+	else
+		gitname="$(git config user.name)"
+	fi
+	$(git config user.email >& /dev/null)
+	if [ $? -ne 0 ]; then
+		gitemail="trieunk@yahoo.com"
+	else
+		gitemail="$(git config user.email)"
+	fi
+	read -p "What do you want for your git name? [${gitname}] " answer
+	if [ -z "$answer" ]; then
+		answer="$gitname"
+	fi
+	gitname="$answer"
+	read -p "What do you want for your git email? [${gitemail}] " answer
+	if [ -z "$answer" ]; then
+		answer="$gitemail"
+	fi
+	gitemail="$answer"
+	appendshell gitsetname "$gitname" $gitinfoglobal
+	appendshell gitsetemail "$gitemail" $gitinfoglobal
+fi
+
+while (( $installerrun )); do
+	read -p "Shall I run the installer? (Y/n) " answer
+	if [ -z "$answer" ]; then
+		answer='y'
+	fi
+	case "$answer" in
+		Y*|y*)
+			echoerr green "Will do."
+      if [ -z "$installprofile" ]; then
+        read -p "What profile do you want to run? (macos/linux/windows10) [${installprofile}] " answer
+        if [ -z "$answer" ]; then
+          answer="macos"
+        fi
+        installprofile="$answer"
+      fi
+
+			appendshell runinstaller "$installprofile"
+			break
+			;;
+		N*|n*)
+			echoerr darkgreen "Okay, I shall not. You will need to take care of that yourself."
+			installerrun=0;
+			break
+			;;
+		*)
+			echoerr red "Answer not understood: ${answer}"
+			;;
+	esac
+done
+
+if (( $preview )); then
+	printferr "\n${setupshell//; /;\\n}\n\n" # place newline after each command for printing
+	warningmessage='If you do not see a problem with the above commands, press enter. '
+else
+	warningmessage=''
+fi
+
+echoerrcolor darkred
+read -p "${warningmessage}This is your last chance to press ^C before actions are taken that should not be interrupted. "
+echoerrnocolor
+
+if ! (( $testmode )); then
+	eval $setupshell
+fi
+
+function runDots() {
+    # Ask for the administrator password upfront
+    sudo -v
+
+    # Keep-alive: update existing `sudo` time stamp until the script has finished
+    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+    git clone --recursive https://github.com/nobitagamer/dotfiles .dotfiles
+    cd ~/.dotfiles && ./install-profile $@
+
+    # Run sections based on command line arguments
+    for ARG in "$@"
+    do
+        if [ $ARG == "bootstrap" ] || [ $ARG == "all" ]; then
+            echo ""
+            echo "------------------------------"
+            echo "Syncing the dev-setup repo to your local machine."
+            echo "------------------------------"
+            echo ""
+            cd ~ && curl -L https://github.com/nobitagamer/dotfiles/tarball/master | tar -xzv --strip-components 1 --exclude={README.md,LICENSE}
+        fi
+        if [ $ARG == "osxprep" ] || [ $ARG == "all" ]; then
+            # Run the osxprep.sh Script
+            echo ""
+            echo "------------------------------"
+            echo "Updating OSX and installing Xcode command line tools"
+            echo "------------------------------"
+            echo ""
+            ./.osxprep.sh
+        fi
+        if [ $ARG == "brew" ] || [ $ARG == "all" ]; then
+            # Run the brew.sh Script
+            # For a full listing of installed formulae and apps, refer to
+            # the commented brew.sh source file directly and tweak it to
+            # suit your needs.
+            echo ""
+            echo "------------------------------"
+            echo "Installing Homebrew along with some common formulae and apps."
+            echo "This might awhile to complete, as some formulae need to be installed from source."
+            echo "------------------------------"
+            echo ""
+            ./.brew.sh
+        fi
+        if [ $ARG == "osx" ] || [ $ARG == "all" ]; then
+            # Run the osx.sh Script
+            # I strongly suggest you read through the commented osx.sh
+            # source file and tweak any settings based on your personal
+            # preferences. The script defaults are intended for you to
+            # customize. For example, if you are not running an SSD you
+            # might want to change some of the settings listed in the
+            # SSD section.
+            echo ""
+            echo "------------------------------"
+            echo "Setting sensible OSX defaults."
+            echo "------------------------------"
+            echo ""
+            ./.osx.sh
+        fi
+        if [ $ARG == "php" ] || [ $ARG == "all" ]; then
+            # Run the php.sh Script
+            echo "------------------------------"
+            echo "Setting up php development environment."
+            echo "------------------------------"
+            echo ""
+            ./.php.sh
+        fi
+    done
+
+    echo "------------------------------"
+    echo "Completed running .dots, restart your computer to ensure all updates take effect"
+    echo "------------------------------"
+}
+
+# read -p "This script may overwrite existing files in your home directory. Are you sure? (y/n) " -n 1;
+# echo "";
+# if [[ $REPLY =~ ^[Yy]$ ]]; then
+#     runDots $@
+# fi;
+
+# unset runDots;
