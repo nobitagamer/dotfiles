@@ -1,0 +1,5 @@
+- aptget:
+    git: {}
+    editorconfig: {}
+    ruby: {}
+    zsh: {}

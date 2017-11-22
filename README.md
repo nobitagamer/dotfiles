@@ -154,13 +154,13 @@ This repo takes a more **light-weight** approach to automation using a combinati
 
 ##### Clone the Repo
 
-    $ git clone https://github.com/nobitagamer/dev-setup.git && cd dev-setup
+    $ git clone https://github.com/nobitagamer/dotfiles.git ~/.dotfiles && cd ~/.dotfiles
 
 ##### Run the .dots Script with Command Line Arguments
 
 **Since you probably don't want to install every section**, the `.dots` script supports command line arguments to run only specified sections.  Simply pass in the [scripts](#scripts) that you want to install.  Below are some examples.
 
-**For more customization, you can [clone](#clone-the-repo) or [fork](https://github.com/nobitagamer/dev-setup/fork) the repo and tweak the `.dots` script and its associated components to suit your needs.**
+**For more customization, you can [clone](#clone-the-repo) or [fork](https://github.com/nobitagamer/dotfiles/fork) the repo and tweak the `.dots` script and its associated components to suit your needs.**
 
 Run all:
 
@@ -176,29 +176,29 @@ Run `.bootstrap.sh`, `.osxprep.sh`, `.brew.sh`, and `.osx.sh`, `.pydata.sh`, `aw
 
 #### Running without Git
 
-    $ curl -O https://raw.githubusercontent.com/nobitagamer/dev-setup/master/.dots && ./.dots [Add ARGS Here]
+    $ curl -O https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots && . ./.dots [Add ARGS Here]
 
 #### Scripts
 
-* [.dots](https://github.com/nobitagamer/dev-setup/blob/master/.dots)
+* [.dots](https://github.com/nobitagamer/dotfiles/blob/master/.dots)
     * Runs specified scripts
-* [.bootstrap.sh](https://github.com/nobitagamer/dev-setup/blob/master/.bootstrap.sh)
+* [.bootstrap.sh](https://github.com/nobitagamer/dotfiles/blob/master/.bootstrap.sh)
     * Syncs dev-setup to your local home directory `~`
-* [.osxprep.sh](https://github.com/nobitagamer/dev-setup/blob/master/.osxprep.sh)
+* [.osxprep.sh](https://github.com/nobitagamer/dotfiles/blob/master/.osxprep.sh)
     * Updates OS X and installs Xcode command line tools
-* [.brew.sh](https://github.com/nobitagamer/dev-setup/blob/master/.brew.sh)
+* [.brew.sh](https://github.com/nobitagamer/dotfiles/blob/master/.brew.sh)
     * Installs common Homebrew formulae and apps
-* [.osx.sh](https://github.com/nobitagamer/dev-setup/blob/master/.osx.sh)
+* [.osx.sh](https://github.com/nobitagamer/dotfiles/blob/master/.osx.sh)
     * Sets up OS X defaults geared towards developers
-* [.pydata.sh](https://github.com/nobitagamer/dev-setup/blob/master/.pydata.sh)
+* [.pydata.sh](https://github.com/nobitagamer/dotfiles/blob/master/.pydata.sh)
     * Sets up python for data analysis
-* [.aws.sh](https://github.com/nobitagamer/dev-setup/blob/master/.aws.sh)
+* [.aws.sh](https://github.com/nobitagamer/dotfiles/blob/master/.aws.sh)
     * Sets up Spark, Hadoop MapReduce, and Amazon Web Services
-* [.datastores.sh](https://github.com/nobitagamer/dev-setup/blob/master/.datastores.sh)
+* [.datastores.sh](https://github.com/nobitagamer/dotfiles/blob/master/.datastores.sh)
     * Sets up common data stores
-* [.web.sh](https://github.com/nobitagamer/dev-setup/blob/master/.web.sh)
+* [.web.sh](https://github.com/nobitagamer/dotfiles/blob/master/.web.sh)
     * Sets up JavaScript web development
-* [.android.sh](https://github.com/nobitagamer/dev-setup/blob/master/.android.sh)
+* [.android.sh](https://github.com/nobitagamer/dotfiles/blob/master/.android.sh)
     * Sets up Android development
 
 **Notes:**
@@ -211,7 +211,7 @@ Run `.bootstrap.sh`, `.osxprep.sh`, `.brew.sh`, and `.osx.sh`, `.pydata.sh`, `aw
 * `.dots` runs `.brew.sh`, which takes awhile to complete as some formulae need to be installed from source.
 * **When `.dots` completes, be sure to restart your computer for all updates to take effect.**
 
-I encourage you to read through Section 1 so you have a better idea of what each installation script does.  The following discussions describe in greater detail what is executed when running the [.dots](https://github.com/nobitagamer/dev-setup/blob/master/.dots) script.
+I encourage you to read through Section 1 so you have a better idea of what each installation script does.  The following discussions describe in greater detail what is executed when running the [.dots](https://github.com/nobitagamer/dotfiles/blob/master/.dots) script.
 
 ### [.bootstrap.sh](.bootstrap.sh) script
 
@@ -238,7 +238,7 @@ Alternatively, to update while avoiding the confirmation prompt:
 
 To sync dev-setup to your local home directory without Git, run the following:
 
-    $ cd ~; curl -#L https://github.com/nobitagamer/dev-setup/tarball/master | tar -xzv --strip-components 1 --exclude={README.md,.bootstrap.sh,LICENSE}
+    $ cd ~; curl -#L https://github.com/nobitagamer/dotfiles/tarball/master | tar -xzv --strip-components 1 --exclude={README.md,.bootstrap.sh,LICENSE}
 
 To update later on, just run that command again.
 
@@ -277,7 +277,7 @@ gpip(){
 }
 ```
 
-You could also use `~/.extra` to override settings, functions, and aliases from the dev-setup repository, although it’s probably better to [fork the dev-setup repository](https://github.com/nobitagamer/dev-setup/fork).
+You could also use `~/.extra` to override settings, functions, and aliases from the dev-setup repository, although it’s probably better to [fork the dev-setup repository](https://github.com/nobitagamer/dotfiles/fork).
 
 ### [.osxprep.sh](.osxprep.sh) script
 
@@ -324,7 +324,7 @@ Once you reach the downloads page, search for "command line tools", and download
 
 When setting up a new Mac, you may want to install [Homebrew](http://brew.sh/), a package manager that simplifies installing and updating applications or libraries.
 
-Some of the apps installed by the `.brew.sh` script include: Chrome, Firefox, Sublime Text, Atom, Dropbox, Evernote, Skype, Slack, Alfred, VirtualBox, Vagrant, Docker, etc.  **For a full listing of installed formulae and apps, refer to the commented [.brew.sh source file](https://github.com/nobitagamer/dev-setup/blob/master/brew.sh) directly and tweak it to suit your needs.**
+Some of the apps installed by the `.brew.sh` script include: Chrome, Firefox, Sublime Text, Atom, Dropbox, Evernote, Skype, Slack, Alfred, VirtualBox, Vagrant, Docker, etc.  **For a full listing of installed formulae and apps, refer to the commented [.brew.sh source file](https://github.com/nobitagamer/dotfiles/blob/master/brew.sh) directly and tweak it to suit your needs.**
 
 Run the `.brew.sh` script:
 
@@ -343,7 +343,7 @@ The `.brew.sh` script takes awhile to complete, as some formulae need to be inst
 
 When setting up a new Mac, you may want to set OS X defaults geared towards developers.  The `.osx.sh` script also configures common third-party apps such Sublime Text and Chrome.
 
-**Note**: **I strongly encourage you read through the commented [.osx.sh source file](https://github.com/nobitagamer/dev-setup/blob/master/osx.sh) and tweak any settings based on your personal preferences.  The script defaults are intended for you to customize.**  For example, if you are not running an SSD you might want to change some of the settings listed in the SSD section.
+**Note**: **I strongly encourage you read through the commented [.osx.sh source file](https://github.com/nobitagamer/dotfiles/blob/master/osx.sh) and tweak any settings based on your personal preferences.  The script defaults are intended for you to customize.**  For example, if you are not running an SSD you might want to change some of the settings listed in the SSD section.
 
 Run the `.osx.sh` script:
 
@@ -682,10 +682,10 @@ To check your version of Git, run the following command:
 
 And `$ which git` should output `/usr/local/bin/git`.
 
-Let's set up some basic configuration. Download the [.gitconfig](https://raw.githubusercontent.com/nobitagamer/dev-setup/master/.gitconfig) file to your home directory:
+Let's set up some basic configuration. Download the [.gitconfig](https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.gitconfig) file to your home directory:
 
     $ cd ~
-    $ curl -O https://raw.githubusercontent.com/nobitagamer/dev-setup/master/.gitconfig
+    $ curl -O https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.gitconfig
 
 It will add some color to the `status`, `branch`, and `diff` Git commands, as well as a couple aliases. Feel free to take a look at the contents of the file, and add to it to your liking.
 
@@ -700,7 +700,7 @@ To push code to your GitHub repositories, we're going to use the recommended HTT
 
     $ git config --global credential.helper osxkeychain
 
-**Note**: On a Mac, it is important to remember to add `.DS_Store` (a hidden OS X system file that's put in folders) to your `.gitignore` files. You can take a look at this repository's [.gitignore](https://github.com/nobitagamer/dev-setup/blob/master/.gitignore) file for inspiration.  Also check out GitHub's [collection of .gitignore templates](https://github.com/github/gitignore).
+**Note**: On a Mac, it is important to remember to add `.DS_Store` (a hidden OS X system file that's put in folders) to your `.gitignore` files. You can take a look at this repository's [.gitignore](https://github.com/nobitagamer/dotfiles/blob/master/.gitignore) file for inspiration.  Also check out GitHub's [collection of .gitignore templates](https://github.com/github/gitignore).
 
 ### Homebrew
 
@@ -1871,11 +1871,11 @@ If you prefer to install it separately, you can download it [here](https://www.j
 
 ### Contributions
 
-Bug reports, suggestions, and pull requests are [welcome](https://github.com/nobitagamer/dev-setup/issues)!
+Bug reports, suggestions, and pull requests are [welcome](https://github.com/nobitagamer/dotfiles/issues)!
 
 ### Credits
 
-See the [Credits Page](https://github.com/nobitagamer/dev-setup/blob/master/CREDITS.md).
+See the [Credits Page](https://github.com/nobitagamer/dotfiles/blob/master/CREDITS.md).
 
 ## Contact Info
 

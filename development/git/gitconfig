@@ -1,42 +1,24 @@
 [user]
-	email = magicmonty@pagansoft.de
-	name = Martin Gondermann
+	name = Nguyen Khac Trieu
+	email = trieunk@yahoo.com
+	signingkey = 38596100
 [core]
 	excludesfile = ~/.gitignore_global
-	editor = /usr/local/bin/vim
+	editor = /usr/bin/nvim
 
-[difftool "sourcetree"]
-	cmd = /Users/martingondermann/bin/bcomp \"$LOCAL\" \"$REMOTE\"
-	path = -ro
-
-[mergetool "sourcetree"]
-	cmd = /Users/martingondermann/bin/bcomp \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\"
-	trustExitCode = true
-
-[difftool "bc3"]
-  cmd = /usr/local/bin/bcomp \"$LOCAL\" \"$REMOTE\"
-  trustExitCode = true
-
-[mergetool "bc3"]
-  cmd = /usr/local/bin/bcomp \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\"
-  trustExitCode = true
+[push]
+	default = matching
 
 [credential]
 	helper = "netrc -f ~/.netrc.asc -v"
-
-[push]
-	default = current
-
-[diff]
-	tool = bc3
-
-[merge]
-  tool = bc3
 
 [hub]
 protocol = https
 
 [alias]
+	la = !git config -l | grep alias | cut -c 7-
+	ec = config --global -e
+
   s = status
   st = status
   stu = status --untracked-files=no
@@ -52,6 +34,10 @@ protocol = https
   reword = commit --amend --message
   undo = reset HEAD~1
   rh = reset --hard
+	fp = "!f(){ git fetch ${1} ${2} && git reset --hard ${1}/${2};};f"
+	up = !git fetch && git rebase --autostash FETCH_HEAD
+	save = !git add -A && git commit -m 'SAVEPOINT'
+  wip = commit -am 'WIP'
 
   # index related commands
   a = add
@@ -75,19 +61,28 @@ protocol = https
   dt = difftool
 
   # merges
+	cp = cherry-pick
   mt = mergetool
   unresolve = checkout --conflict=merge
 
   # git log
-  ll = log
+  # ll = log
+	ll = log --pretty=format:'%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate --numstat
   l = log --oneline --max-count=15
-  ld = log --oneline --max-count=15 --decorate
-  gl = log --graph --oneline --decorate --branches --all
-  glog = log --graph --oneline --decorate --branches --all
+  # ld = log --oneline --max-count=15 --decorate
+	ld = log --pretty=format:'%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate --date=relative
+	lt = describe --tags --abbrev=0
+	ls = log --pretty=format:'%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate
+	le = log --oneline --decorate
+	lds = log --pretty=format:'%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate --date=short
+  # gl = log --graph --oneline --decorate --branches --all
+  # glog = log --graph --oneline --decorate --branches --all
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cblue<%an>%Creset' --abbrev-commit --date=relative --all
   hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
   who = log --date=relative --pretty='format:%C(yellow)%h%Creset %C(bold blue)%an%Creset %C(bold green)%cr%Creset %s'
   wdw = log --date=relative --pretty='format:%C(yellow)%h%Creset %C(bold blue)%an%Creset %C(bold green)%cr%Creset %s'
   most-changed = !git log --format=%n --name-only | grep -v '^$' | sort | uniq -c | sort --numeric-sort --reverse | head -n 50
+	last = log -1 --stat
 
   # clean
   cleanf = clean -xdf

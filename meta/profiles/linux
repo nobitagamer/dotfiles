@@ -1,8 +1,9 @@
 apt.linux
 ruby
 dev
-git.np4
+git
 vim.linux
 fish.linux
 tmux.linux
 binaries.linux
+ls

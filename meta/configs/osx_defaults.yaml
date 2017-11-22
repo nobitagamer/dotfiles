@@ -1,3 +1,3 @@
 - shell:
-    - - ~/.dotfiles/macos
+    - - ~/.dotfiles/app/misc/macos/settings
       - Setting OSX defaults

@@ -1,3 +1,3 @@
 alias ta='tmux attach'
-alias encrypt='gpg -e --recipient magicmonty@pagansoft.de -o'
+alias encrypt='gpg -e --recipient trieunk@yahoo.com -o'
 alias mux=tmuxinator
