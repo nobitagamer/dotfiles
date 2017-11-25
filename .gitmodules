@@ -10,3 +10,6 @@
 	path = meta/dotbot-pip
 	url = https://github.com/sobolevn/dotbot-pip.git
 	ignore = dirty
+[submodule "meta/dotbot-brew"]
+	path = meta/dotbot-brew
+	url = https://github.com/d12frosted/dotbot-brew.git

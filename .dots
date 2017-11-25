@@ -82,7 +82,7 @@ appendshell() {
 		add="git clone https://github.com/$author/dotfiles .;"
 		;;
 	gitupdate)
-		add='git pull origin master;'
+		add='git fetch && git reset --hard origin/master;'
 		;;
 	ensureparentdirs)
 		add="mkdir -p $2; rmdir $2;"
@@ -95,6 +95,9 @@ appendshell() {
 		;;
 	runinstaller)
 		add="./install-profile $2;"
+		;;
+	wslumaskfix)
+		add=". ./wsl-umask-fix.sh;"
 		;;
 	gitsetname)
 		if (($3)); then
@@ -124,9 +127,13 @@ appendshell() {
 	gitinitialcommit)
 		add='git add -A; git commit -m "Initial commit";'
 		;;
-
 	esac
-	setupshell=$setupshell' '$add
+
+  if [ -z "$setupshell" ]; then
+	  setupshell='  '$add
+  else
+	  setupshell=$setupshell'   '$add
+  fi
 }
 
 testmode=0
@@ -180,8 +187,33 @@ done
 setupshell=''
 installerrun=1
 
+if [ "$(umask)" = "0000" ]; then
+  echoerr red 'I detected that you are running WSL and current umask value'
+  echoerr red 'is NOT configured to 022, this may cause permission problems!'
+  echoerr red 'To continue the following changes must be apply:'
+  echoerr red '- Append `umask 022` to your ~/.bashrc file.'
+  read -p "Do you want to apply? (Y/n) " answer
+	if [ -z "$answer" ]; then
+		answer="y"
+	fi
+
+  case "$answer" in
+  Y* | y*)
+    echoerr green "Fixes will be applied."
+    setupshell='umask 022;'
+    appendshell wslumaskfix
+    ;;
+  *)
+    echoerr red "CANCELED, may be another time!"
+    exit 1
+    ;;
+  esac
+fi
+
+echoerr
 echoerr blue "Welcome to $author's dotfiles installer powered by Dotbot"
-echoerr blue "Please be aware that if you have a complicated setup, you may need more customization than this script offers."
+echoerr
+echoerr darkred "Please be aware that installer may overwrite existing files in your home directory."
 echoerr
 echoerr blue "At any time, press ^C to quit. No changes will be made until you confirm."
 echoerr
@@ -196,10 +228,9 @@ if ! [ -d $prefixfull ]; then
 	appendshell mkprefix $prefix
 	appendshell gitclone
 else
-	echoerr darkcyan "${prefix} exists, trying to update."
+	echoerr darkcyan "${prefix} exists, i will try to update."
 	appendshell useprefix $prefix
 	appendshell gitupdate
-	# echoerr darkcyan "${prefix} exists and may have another purpose than ours."
 fi
 
 getgitinfo=0
@@ -289,13 +320,14 @@ unamestr=$(uname)
 
 case $unamestr in
 'Linux')
-	platform='linux'
+  if grep -q Microsoft /proc/version; then
+  	platform='wsl.ubuntu'
+  else
+  	platform='linux'
+  fi
 	;;
 'Darwin')
 	platform='macos'
-	;;
-'FreeBSD')
-	platform='freebsd'
 	;;
 MINGW*)
 	platform='windows'
@@ -303,54 +335,39 @@ MINGW*)
 CYGWIN*)
 	platform='windows'
 	;;
+'FreeBSD')
+	# platform='freebsd'
+	;;
 'SunOS')
-	platform='solaris'
+	# platform='solaris'
 	;;
 'AIX') ;;
 *) ;;
 esac
 
-while (($installerrun)); do
-	read -p "This installer may overwrite existing files in your home directory, shall I run it? (Y/n) " answer
-	if [ -z "$answer" ]; then
-		answer='y'
-	fi
-	case "$answer" in
-	Y* | y*)
-		echoerr green "Will do."
-		if [ -z "$installprofile" ]; then
-			if [[ $platform == 'linux' ]]; then
-				installprofile='linux'
-			elif [[ $platform == 'macos' ]]; then
-				installprofile='macos'
-			elif [[ $platform == 'windows' ]]; then
-				installprofile='windows10'
-			else
-				read -p "What profile do you want to run? (macos/linux/windows10) [${installprofile}] " answer
-				if [ -z "$answer" ]; then
-					answer="macos"
-				fi
-				installprofile="$answer"
-			fi
-		fi
+echoerr green "Detected platform: $platform"
 
-		appendshell runinstaller "$installprofile"
-		break
-		;;
-	N* | n*)
-		echoerr darkgreen "Okay, I shall not. You will need to take care of that yourself."
-		installerrun=0
-		break
-		;;
-	*)
-		echoerr red "Answer not understood: ${answer}"
-		;;
-	esac
-done
+if [ -z "$installprofile" ]; then
+  installprofile=$platform
+else
+  read -p "What profile do you want to run? (macos/linux/wsl.ubuntu/windows10) [${installprofile}] " answer
+  if [ -z "$answer" ]; then
+    answer="macos"
+  fi
+  installprofile="$answer"
+fi
+
+appendshell runinstaller "$installprofile"
+
+# Set git information since it maybe ovewrite by install process.
+if (($gitinfoglobal)); then
+  appendshell gitsetname "$gitname" $gitinfoglobal
+  appendshell gitsetemail "$gitemail" $gitinfoglobal
+fi
 
 if (($preview)); then
 	printferr "\n${setupshell//; /;\\n}\n\n" # place newline after each command for printing
-	warningmessage='If you do not see a problem with the above commands, press enter. '
+	warningmessage='If you do not see a problem with the above commands, press ENTER. '
 else
 	warningmessage=''
 fi
@@ -362,6 +379,9 @@ echoerrnocolor
 if ! (($testmode)); then
 	eval $setupshell
 fi
+
+echoerr green "Reloading current shell, see you soon..."
+exec "$SHELL"
 
 function runDots() {
 	# Ask for the administrator password upfront

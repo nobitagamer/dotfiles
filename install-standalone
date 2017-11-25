@@ -1,9 +1,15 @@
-#!/usr/bin/env bash
+#!/bin/bash -i
 
 set -e
 
+# Do not continue until umask is fixed
+if [ "$(umask)" = "0000" ]; then
+  echo "WSL umask was not fixed, cannot continue!"
+  exit 1
+fi
+
 BASE_CONFIG="base"
-CONFIG_SUFFIX=".json"
+CONFIG_SUFFIX=".yaml"
 
 META_DIR="meta"
 CONFIG_DIR="configs"
@@ -13,12 +19,19 @@ DOTBOT_BIN="bin/dotbot"
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+PLUGIN_DIR="dotbot-plugins"
+
 cd "${BASE_DIR}"
 git submodule update --init --recursive --remote
 
+# HACK to make dotbot-brew work since Linuxbrew does not add PATH automatically.
+if [[ `which brew` = "" ]]; then
+  export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+fi
 
-"${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}/dotbot-brewfile" --plugin-dir "${META_DIR}/${PLUGIN_DIR}/dotbot-pip" -c "${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}"
+
+"${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}" --plugin-dir "${META_DIR}/dotbot-brew" --plugin-dir "${META_DIR}/dotbot-brewfile" --plugin-dir "${META_DIR}/dotbot-pip" -c "${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}"
 
 for config in ${@}; do
-    "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}/dotbot-brewfile" --plugin-dir "${META_DIR}/${PLUGIN_DIR}/dotbot-pip" -c "${META_DIR}/${CONFIG_DIR}/${config}${CONFIG_SUFFIX}"
+    "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}" --plugin-dir "${META_DIR}/dotbot-brew" --plugin-dir "${META_DIR}/dotbot-brewfile" --plugin-dir "${META_DIR}/dotbot-pip" -c "${META_DIR}/${CONFIG_DIR}/${config}${CONFIG_SUFFIX}"
 done

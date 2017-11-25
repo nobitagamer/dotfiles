@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+
+echo "[$$] Verifying Zsh environment: $ZDOTDIR"
+
+test "$(zplug list | wc -l)" -gt 10 || {
+	echo "expecting 10+ bundles loaded" >&2
+	exit 1
+}
+
+test -s $ZDOTDIR/.zcompdump || {
+	echo "zcompdump file is empty" >&2
+	exit 1
+}
+
+echo "Check if a random plugin is working (meaning that the bundles were loaded)..."
+exa
+
+pstree
+
+echo "Zsh verify successfully!"
+
+exit 0

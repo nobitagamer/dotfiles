@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Make vim the default editor.
+export EDITOR="vim"
+export VISUAL="$EDITOR"
+
+# Enable persistent REPL history for `node`.
+NODE_REPL_HISTORY_FILE=~/.node_history;
+# Allow 32³ entries; the default is 1000.
+NODE_REPL_HISTORY_SIZE='32768';
+
+# Prefer US English and use UTF-8.
+export LANG='en_US.UTF-8';
+export LC_ALL='en_US.UTF-8';
+
+# Highlight section titles in manual pages.
+export LESS_TERMCAP_md="${yellow}";
+
+# Don’t clear the screen after quitting a manual page.
+export MANPAGER='less -X';
+
+# Always enable colored `grep` output.
+export GREP_OPTIONS='--color=auto';
+
+# Allow 4 path parts in prompt before trimming
+export PROMPT_DIRTRIM=4
+
+# Some default bashmarks
+export DIR_drop="$HOME/Dropbox"
+export DIR_dl="$HOME/Downloads"
+export DIR_dp="$HOME/Desktop"
+export DIR_devsetup="$HOME/Developer/dev-setup"

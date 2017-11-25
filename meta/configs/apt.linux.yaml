@@ -1,5 +1,28 @@
 - aptget:
-    git: {}
-    editorconfig: {}
-    ruby: {}
-    zsh: {}
+    neovim:
+      ppa_source: 'ppa:neovim-ppa/stable'
+    git:
+      ppa_source: 'ppa:git-core/ppa'
+    fasd:
+      ppa_source: 'ppa:aacebedo/fasd'
+# - aptget:
+#     fish:
+#       ppa_source: 'ppa:c/release-2'
+- aptget:
+    - zsh
+    - lnav
+    - tmux
+    - source-highlight
+    - editorconfig
+    - fortune-mod
+    - apg
+- aptget:
+    - python-pip
+    - python3-pip
+    - ruby
+- aptget:
+    - wget curl make llvm build-essential xz-utils # Python and Ruby build requirements, see https://github.com/pyenv/pyenv/wiki/Common-build-problems
+- aptget:
+    - >-
+      libssl-dev zlib1g-dev libbz2-dev libreadline-dev
+      libsqlite3-dev libncurses5-dev libncursesw5-dev tk-dev

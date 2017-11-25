@@ -1,3 +1,6 @@
 - shell:
     - - ~/.dotfiles/app/misc/macos/settings
       - Setting OSX defaults
+
+# # iTerm 2 Shell integration
+# curl -L https://iterm2.com/misc/install_shell_integration.sh | bash

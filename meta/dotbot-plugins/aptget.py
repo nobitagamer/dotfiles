@@ -34,30 +34,34 @@ class AptGet(dotbot.Plugin):
         defaults = self._context.defaults().get('aptget', {})
         results = {}
         successful = [PkgStatus.UP_TO_DATE, PkgStatus.INSTALLED]
-        commandPrefix = ""
+        command_prefix = ""
 
         if os.geteuid() != 0:
-            commandPrefix = "sudo "
+            command_prefix = "sudo "
 
         success = True
 
         cleaned_packages = self._dispatch_names_and_sources(packages)
         if cleaned_packages['sources']:
             for source in cleaned_packages['sources']:
-                success &= self._add_ppa(source, commandPrefix)
+                success &= self._add_ppa(source, command_prefix)
 
         # apt-get update
-        success = self._update_index(commandPrefix)
+        success = self._update_index(command_prefix)
         if not success:
             return success
-        
-        for pkg_name in cleaned_packages['packages']:
-            result = self._install(pkg_name, commandPrefix)
-            results[result] = results.get(result, 0) + 1 
-            if result not in successful:
-                self._log.error("Could not install package '{]}'".format(pkg_name))
 
-        if all([result in successful for result in results.keys()]):
+        for pkg_name in cleaned_packages['packages']:
+            try:
+                result = self._install(pkg_name, command_prefix)
+                results[result] = results.get(result, 0) + 1
+                if result not in successful:
+                    self._log.error("[{}] Could not install package '{}'".format(result, pkg_name))
+            except Exception as ex:
+                self._log.error('Failed to parse result: {} {}'.format(ex, result))
+                return False
+
+        if all([result in successful for result in results.items()]):
             self._log.info('All packages installed successfully')
             success = True
         else:
@@ -69,13 +73,13 @@ class AptGet(dotbot.Plugin):
 
         return success
 
-    def _add_ppa(self, source, commandPrefix):
+    def _add_ppa(self, source, command_prefix):
         success = False
         if 'ppa:' not in source:
             source = 'ppa:%s' % source
-        
+
         # NB: Trying to avoid subprocess.Popen(), as this command is pretty simple
-        cmd = '{}add-apt-repository --yes {}'.format(commandPrefix, source)
+        cmd = '{}add-apt-repository --yes {}'.format(command_prefix, source)
 
         try:
             process = subprocess.Popen(cmd, shell=True,
@@ -115,9 +119,9 @@ class AptGet(dotbot.Plugin):
                         cleaned_dict['sources'].append(pkg_opts)
         return cleaned_dict
 
-    def  _update_index(self, commandPrefix):
+    def  _update_index(self, command_prefix):
         self._log.info("Updating APT package index")
-        cmd = '{}apt-get update'.format(commandPrefix)
+        cmd = '{}apt-get update'.format(command_prefix)
 
         try:
             process = subprocess.Popen(cmd, shell=True,
@@ -131,25 +135,31 @@ class AptGet(dotbot.Plugin):
             self._log.error('Failed to update index: {}'.format(e))
             return False
 
-    def _install(self, pkg, commandPrefix):
+    def _install(self, pkg, command_prefix):
         self._log.info("Installing package {}".format(pkg))
-        cmd = '{}apt-get install {} -y'.format(commandPrefix, pkg)
-        process = subprocess.Popen(cmd, shell=True,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
-        out = process.stdout.read()
-        process.stdout.close()
+        cmd = '{}apt-get install {} -y'.format(command_prefix, pkg)
 
-        for item in self._strings.keys():
-            for text in self._strings[item]:
-                try:
-                    index = out.find(text)
-                except:
-                    index = 0
+        try:
+            process = subprocess.Popen(cmd, shell=True,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
 
-                if index >= 0:
-                    return item
+            out = process.communicate()[0]
+            # process.stdout.close() # Allow ps_process to receive a SIGPIPE if process exits.
+
+            for key, value in self._strings.items():
+                for text in self._strings[key]:
+                    try:
+                        index = out.find(text)
+                    except:
+                        index = 0
+
+                    if index >= 0:
+                        return key
+        except Exception as e:
+            self._log.error('Failed to install package: {}'.format(e))
+            return PkgStatus.NOT_SURE
 
         self._log.error("Could not determine what happened with package {}".format(pkg))
         return PkgStatus.NOT_SURE
-    
+

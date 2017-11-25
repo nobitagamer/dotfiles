@@ -6,9 +6,6 @@
 - clean:
     - ~/.config/fisherman
     - ~/.config/fish
-- aptget:
-    fish:
-      ppa_source: 'ppa:fish-shell/release-2'
 - link:
     ~/.config/fish/abbr.fish: shells/fish/config/fish/abbr.linux.fish
     ~/.config/fish/autoenv.fish: shells/fish/config/fish/autoenv.fish
@@ -31,7 +28,7 @@
     ~/.config/fish/functions/fish_prompt.fish: shells/fish/config/fish/functions/fish_prompt.fish
     ~/.config/fish/functions/fish_right_prompt.fish: shells/fish/config/fish/functions/fish_right_prompt.fish
     ~/.config/fish/functions/fish_title.fish: shells/fish/config/fish/functions/fish_title.fish
-- shell:
+- shell++:
     - - fish -c 'fisher and fisher up'
       - Installing fisher plugins
 - link:

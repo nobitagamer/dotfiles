@@ -1,0 +1,99 @@
+# -*- mode: shell-script -*-
+# vim: set ft=zsh:
+#
+# Module Loader
+#
+
+# Loads Prezto modules.
+function pmodload {
+  local -a pmodules
+  local -a pmodule_dirs
+  local -a locations
+  local pmodule
+  local pmodule_location
+  local pfunction_glob='^([_.]*|prompt_*_setup|README*|*~)(-.N:t)'
+
+  # Load in any additional directories and warn if they don't exist
+  zstyle -a ':prezto:load' pmodule-dirs 'user_pmodule_dirs'
+  for user_dir in "$user_pmodule_dirs[@]"; do
+    if [[ ! -d "$user_dir" ]]; then
+      echo "$0: Missing user module dir: $user_dir"
+    fi
+  done
+
+  pmodule_dirs=("$ZPREZTODIR/modules" "$ZPREZTODIR/contrib" "$user_pmodule_dirs[@]")
+
+  # $argv is overridden in the anonymous function.
+  pmodules=("$argv[@]")
+
+  # Load Prezto modules.
+  for pmodule in "$pmodules[@]"; do
+    if zstyle -t ":prezto:module:$pmodule" loaded 'yes' 'no'; then
+      continue
+    else
+      locations=(${pmodule_dirs:+${^pmodule_dirs}/$pmodule(-/FN)})
+      if (( ${#locations} > 1 )); then
+        print "$0: conflicting module locations: $locations"
+        continue
+      elif (( ${#locations} < 1 )); then
+        print "$0: no such module: $pmodule"
+        continue
+      fi
+
+      # Grab the full path to this module
+      pmodule_location=${locations[1]}
+
+      # Add functions to $fpath.
+      fpath=(${pmodule_location}/functions(/FN) $fpath)
+
+      function {
+        local pfunction
+
+        # Extended globbing is needed for listing autoloadable function directories.
+        setopt LOCAL_OPTIONS EXTENDED_GLOB
+
+        # Load Prezto functions.
+        for pfunction in ${pmodule_location}/functions/$~pfunction_glob; do
+          autoload -Uz "$pfunction"
+        done
+      }
+
+      if [[ -s "$ZPREZTODIR/modules/$pmodule/init.zsh" ]]; then
+        source "$ZPREZTODIR/modules/$pmodule/init.zsh"
+      fi
+
+      if (( $? == 0 )); then
+        zstyle ":prezto:module:$pmodule" loaded 'yes'
+      else
+        # Remove the $fpath entry.
+        fpath[(r)${pmodule_location}/functions]=()
+
+        function {
+          local pfunction
+
+          # Extended globbing is needed for listing autoloadable function
+          # directories.
+          setopt LOCAL_OPTIONS EXTENDED_GLOB
+
+          # Unload Prezto functions.
+          for pfunction in ${pmodule_location}/functions/$~pfunction_glob; do
+            unfunction "$pfunction"
+          done
+        }
+
+        zstyle ":prezto:module:$pmodule" loaded 'no'
+      fi
+    fi
+  done
+}
+
+#
+# Prezto Initialization
+#
+# This finds the directory prezto is installed to so plugin managers don't need
+# to rely on dirty hacks to force prezto into a directory. Additionally, it
+# needs to be done here because inside the pmodload function ${0:h} evaluates to
+# the current directory of the shell rather than the prezto dir.
+# :h will truncate last path component leaving you with a directory name.
+# ZPREZTODIR=${0:h}
+ZPREZTODIR=~/.zplug/repos/sorin-ionescu/prezto

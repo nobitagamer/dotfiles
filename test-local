@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+# Zsh
+# testscript=${0:a:h}/test-zsh
+
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+testscript=$SCRIPTPATH/test-zsh
+
+# link to ~ and cd to it
+pushd ${0:a:h}/.. >/dev/null
+
+cp -rf dotfiles ~/.dotfiles
+
+pushd ~/.dotfiles >/dev/null
+
+# setup git credentials
+git config --global user.name "Nguyen Khac Trieu"
+git config --global user.email "trieunk@yahoo.com"
+
+# bootstrap the mighty
+./.dots
+
+popd >/dev/null
+
+popd >/dev/null
+
+# load zshrc (-i) and check if zplug is working
+exec /bin/zsh -i "$testscript"
+
+unset testscript SCRIPTPATH

@@ -1,0 +1,27 @@
+# -*- mode: shell-script -*-
+# vi: set ft=zsh :
+
+# No arguments: `git status`
+# With arguments: acts like `git`
+
+g() {
+  if [[ $# > 0 ]]; then
+    if [[ $1 == "c" ]]; then
+      shift
+      while [ -n "$1" ]; do
+        MESSAGE="$MESSAGE $1"
+        shift
+      done
+      git commit -m "$MESSAGE"
+    else
+      git $@
+    fi
+  else
+    git status
+  fi
+}
+
+# Complete g like git
+compdef g=git
+
+g $@

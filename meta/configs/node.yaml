@@ -1,0 +1,28 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+- link:
+    ~/.node-version: development/node/node-version
+    ~/.npmrc: development/node/npmrc
+    ~/.config/zsh/settings/nodejs.zsh: development/node/zsh/settings/nodejs.zsh
+- shell++:
+  - description: Install nodenv
+    condition: '! hash nodenv 2>/dev/null || test -h $(which nodenv)'
+  - stdout: true
+    stderr: true
+    command: |
+      export PATH="$HOME/.nodenv/bin:$PATH"
+      if [ ! -d ~/.nodenv ]; then
+        git clone https://github.com/nodenv/nodenv.git ~/.nodenv
+        git clone https://github.com/nodenv/node-build.git $(nodenv root)/plugins/node-build
+        git clone https://github.com/nodenv/nodenv-package-json-engine.git $(nodenv root)/plugins/nodenv-package-json-engine
+        git clone https://github.com/nodenv/nodenv-vars.git $(nodenv root)/plugins/nodenv-vars
+        git clone https://github.com/nodenv/node-build-update-defs.git $(nodenv root)/plugins/node-build-update-defs
+        git clone https://github.com/nodenv/nodenv-update.git $(nodenv root)/plugins/nodenv-update
+      fi
+
+      if [ -r ~/.node-version ] && [ ! -d ~/.nodenv/versions/$(cat ~/.node-version) ]; then
+        nodenv install $(cat ~/.node-version)
+      fi

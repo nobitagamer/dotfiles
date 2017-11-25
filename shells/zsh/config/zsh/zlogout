@@ -1,0 +1,13 @@
+# vim: set ft=zsh:
+#
+# Executes commands at logout.
+# .zlogout is sometimes used to clear and reset the terminal.
+#
+
+# clear
+
+# Print the message.
+cat <<-EOF
+Thank you. Come again!
+  -- Trieunk
+EOF

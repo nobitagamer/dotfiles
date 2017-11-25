@@ -1,1 +1,2 @@
-umask=18
+prefix = ${HOME}/.npm/npm-packages
+umask = 18

@@ -28,7 +28,6 @@ class AdvancedShell(dotbot.Plugin):
 
     def _process_dict_item(self, item, devnull):
         msg = item.get('description')
-
         stdin = stdout = stderr = devnull
         if item.get('stdall', False) is True:
             stdin = stdout = stderr = None
@@ -42,7 +41,7 @@ class AdvancedShell(dotbot.Plugin):
 
         if item.get('condition'):
             ret = subprocess.call(item['condition'], shell=True, stdin=stdin, stdout=stdout,
-                                  stderr=stderr, cwd=self._base_directory)
+                                  stderr=stderr, cwd=self._context.base_directory())
             self._log_cmd(item['condition'], msg)
             if item.get('branch'):
                 if ret not in item['branch']:
@@ -88,12 +87,16 @@ class AdvancedShell(dotbot.Plugin):
         else:
             return False, 'Bad item: {}'.format(item)
 
+        self._log.info('Processing cmd:')
         self._log_cmd(cmd, msg)
-        ret = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout,
-                              stderr=stderr, cwd=self._base_directory)
-        if ret != 0:
-            return False, 'Command [%s] failed' % cmd
-        return True, None
+        try:
+            ret = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout,
+                                stderr=stderr, cwd=self._context.base_directory())
+            if ret != 0:
+                return False, 'Command [%s] failed' % cmd
+            return True, None
+        except Exception as e:
+            return False, 'Cannot run command %s' % str(e)
 
     def _process_commands(self, data, log_suffix=True):
         success = True
@@ -118,7 +121,7 @@ class AdvancedShell(dotbot.Plugin):
                     msg = None
                 self._log_cmd(cmd, msg)
                 ret = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout,
-                                      stderr=stderr, cwd=self._base_directory)
+                                      stderr=stderr, cwd=self._context.base_directory())
                 if ret != 0:
                     success = False
                     self._log.warning('Command [%s] failed' % cmd)

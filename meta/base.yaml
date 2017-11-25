@@ -1,13 +1,14 @@
----
 - defaults:
     link:
       create: true
       relink: true
       force: true
 - clean:
-  - "~"
-  - "~/.config"
-- shell:
-  - description: Update submodules in dotfiles repo
-    command: |
-      git submodule update --init --recursive
+    - '~'
+    - ~/.config
+- shell++:
+    - description: Update submodules in dotfiles repo
+      stdout: true
+      stderr: true
+      command: |
+        git submodule update --init --recursive

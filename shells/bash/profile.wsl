@@ -1,0 +1,15 @@
+#!/bin/sh
+# ~/.profile: executed by the command interpreter for login shells.
+# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
+# exists.
+# see /usr/share/doc/bash/examples/startup-files for examples.
+# the files are located in the bash-doc package.
+
+## Fix missing umask value for WSL (see https://github.com/Microsoft/WSL/issues/795)
+# You can change the default permissions for the files you create by setting the umask
+# value in your .profile. The umask is the complement of the maximal permissions of a file.
+# Common values include 022 (writable only by the owner, readable and executable by everyone),
+# 077 (access only by the owner), and 002 (like 022, but also group-writable).
+# the default umask is set in /etc/profile; for setting the umask
+# for ssh logins, install and configure the libpam-umask package.
+umask 022

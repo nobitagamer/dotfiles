@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+# NOTE: must run with `/<full UNIX path to this folder>/test`
+set -e
+
+# Zsh
+# SCRIPTPATH="${0:a:h}"
+
+# Bash
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+
+cd "$SCRIPTPATH"
+
+# setup git credentials
+git config user.name "Nguyen Khac Trieu"
+git config user.email "trieunk@yahoo.com"
+
+git add .
+git commit --amend --no-edit
+git push --force-with-lease
+
+if [ -d ~/.dotfiles ]; then
+  cd ~/.dotfiles
+
+  git fetch origin master
+  git reset --hard origin/master
+
+  # wrappedProgram "$@"
+  # ^^^ this is correct and will hand over all arguments in the way
+  #     we received them, i. e. as several arguments, each of them
+  #     containing all the spaces and other uglinesses they have.
+  # wrappedProgram "$*"
+  # ^^^ this will hand over exactly one argument, containing all
+  #     original arguments, separated by single spaces.
+  # wrappedProgram $*
+  # ^^^ this will join all arguments by single spaces as well and
+  #     will then split the string as the shell does on the command
+  #     line, thus it will split an argument containing spaces into
+  #     several arguments.
+  # Example: Calling
+
+  # wrapper "one two    three" four five "six seven"
+  # will result in:
+
+  # "$@": wrappedProgram "one two    three" four five "six seven"
+  # "$*": wrappedProgram "one two    three four five six seven"
+  # $*:   wrappedProgram one two three four five six seven
+
+  # ./install-profile linux # "$@"
+  ./install-standalone zsh.linux bash # "$@"
+else
+  curl -o ~/.dots https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots && . ~/.dots
+
+  # git clone git@github.com:nobitagamer/dotfiles.git ~/.dotfiles
+  # cd ~/.dotfiles
+fi
+
+# read -p "Press ENTER to continue..."
+
+# reload!
+exec /usr/bin/env zsh
+
+exit 0

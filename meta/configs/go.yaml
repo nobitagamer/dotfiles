@@ -1,0 +1,8 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+- link:
+    ~/.go-version: development/go/go-version
+    ~/.config/zsh/settings/go.zsh: development/go/zsh/settings/go.zsh

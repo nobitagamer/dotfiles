@@ -1,0 +1,312 @@
+#!/usr/bin/env zsh
+# vim: set ft=zsh:
+#
+# Executes commands at the start of an interactive session.
+# .zshrc is for interactive shell configuration. You set options for
+# the interactive shell there with the setopt and unsetopt commands.
+# You can also load shell modules, set your history options, change your
+# prompt, set up zle and completion, et cetera. You also set any variables
+# that are only used in the interactive shell (e.g. $LS_COLORS).
+#
+
+# This just makes my username disappear from prompt
+export DEFAULT_USER="trieunk"
+
+###############################################################################
+# Zplug
+###############################################################################
+export ZPLUG_HOME=$HOME/.zplug
+
+# Check if zplug is installed
+if [[ ! -d $ZPLUG_HOME ]]; then
+  git clone https://github.com/zplug/zplug $ZPLUG_HOME
+fi
+
+# Essential
+source $ZPLUG_HOME/init.zsh
+
+zplug "zplug/zplug", hook-build:"zplug --self-manage"
+
+# zsh-users
+# Note: To specify the order in which packages should be loaded, use the defer
+#       tag described in the next section
+zplug "zsh-users/zsh-completions", defer:0 # Completions
+zplug "zsh-users/zsh-autosuggestions", defer:2, on:"zsh-users/zsh-completions" # Type some chars from a previous command and hit arrow-up to sort through matching commands from history
+
+# Set the priority when loading
+# e.g., zsh-syntax-highlighting must be loaded
+# after executing compinit command and sourcing other plugins
+# (If the defer tag is given 2 or above, run after compinit command)
+# zplug "zsh-users/zsh-syntax-highlighting", defer:2 # Syntax highlighting on CLI
+zplug "zdharma/fast-syntax-highlighting", defer:2 # Syntax highlighting on CLI
+zplug "zsh-users/zsh-history-substring-search", defer:3
+
+# plugins
+# zplug "Schnouki/git-annex-zsh-completion", at:e87e7db, frozen:1
+# zplug "lukechilds/zsh-better-npm-completion", at:c20b07c, frozen:1, defer:2
+## zplug "lukechilds/zsh-better-npm-completion", frozen:1, defer:2
+zplug "supercrabtree/k", frozen:1 # Quick ls-replacement with git status
+zplug "tarrasch/zsh-bd", frozen:1 # Jump back to a specific directory, without doing `cd ../../..`
+# zplug "rupa/z", use:z.sh # Obsoleted: Use fasd instead
+
+# prezto
+zplug 'modules/environment', from:prezto # Sets general shell options and defines environment variables.
+zplug 'modules/terminal', from:prezto, frozen:1
+zplug 'modules/editor', from:prezto, frozen:1
+zplug "modules/history", from:prezto, frozen:1
+zplug "modules/directory", from:prezto, frozen:1 # Sets directory options and defines directory aliases.
+zplug "modules/spectrum", from:prezto, frozen:1
+zplug 'modules/utility', from:prezto, frozen:1
+zplug "modules/completion", from:prezto, frozen:1
+zplug "modules/fasd", from:prezto, frozen:1, defer:2
+# zplug "modules/archive", from:prezto, frozen:1
+zplug "modules/git", from:prezto, frozen:1
+# zplug "modules/gpg", from:prezto, frozen:1
+zplug "modules/node", from:prezto, frozen:1
+##zplug 'modules/osx', from:prezto, frozen:1 # Aliases and functions
+# zplug 'modules/pacman', from:prezto, frozen:1
+zplug "modules/python", from:prezto, frozen:1
+zplug "modules/rsync", from:prezto, frozen:1
+zplug "modules/ruby", from:prezto, frozen:1
+##zplug "modules/haskell", from:prezto, frozen:1
+zplug "modules/ssh", from:prezto, frozen:1
+zplug "modules/tmux", from:prezto, frozen:1
+zplug "modules/prompt", from:prezto, frozen:1
+
+# Dirty hacks for Prezto:
+# @see https://github.com/zplug/zplug/issues/373
+zstyle ":prezto:module:completion" loaded 'yes'
+
+###############################################################################
+# Prezto
+###############################################################################
+zstyle ':prezto:*:*' color 'yes'
+
+############
+# Git
+############
+# Ignore submodules when they are 'dirty', 'untracked', 'all', or 'none'.
+zstyle ':prezto:module:git:status:ignore' submodules 'all'
+
+############
+# Editor
+############
+# Set the key mapping style to 'emacs' or 'vi'.
+zstyle ':prezto:module:editor' key-bindings 'vi'
+
+# Auto convert .... to ../..
+zstyle ':prezto:module:editor' dot-expansion 'yes'
+
+############
+# Terminal
+############
+# Auto set the tab and window titles.
+zstyle ':prezto:module:terminal' auto-title 'yes'
+
+zstyle ':prezto:module:terminal:window-title' format '%n@%m: %s'
+zstyle ':prezto:module:terminal:tab-title' format '%m: %s'
+zstyle ':prezto:module:terminal:multiplexer-title' format '%s'
+
+############
+# SSH
+############
+# Load default identities
+zstyle ':prezto:module:ssh:load' identities 'id_rsa' 'id_github'
+
+############
+# Completion
+############
+# # Forces zsh to realize new commands
+zstyle ':completion:*' completer _oldlist _expand _complete _match _ignored _approximate
+
+# Matches case insensitive for lowercase
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# Pasting with tabs doesn't perform completion
+zstyle ':completion:*' insert-tab pending
+
+# Rehash if command not found (possibly recently installed)
+zstyle ':completion:*' rehash true
+
+# Menu if nb items > 2
+zstyle ':completion:*' menu select=2
+
+############
+# Utility
+############
+# LS_COLORS loaded from .zprofile
+zstyle ':prezto:module:utility:ls' color 'no'
+
+# Tab completion in dotfiles directory
+dotfiles() { cd $DOTFILES/$1; }
+compctl -f -W $DOTFILES/ dotfiles
+
+zplug "${ZDOTDIR:-$HOME/.zsh}/settings", from:local, defer:3 # MUST load after modules/fasd
+zplug "${ZDOTDIR:-$HOME/.zsh}/aliases", from:local, defer:2
+zplug "${ZDOTDIR:-$HOME/.zsh}/zle", from:local, defer:2
+
+############
+# Prompt
+############
+# Set the prompt theme to load.
+zplug "mafredri/zsh-async", from:github  # Load this first
+zplug "${ZDOTDIR:-$HOME/.zsh}/themes", use:prompt_pure_setup, from:local, as:theme
+# zplug "nobitagamer/pure", at:trieunk, use:pure.zsh, from:github, as:theme
+
+# See https://github.com/denysdovhan/spaceship-zsh-theme
+# zplug "denysdovhan/spaceship-zsh-theme", use:spaceship.zsh, defer:0, from:github, as:theme
+
+# zplug "mafredri/zsh-async", from:github, defer:0  # Load this first
+# zplug "pecigonzalo/pure-spaceship-zsh-theme", use:pure.zsh, from:github, as:theme
+
+# See https://github.com/caiogondim/bullet-train.zsh
+# setopt prompt_subst # Make sure prompt is able to be generated properly.
+# zplug "caiogondim/bullet-train.zsh", use:bullet-train.zsh-theme, defer:3 # defer until other plugins like oh-my-zsh is loaded
+# ZSH_THEME="bullet-train"
+
+# Load theme file
+zstyle ':prezto:module:prompt' theme 'pure'
+# zstyle ':prezto:module:prompt' theme 'anishathalye'
+# zstyle ':prezto:module:prompt' theme 'ayk'
+# zstyle ':prezto:module:prompt' theme 'squeak'
+# zstyle ':prezto:module:prompt' theme 'sorin'
+
+# Theme Settings
+PURE_CMD_MAX_EXEC_TIME=1
+PURE_PROMPT_SYMBOL="λ"
+
+# zstyle ':prezto:module:prompt' theme 'spaceship'
+# ===== Base16 Shell
+# zplug "chriskempson/base16-shell", frozen:1 # Base16 for Shells https://github.com/chriskempson/base16
+# BASE16_SCHEME="default"
+# BASE16_SHELL="$XDG_CONFIG_HOME/plugins/base16/base16-$BASE16_SCHEME.dark.sh"
+# [[ -s $BASE16_SHELL ]] && . $BASE16_SHELL
+
+# Theme Settings
+# Using awesome patched font
+# # POWERLEVEL9K_MODE='awesome-patched'
+# # POWERLEVEL9K_MODE='nerdfont-complete'
+
+# # POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
+# # POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status anaconda time)
+
+# #POWERLEVEL9K_CUSTOM_TIME_FORMAT="%D{\uf017 %H:%M:%S}"
+# POWERLEVEL9K_TIME_FORMAT="%D{\uf017 %H:%M \uf073 %d.%m.%y}"
+# # POWERLEVEL9K_ANACONDA_LEFT_DELIMITER=''
+# # POWERLEVEL9K_ANACONDA_RIGHT_DELIMITER=''
+# # POWERLEVEL9K_ANACONDA_BACKGROUND=244
+# # POWERLEVEL9K_ANACONDA_FOREGROUND="black"
+
+# POWERLEVEL9K_CHANGESET_HASH_LENGTH=7
+# # POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"
+# # POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
+# POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+# POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=""
+# # POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX=' \u03bb ' # " λ "
+# POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX=' \u276f ' # " ❯ "
+
+# zstyle ':prezto:module:prompt' theme 'powerlevel9k'
+
+if ! zplug check --verbose; then
+  printf "Install? [y/N]: "
+  if read -q; then
+    echo; zplug install
+  fi
+fi
+
+# See https://github.com/cmderdev/cmder/issues/1044
+# For anyone ran into the same issue with index lock, there's a workaround that disabling
+# Settings -> Git Extensions -> Performance -> Show number of changed files on commit button
+# so that Git Extensions won't call git status as soon as any file updates which blocking the
+# current processing git commands and introducing the lock.
+# zplug load --verbose
+zplug load
+
+# load shell bookmarks
+if [[ -f ${ZDOTDIR:-$HOME/.zsh}/shell_bookmarks.zsh ]]; then
+  source ${ZDOTDIR:-$HOME/.zsh}/shell_bookmarks.zsh
+fi
+alias bookmarks="vim ${ZDOTDIR:-$HOME/.zsh}/shell_bookmarks.zsh"
+
+###############################################################################
+# Neovim Pane Switching
+###############################################################################
+# vim
+if (( $+commands[nvim] )); then
+  alias vim=nvim
+  alias vi=nvim
+else
+  alias vi=vim
+fi
+
+# only defined in neovim libvterm
+if [[ -n $NVIM_LISTEN_ADDRESS ]]; then
+
+  _nvr_up()    { nvr -c 'TmuxNavigateUp' }
+  _nvr_right() { nvr -c 'TmuxNavigateRight' }
+  _nvr_down()  { nvr -c 'TmuxNavigateDown' }
+  _nvr_left()  { nvr -c 'TmuxNavigateLeft' }
+  zle -N nvr_up _nvr_up
+  zle -N nvr_right _nvr_right
+  zle -N nvr_down _nvr_down
+  zle -N nvr_left _nvr_left
+  bindkey '^K' nvr_up
+  bindkey '^L' nvr_right
+  bindkey '^J' nvr_down
+  bindkey '^H' nvr_left
+
+  sp () { nvr -o $@ }
+  vsp () { nvr -O $@ }
+  ds() { nvr -c "DirectionalSplit $@" }
+
+  alias nvim=nvr
+  alias vim=nvr
+  alias vi=nvr
+  export EDITOR=nvr
+
+  command_not_found_handler() {
+    if [[ "$@" =~ ^: ]]; then
+      nvr --remote-send "<C-\\><C-n>${@}<CR>"
+    else
+      return 127
+    fi
+  }
+
+  fe() { nvr --remote-send "<esc><esc>:GitFZF $PWD<cr>" }
+
+elif [[ -n $TMUX ]]; then
+  alias ':q'='tmux kill-pane'
+fi
+
+###############################################################################
+# vim fzf
+###############################################################################
+if [[ -f ~/.fzf.zsh ]]; then
+  source ~/.fzf.zsh
+  export FZF_COMPLETION_TRIGGER='jk'
+
+  export FZF_DEFAULT_COMMAND="$(which rg_git_list); rg_git_list"
+  export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+
+  export FZF_DEFAULT_OPTS='--ansi -x -m --bind=alt-k:up,alt-j:down'
+  bindkey '^F' fzf-file-widget
+fi
+
+###############################################################################
+# Special Settings
+###############################################################################
+[[ -f "$HOME/.zshrc.os" ]] && source "$HOME/.zshrc.os"         # OS Specific
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"   # Local
+[[ -f "$HOME/.secret_zshrc" ]] && source "$HOME/.secret_zshrc" # Secret!
+
+###############################################################################
+# direnv (use smartcd instead)
+###############################################################################
+# TODO(aleks, 08/13/17): too slow
+# if (( $+commands[direnv] )); then
+#   eval "$(direnv hook zsh)"
+# fi
+
+if [[ -o INTERACTIVE && ! -o LOGIN ]]; then
+  _startup_time_prompt '\x1b[35m'  # purple
+fi

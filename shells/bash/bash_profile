@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+shopt -q login_shell && echo 'This Bash Shell is a Login Shell' || echo 'This Bash Shell is NOT a Login Shell'
+
+# Ensure that a non-login shell has a defined environment.
+if [ -s "$HOME/.profile" ]; then
+  source "$HOME/.profile"
+fi
+
+# # if running bash
+# if [ -n "$BASH_VERSION" ]; then
+#     # include .bashrc if it exists
+#     if [ -f "$HOME/.bashrc" ]; then
+# 	    . "$HOME/.bashrc"
+#     fi
+# fi
+
+# XDG stuff
+XDG_CACHE_HOME="$HOME"/.cache
+XDG_CONFIG_HOME="$HOME"/.config
+XDG_DATA_HOME="$HOME"/.local/share
+
+export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME
+
+BASHDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/bash"
+
+# Use sensible bash
+if [ -f $BASHDOTDIR/sensible.bash ]; then
+  source $BASHDOTDIR/sensible.bash
+fi
+
+# Load the shell dotfiles, and then some:
+# * ~/.path can be used to extend `$PATH`.
+# * ~/.extra can be used for other settings you don’t want to commit.
+for file in $BASHDOTDIR/.{path,bash_prompt,exports,functions,extra}; do
+    [ -r "$file" ] && [ -f "$file" ] && source "$file";
+done;
+unset file;
+
+# Add tab completion for many Bash commands
+# if which brew > /dev/null && [ -f "$(brew --prefix)/share/bash-completion/bash_completion" ]; then
+#     source "$(brew --prefix)/share/bash-completion/bash_completion";
+# elif [ -f /etc/bash_completion ]; then
+#     source /etc/bash_completion;
+# fi;
+
+# Enable tab completion for `g` by marking it as an alias for `git`
+# if type _git &> /dev/null && [ -f /usr/local/etc/bash_completion.d/git-completion.bash ]; then
+#     complete -o default -o nospace -F _git g;
+# fi;
+
+# Add `killall` tab completion for common apps
+complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
+
+# Symfony console commands auto completion
+if [ -f ~/.composer/vendor/bin/symfony-autocomplete ]; then
+  eval "$(symfony-autocomplete --aliases=c --aliases=surf --aliases=php-cs-fixer --aliases=typo3cms --aliases=typo3console)"
+fi;
+
+# set PATH so it includes user's private bin directories
+PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+
+[ -r "$HOME/.smartcd_config" ] && ( [ -n $BASH_VERSION ] || [ -n $ZSH_VERSION ] ) && source ~/.smartcd_config
+
+# Ensure that a login non-interactive shell has a defined environment.
+shopt -q login_shell && ( [ ! -z "$PS1" ] && [ -s "$HOME/.bashrc" ] ) && source "$HOME/.bashrc"

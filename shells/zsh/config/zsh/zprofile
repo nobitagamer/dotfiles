@@ -1,0 +1,307 @@
+#!/usr/bin/env zsh
+# vim: set ft=zsh:ts=2:sts=2:sw=2:
+#
+# Executes commands at login pre-zshrc.
+# .zprofile is basically the same as .zlogin except that it's sourced directly
+# before .zshrc is sourced instead of directly after it. According to the zsh
+# documentation ".zprofile is meant as an alternative to `.zlogin' for ksh fans;
+# the two are not intended to be used together, although this could certainly be done if desired."
+#
+
+# Fix Zsh not hitting ~/.profile: https://superuser.com/questions/187639/zsh-not-hitting-profile
+[[ -e ~/.profile ]] && emulate sh -c 'source ~/.profile'
+
+###############################################################################
+# Startup
+###############################################################################
+# function {
+#   while read -r line; do
+#     if [[ ! $line == '#'* ]]; then            # ignore lines starting with an `#`
+#       if (( ${#line} > 0 )); then             # ignore empty lines
+#         line=${line%%\#*}
+#         line=${line%%+([[:space:]])}          # remove trailing whitespace characters
+#         systemctl --user set-environment $line
+#       fi
+#     fi
+#   done < $HOME/.systemd-profile
+# }
+export UNAME=${$(uname -s):l}
+export TEXMFHOME=texmf # Latex
+export KEYTIMEOUT=1 # Reduce command line vim delay
+
+# shortcut to this dotfiles path is $DOTFILES
+export DOTFILES="$HOME/.dotfiles"
+
+# your project folder that we can `c [tab]` to
+export PROJECTS="$HOME/Code"
+
+export WORKON_HOME=$HOME/.pyvirtualenvs # Virtualenv
+
+###############################################################################
+# Editors
+###############################################################################
+if [ -z "$SSH_CONNECTION" ]; then
+  export EMACSCLIENT=emacsclient
+  export EDITOR="$EMACSCLIENT -t -a 'vim'"
+  export ALTERNATE_EDITOR=""
+else
+  export EDITOR=$(type -P emacs || type -P vim || type -P vi)
+
+  # macOS only
+  if [[ "$OSTYPE" == darwin* ]]; then
+    if (( $+commands[code] )); then
+      # your default editor
+      export EDITOR='code'
+    fi
+  else
+    if (( $+commands[nvim] )); then
+      if (( $+commands[nvim-client] )); then
+        export EDITOR='nvim-client'
+      else
+        export EDITOR='nvim'
+      fi
+    fi
+  fi
+
+fi
+export VISUAL=$EDITOR
+export PAGER='less'
+
+###############################################################################
+# Browser
+###############################################################################
+if [[ "$OSTYPE" == darwin* ]]; then
+  export BROWSER='open'
+fi
+
+###############################################################################
+# Language
+###############################################################################
+if [[ -z "$LANG" ]]; then
+  export LANG='en_US.UTF-8'
+fi
+
+if [[ -z "$LANGUAGE" ]]; then
+  export LANGUAGE='en_US.UTF-8'
+fi
+
+if [[ -z "$LC_ALL" ]]; then
+  export LC_ALL=en_US.UTF-8
+fi
+
+###############################################################################
+# Less
+###############################################################################
+# Set the default Less options.
+# Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+# Remove -X and -F (exit if the content fits on one screen) to enable it.
+export LESS='-g -i -M -R -S -w -z-4'
+
+# Improve Less input preprocessor
+if (( $+commands[source-highlight] )); then
+  export LESSOPEN='| /usr/bin/env source-highlight-esc.sh %s 2>&-'
+fi
+
+# Set the Less input preprocessor.
+# Try both `lesspipe` and `lesspipe.sh` as either might exist on a system.
+if (( $#commands[(i)lesspipe(|.sh)] )); then
+  export LESSOPEN="| /usr/bin/env $commands[(i)lesspipe(|.sh)] %s 2>&-"
+fi
+
+###############################################################################
+# Paths
+# Set the list of directories that Zsh searches for programs.
+###############################################################################
+# Ensure path arrays do not contain duplicates.
+typeset -gU cdpath mailpath path
+
+if [[ -d $HOME/bin ]]; then
+  path=($HOME/bin $path)
+fi
+
+# I manage some binaries and scripts on my ~/.local/bin directory, so I add it first
+if [[ -d $HOME/.local/bin ]]; then
+  path=($HOME/.local/bin $path)
+fi
+
+if [[ -d /usr/local/opt/openssl/bin ]]; then
+  path=(/usr/local/opt/openssl/bin $path)
+fi
+
+if [[ $UNAME == darwin ]]; then
+  # used by Homebrew
+  path=(/usr/local/sbin $path)
+fi
+
+############
+# Linuxbrew
+############
+if [[ -d $HOME/.linuxbrew/bin ]]; then
+  path=($HOME/.linuxbrew/bin $HOME/.linuxbrew/sbin $path)
+  export MANPATH="$(brew --prefix)/share/man:$MANPATH"
+  export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+fi
+
+if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
+  path=(/home/linuxbrew/.linuxbrew/bin /home/linuxbrew/.linuxbrew/sbin $path)
+  export MANPATH="$(brew --prefix)/share/man:$MANPATH"
+  export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+fi
+
+############
+# Python
+############
+# See https://github.com/sorin-ionescu/prezto/blob/master/modules/python/init.zsh
+# if [[ -d $HOME/.pyenv ]]; then
+#   export PYENV_SHIMS=$HOME/.pyenv/shims
+#   path=(
+#     $HOME/.pyenv/bin
+#     $PYENV_SHIMS
+#     $path)
+# fi
+
+# pip should only run if there is a virtualenv currently activated
+export PIP_REQUIRE_VIRTUALENV=false
+
+# Cache pip-installed packages to avoid re-downloading
+export PIP_DOWNLOAD_CACHE=$HOME/.pip/cache
+
+# Python startup file
+export PYTHONSTARTUP=$HOME/.pythonrc
+
+# if [[ -d $HOME/lib/anaconda3 ]]; then
+#   path+=($HOME/lib/anaconda3/bin)
+# fi
+
+# Re-activate any active VIRTUAL_ENV on shell start up
+if [[ -n $VIRTUAL_ENV ]]; then
+  source ${VIRTUAL_ENV}/bin/activate
+fi
+
+# Re-activate any active anaconda env on shell start up
+if [[ -n $CONDA_DEFAULT_ENV ]]; then
+  echo "Sourcing conda env: $CONDA_DEFAULT_ENV"
+  source activate $CONDA_DEFAULT_ENV
+fi
+
+############
+# Ruby
+############
+# See https://github.com/sorin-ionescu/prezto/blob/master/modules/ruby/init.zsh
+# if [[ -d $HOME/.rbenv ]]; then
+#   export RBENV_SHIMS=$HOME/.rbenv/shims
+#   path=(
+#     $HOME/.rbenv/bin
+#     $RBENV_SHIMS
+#     $path)
+# fi
+
+# Make sure *vendored* gems are run first than anything (useful with rbenv)
+# See:
+#   + http://jimeh.me/blog/2011/11/01/my-ruby-development-environment/
+#   + http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/
+path=(
+  ./vendor/bundle/bin
+  $path
+)
+
+############
+# Node.js
+############
+if [[ -d $HOME/.nodenv ]]; then
+  export NODENV_SHIMS=$HOME/.nodenv/shims
+  path=(
+    $HOME/.nodenv/bin
+    $NODENV_SHIMS
+    $path)
+fi
+
+############
+# Misc
+############
+if [[ -d $DOTFILES/bin ]]; then
+  path+=($DOTFILES/bin)
+  [[ -d $DOTFILES/bin/$UNAME ]] && path+=($DOTFILES/bin/$UNAME)
+fi
+
+if [[ -d $HOME/.fzf/bin ]]; then
+  path+=($HOME/.fzf/bin)
+fi
+
+if [[ -d $HOME/.tmuxifier/bin ]]; then
+  path+=($HOME/.tmuxifier/bin)
+fi
+
+############
+# GoLang
+############
+export GOPATH=/usr/local/lib/golang
+export GOBIN=$GOPATH/bin
+
+if [[ -n $GOPATH ]]; then
+  path+=(/usr/local/opt/go/libexec/bin)
+fi
+
+# This must be last
+if [[ -d $GOBIN ]]; then
+  path=($path $GOBIN)
+fi
+
+# Set the the list of directories that cd searches.
+# cdpath=(
+#   $cdpath
+# )
+
+export CHECKPOINT_DISABLE=1
+export HOMEBREW_NO_ANALYTICS=1
+export NO_UPDATE_NOTIFIER=1
+export yeoman_test=1
+
+export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+export PACKER_CACHE_DIR=$XDG_CACHE_HOME/packer
+export PERU_CACHE_DIR=$XDG_CACHE_HOME/peru
+export ZPLUG_CACHE_DIR=$XDG_CACHE_HOME/zplug
+
+export ANDROID_HOME=/usr/local/opt/android-sdk
+
+###############################################################################
+# Miscellaneous
+###############################################################################
+# ===== Good ol' GREP
+GREP_COLOR='0;35'
+
+# ===== History
+# See https://github.com/sorin-ionescu/prezto/blob/master/modules/history/init.zsh
+# Make some commands not show up in history.
+HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help:ll:"
+
+# ===== Misc
+MANWIDTH=80 # make sure man pages doesn't overflow
+
+export GREP_COLOR MANWIDTH
+
+# ===== Dircolors
+# https://github.com/seebi/dircolors-solarized
+if [[ "$(tput colors)" == "256" ]]; then
+  [[ -d $XDG_CONFIG_HOME/plugins/dircolors-solarized ]] \
+    && eval $(dircolors =(cat $XDG_CONFIG_HOME/plugins/dircolors-solarized/dircolors.256dark $XDG_CONFIG_HOME/plugins/dircolors.extra))
+fi
+
+# Disable Ctrl-d to logout
+bindkey -r '^D'
+setopt IGNORE_EOF
+
+# export BSPWM_STATE=$TMPDIR/bspwm-state.json
+
+# Use .localrc for SUPER SECRET CRAP that you don't
+# want in your public, versioned repo.
+# shellcheck disable=SC1090
+[ -f $HOME/.localrc ] && . $HOME/.localrc
+
+# Make Zsh the default shell
+[[ $SHELL =~ "zsh" ]] || export SHELL=`builtin which zsh`
+
+[[ -o interactive ]] && echo "This ZSH Shell is an Interactive Shell" || echo "This ZSH Shell is Not an Interactive Shell"
+
+[[ -o login ]] && echo "This ZSH Shell is a Login Shell" || echo "This ZSH Shell is Not a Login Shell"

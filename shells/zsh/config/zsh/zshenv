@@ -1,0 +1,109 @@
+#!/usr/bin/env zsh
+# vim: set ft=zsh:
+#
+# Defines environment variables and sets up profiler.
+# Since .zshenv is always sourced, it often contains exported variables
+# that should be available to other programs. For example, $PATH, $EDITOR,
+# and $PAGER are often set in .zshenv. Also, you can set $ZDOTDIR in .zshenv
+# to specify an alternative location for the rest of your zsh configuration.
+#
+
+## Fix missing umask value for WSL (see https://github.com/Microsoft/WSL/issues/795)
+umask 022
+
+# Check for the minimum supported version.
+min_zsh_version='4.3.11'
+if ! autoload -Uz is-at-least || ! is-at-least "$min_zsh_version"; then
+  printf "zshrc: old shell detected, minimum required: %s\n" "$min_zsh_version" >&2
+  return 1
+fi
+unset min_zsh_version
+
+###############################################################################
+# Temporary Files
+###############################################################################
+if [[ ! -d "$TMPDIR" ]]; then
+  export TMPDIR="/tmp/$USER"
+  mkdir -p -m 700 "$TMPDIR"
+fi
+
+TMPPREFIX="${TMPDIR%/}/zsh"
+if [[ ! -d "$TMPPREFIX" ]]; then
+  mkdir -p "$TMPPREFIX"
+fi
+
+# Profiler for interactive shell
+if [[ -o INTERACTIVE ]]; then
+  zmodload zsh/datetime
+
+  #######################################
+  #######################################
+
+  # Turn on these flags and use `zprof |less` to view report.
+  ZSH_XTRACE_STARTUP=0
+  ZSH_ZPROF=0
+
+  #######################################
+  #######################################
+
+  if (( $ZSH_XTRACE_STARTUP )); then
+    setopt promptsubst
+    ZSH_PROFILER_LOG="$TMPPREFIX/startlog/${"$(date +%s)":6}_$$"
+    mkdir -p ${ZSH_PROFILER_LOG:a:h}
+
+    PS4=$'+$EPOCHREALTIME %N:%i> '
+    exec 3>&2 2>$ZSH_PROFILER_LOG
+    setopt xtrace prompt_subst
+  fi
+
+  if (( $ZSH_ZPROF )); then
+    zmodload zsh/zprof
+  fi
+
+  ZSH_START_TIME=$EPOCHREALTIME
+  _startup_time_prompt() {
+    reset='\x1b[0m'
+    echo "${1}> Started zsh in about ${$(( ($EPOCHREALTIME - $ZSH_START_TIME) * 1000 ))%%\.*} ms.${reset}"
+    unset reset
+  }
+fi
+
+# Ensure that a non-login, non-interactive shell has a defined environment.
+# if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+if [[ ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprofile"
+fi
+
+# Fix shim paths for neovim libvterm
+if [[ -n $VIMRUNTIME ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprofile"
+fi
+
+###############################################################################
+# Functions
+###############################################################################
+# Needed while we do the function magic
+setopt EXTENDED_GLOB
+
+# Add a function path
+# NOTE: fpath doesn't recurse directories so they have to be add explicitily
+functions_path=( themes functions completions )
+functions_path=($ZDOTDIR/${^functions_path})        # prepend local dir
+
+# Add directories for (local) completion scripts and functions so they can be
+# autoloaded later.
+# NOTE: this has to be loaded *before* compinit
+fpath=(
+  $functions_path
+  $fpath
+)
+
+# Autoload functions
+autoload -Uz $ZDOTDIR/functions/^*.*sh(:t)
+unsetopt EXTENDED_GLOB
+
+# Fix Operation Not permitted, when installing zplug plugins on windows subsystem for linux (WSL)
+# See:
+# - https://github.com/zplug/zplug/issues/398
+# - https://github.com/Microsoft/BashOnWindows/issues/1887
+unsetopt BG_NICE
