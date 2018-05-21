@@ -8,7 +8,7 @@ tap "caskroom/cask"
 tap "wooga/tools"
 
 ## Add tap for Pivotal
-pivotal/tap
+tap "pivotal/tap"
 
 ## My tap for android-ndk-r10e
 tap "nobitagamer/cask"
