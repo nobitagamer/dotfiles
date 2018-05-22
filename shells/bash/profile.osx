@@ -1,0 +1,23 @@
+export PATH="$HOME/.fastlane/bin:$PATH"
+
+# Having your locale not set to a UTF-8 locale will cause issues with building and uploading your build.
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+export JAVA_HOME=$(/usr/libexec/java_home)
+export PATH=${JAVA_HOME}/bin:$PATH
+
+# MUST use android-ndk r10e for Unity 5.5.2f1
+export ANDROID_NDK_HOME=/usr/local/opt/android-ndk/android-ndk-r10e
+export ANDROID_HOME=/usr/local/opt/android-sdk
+
+# OPENSSL_ROOT="$(brew --prefix openssl)"
+export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+export MANPATH=/opt/local/share/man:$MANPATH
+
+if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
+export PATH="/usr/local/opt/icu4c/bin:$PATH"
+export PATH="/usr/local/opt/icu4c/sbin:$PATH"
+
+echo '.profile loaded successfully.'

@@ -6,31 +6,31 @@ echoerrcolor() {
 	if (($colors)); then
 		case $1 in
 		none)
-			str="\e[0;37m"
+			str=$'\e[0;37m'
 			;;
 		green)
-			str="\e[0;32m"
+			str=$'\e[0;32m'
 			;;
 		red)
-			str="\e[0;31m"
+			str=$'\e[0;31m'
 			;;
 		blue)
-			str="\e[1;34m"
+			str=$'\e[1;34m'
 			;;
 		darkcyan)
-			str="\e[0;36m"
+			str=$'\e[0;36m'
 			;;
 		darkgreen)
-			str="\e[1;32m"
+			str=$'\e[1;32m'
 			;;
 		darkred)
-			str="\e[1;31m"
+			str=$'\e[1;31m'
 			;;
 		magenta)
-			str="\e[0;35m"
+			str=$'\e[0;35m'
 			;;
 		darkmagenta)
-			str="\e[1;35m"
+			str=$'\e[1;35m'
 			;;
 
 		esac
@@ -40,7 +40,7 @@ echoerrcolor() {
 
 echoerrnocolor() {
 	if (($colors)); then
-		echo -ne "\e[0m" >&2
+		echo -ne $'\e[0m' >&2
 	fi
 }
 

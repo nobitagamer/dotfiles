@@ -16,8 +16,8 @@ fi
 # esac
 
 # Ensure that a non-login shell has a defined environment.
-if [[ ! -o LOGIN && -s "$HOME/.bash_profile" ]]; then
-  source "$HOME/.bash_profile"
+if [[ -s "$HOME/.bash_profile" ]]; then
+  shopt -q login_shell || source "$HOME/.bash_profile"
 fi
 
 # don't put duplicate lines or lines starting with space in the history.

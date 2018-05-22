@@ -176,7 +176,7 @@ Run `.bootstrap.sh`, `.osxprep.sh`, `.brew.sh`, and `.osx.sh`, `.pydata.sh`, `aw
 
 #### Running without Git
 
-    $ curl -O https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots && . ./.dots [Add ARGS Here]
+    $ cd ~/ && curl -O https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots && . ./.dots [Add ARGS Here]
 
 #### Scripts
 
