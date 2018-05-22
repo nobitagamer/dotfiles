@@ -21,12 +21,13 @@ DOTBOT_BIN="bin/dotbot"
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 PLUGIN_DIR="dotbot-plugins"
+PROFILE_PLUGIN_DIR="${PLUGIN_DIR}/$1"
 
 cd "${BASE_DIR}"
 git submodule update --init --recursive --remote
 
 # HACK to make dotbot-brew work since Linuxbrew does not add PATH automatically.
-if [[ `which brew` = "" ]]; then
+if [[ $(which brew) = "" ]]; then
   export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 fi
 
@@ -37,9 +38,9 @@ done < "${META_DIR}/${PROFILES_DIR}/$1"
 
 shift
 
-"${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}" --plugin-dir "${META_DIR}/dotbot-brew" --plugin-dir "${META_DIR}/dotbot-brewfile" --plugin-dir "${META_DIR}/dotbot-pip" -c "${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}"
+"${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}" --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}" --plugin-dir "${META_DIR}/dotbot-brew" --plugin-dir "${META_DIR}/dotbot-brewfile" --plugin-dir "${META_DIR}/dotbot-pip" -c "${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}"
 
-for config in ${CONFIGS} ${@}; do
+for config in ${CONFIGS} "${@}"; do
     echo -e "\nConfigure $config"
-    "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}" --plugin-dir "${META_DIR}/dotbot-brew" --plugin-dir "${META_DIR}/dotbot-brewfile" --plugin-dir "${META_DIR}/dotbot-pip" -c "${META_DIR}/${CONFIG_DIR}/${config}${CONFIG_SUFFIX}"
+    "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" --plugin-dir "${META_DIR}/${PLUGIN_DIR}" --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}" --plugin-dir "${META_DIR}/dotbot-brew" --plugin-dir "${META_DIR}/dotbot-brewfile" --plugin-dir "${META_DIR}/dotbot-pip" -c "${META_DIR}/${CONFIG_DIR}/${config}${CONFIG_SUFFIX}"
 done
