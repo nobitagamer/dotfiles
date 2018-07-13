@@ -27,6 +27,9 @@
       # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
       while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
+      # See https://stackoverflow.com/questions/9132826/stop-developer-tools-access-needs-to-take-control-of-another-process-for-debugg
+      sudo /usr/sbin/DevToolsSecurity --enable
+
       # Unity3D preinstall
       uvm install 2018.1.0f2 --android --ios
 
