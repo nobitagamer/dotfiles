@@ -6,3 +6,11 @@
 - link:
     ~/.gitconfig: development/git/gitconfig
     ~/.gitignore_global: development/git/gitignore_global
+
+- shell++:
+  - description: Create Git local config file if does not exists
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+      test -f ~/.gitconfig_local || touch ~/.gitconfig_local
