@@ -30,9 +30,6 @@
       # See https://stackoverflow.com/questions/9132826/stop-developer-tools-access-needs-to-take-control-of-another-process-for-debugg
       sudo /usr/sbin/DevToolsSecurity --enable
 
-      # Unity3D preinstall
-      uvm install 2018.1.0f2 --android --ios
-
       # Accept all licenses
       yes | sdkmanager --licenses
 
@@ -43,5 +40,13 @@
       echo N | rbenv install 2.4.2
 
       # Install bundle package manager
+      rbenv rehash && rbenv shell 2.4.2
+      gem install activesupport -v 4.2.6
+      gem install bundle cocoapods
       rbenv rehash
-      rbenv shell 2.4.2 && gem install bundle && rbenv rehash
+
+      # Unity3D preinstall
+      cd ~/
+      curl -O https://raw.githubusercontent.com/sttz/install-unity/master/install-unity.py && chmod +x install-unity.py
+      ~/install-unity.py --package Unity --package iOS --package Android --save 2018.1.0f2
+      # uvm install 2018.1.0f2 --android --ios
