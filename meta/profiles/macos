@@ -6,7 +6,7 @@ go
 dev
 ssh
 vscode.osx
+unity3d.osx
 bash.osx
 zsh.osx
-fish.osx
-unity3d.osx
+settings.osx
