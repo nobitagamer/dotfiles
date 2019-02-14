@@ -65,8 +65,8 @@ brew "gitlab-ci-multi-runner", restart_service: true
 # git
 # git-flow
 
-mas "slack", id: 803453959
-mas "onedrive", id: 823766827
+# mas "slack", id: 803453959
+# mas "onedrive", id: 823766827
 # mas "xcode", id: 497799835
 
 ## VPN stuff

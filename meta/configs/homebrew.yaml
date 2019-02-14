@@ -6,12 +6,55 @@
 - link:
     ~/.Brewfile: Brewfile
 
+- shell++:
+  - description: Install Homebrew
+    condition: '! hash brew 2>/dev/null'
+  - stdout: true
+    stderr: true
+    command: |
+      # Ask for the administrator password upfront
+      sudo -v
+
+      # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
+      while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
 - brewfile:
     file: Brewfile
 
+- tap:
+  - caskroom/versions
+  - caskroom/cask
+  - wooga/tools
+  - pivotal/tap
+  - nobitagamer/cask
+
+- brew:
+  - mas
+  - git-extras
+  - git-flow-avh
+  - gitversion
+  - exa
+  - fish
+  - tmux
+  - tmate
+  # - curl --with-openssl
+  - curl
+
+- brew: [zsh, zsh-completions, zsh-syntax-highlighting]
+
+- cask:
+  - dotnet
+  - gitkraken
+  - iterm2
+  - kdiff3
+  - visual-studio
+  - visual-studio-code
+
 - shell++:
-  - description: Install Homebrew
-    condition: '! hash brew 2>/dev/null || test -h $(which brew)'
+  - description: Install Apps
+    condition: 'hash brew 2>/dev/null'
   - stdout: true
     stderr: true
     command: |
@@ -26,35 +69,12 @@
       sudo xcodebuild -license accept
       xcode-select --install
 
-      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+      # Install Slack
+      mas install 803453959
 
-- tap:
-  - caskroom/versions
-  - caskroom/cask
-  - wooga/tools
-  - pivotal/tap
-  - nobitagamer/cask
+      # Install OneDrive
+      mas install 823766827
 
-- brew:
-  - mas
-  - curl --with-openssl
-  - git-extras
-  - git-flow-avh
-  - gitversion
-  - exa
-  - fish
-  - tmux
-  - tmate
-
-- brew: [zsh, zsh-completions, zsh-syntax-highlighting]
-
-- cask:
-  - dotnet
-  - gitkraken
-  - iterm2
-  - kdiff3
-  - visual-studio
-  - visual-studio-code
 
 - shell++:
   - description: Setting OSX defaults
