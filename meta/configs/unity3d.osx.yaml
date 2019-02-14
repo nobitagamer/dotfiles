@@ -1,5 +1,5 @@
 - tap:
-  - wooga/tools
+  # - wooga/tools
   - nobitagamer/cask
 
 - brew:
@@ -17,24 +17,18 @@
 - shell++:
   - description: Pre-install latest version of Unity3D
     condition: 'true'
-  - stdout: true
-    stdin: true
-    stderr: true
+  - stdall: true
+    # stdin: true
+    # stderr: true
     command: |
-      # Ask for the administrator password upfront
-      sudo -v
+      # # Ask for the administrator password upfront
+      # sudo -v
 
-      # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-      while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+      # # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
+      # while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
       # See https://stackoverflow.com/questions/9132826/stop-developer-tools-access-needs-to-take-control-of-another-process-for-debugg
       sudo /usr/sbin/DevToolsSecurity --enable
-
-      # Accept all licenses
-      yes | sdkmanager --licenses
-
-      # Android SDK build tools
-      sdkmanager "platform-tools" "build-tools;28.0.0" "tools" "extras;android;m2repository" "platforms;android-16" "sources;android-16" "platforms;android-27" "sources;android-27" "platforms;android-28" "sources;android-28"
 
       # Install Ruby for fastlane
       echo N | rbenv install 2.4.2
@@ -50,3 +44,18 @@
       curl -O https://raw.githubusercontent.com/sttz/install-unity/master/install-unity.py && chmod +x install-unity.py
       ~/install-unity.py --package Unity --package iOS --package Android --save 2018.3.5f1
       # uvm install 2018.1.0f2 --android --ios
+
+- shell++:
+  - description: Pre-install Android SDKs
+    condition: 'true'
+  - stdall: true
+    command: |
+      # Accept all licenses
+      yes | sdkmanager --licenses
+
+      # Android SDK build tools
+      touch ~/.android/repositories.cfg
+      sdkmanager "platform-tools" "build-tools;28.0.0" "tools" "extras;android;m2repository"
+      sdkmanager "platforms;android-16" "sources;android-16"
+      sdkmanager "platforms;android-27" "sources;android-27"
+      sdkmanager "platforms;android-28" "sources;android-28"
