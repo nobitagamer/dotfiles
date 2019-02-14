@@ -52,7 +52,22 @@
 
 - shell++:
   - description: Install Apps
-    condition: 'hash brew 2>/dev/null'
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+      # Install XCode
+      mas install 497799835
+
+      # Install Slack
+      mas install 803453959
+
+      # Install OneDrive
+      mas install 823766827
+
+- shell++:
+  - description: Run XCode First Lauch to accept license
+    condition: '! xcodebuild -checkFirstLaunchStatus'
   - stdout: true
     stderr: true
     command: |
@@ -62,13 +77,5 @@
       # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
       while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-      # Install XCode
-      mas install 497799835
-      sudo xcodebuild -license accept
+      sudo xcodebuild -runFirstLaunch
       xcode-select --install
-
-      # Install Slack
-      mas install 803453959
-
-      # Install OneDrive
-      mas install 823766827
