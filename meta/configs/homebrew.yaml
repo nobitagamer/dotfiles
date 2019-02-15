@@ -53,6 +53,7 @@
     command: |
       # Install XCode
       mas install 497799835
+      sudo xcodebuild -license accept
 
       # Install Slack
       mas install 803453959
@@ -67,4 +68,6 @@
     stderr: true
     command: |
       sudo xcodebuild -runFirstLaunch
+
+      # Install Xcode command line tools
       xcode-select --install

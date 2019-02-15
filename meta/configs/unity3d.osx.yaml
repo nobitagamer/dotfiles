@@ -1,3 +1,11 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+- link:
+    ~/.unity-init.sh: apps/Unity3D/unity-init.sh
+
 - tap:
   - nobitagamer/cask
 
@@ -20,18 +28,9 @@
       # See https://stackoverflow.com/questions/9132826/stop-developer-tools-access-needs-to-take-control-of-another-process-for-debugg
       sudo /usr/sbin/DevToolsSecurity --enable
 
-      # Unity3D preinstall
-      cd ~/
+      ~/.unity-init.sh
 
-      # Install Unity v1
-      # curl -O https://raw.githubusercontent.com/sttz/install-unity/legacy/install-unity.py && chmod +x install-unity.py
-      # ~/install-unity.py --package Unity --package iOS --package Android --package VisualStudio --save 2018.3.5f1
-
-      # Install Unity v2
-      curl -s https://api.github.com/repos/sttz/install-unity/releases/latest | grep "browser_download_url.*zip" | cut -d : -f 2,3 | tr -d '"' | wget -qi - -O ~temp.zip
-      unzip -o ~temp.zip install-unity
-      rm ~temp.zip
-      sudo ~/install-unity install -y -p Unity,VisualStudio,iOS,Android 2018.3.5f1
+      sudo ~/install-unity install -y -p Unity,VisualStudio,iOS,Android 2018.3.6f1
 
 - shell++:
   - description: Install cocoapods for build iOS
@@ -65,8 +64,8 @@
   - stderr: true
     command: |
       # Android SDK build tools
-      sdkmanager "platform-tools" "build-tools;28.0.0" "tools" "extras;android;m2repository"
+      echo y | sdkmanager "platform-tools" "build-tools;28.0.0" "tools" "extras;android;m2repository"
 
-      sdkmanager "platforms;android-16" "sources;android-16"
-      sdkmanager "platforms;android-27" "sources;android-27"
-      sdkmanager "platforms;android-28" "sources;android-28"
+      echo y | sdkmanager "platforms;android-16" "sources;android-16"
+      echo y | sdkmanager "platforms;android-27" "sources;android-27"
+      echo y | sdkmanager "platforms;android-28" "sources;android-28"

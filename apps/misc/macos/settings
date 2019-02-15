@@ -6,12 +6,6 @@
 # settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
 
-# Ask for the administrator password upfront
-sudo -v
-
-# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
 # Patch to use latest Bash shell if found, see https://johndjameson.com/blog/updating-your-shell-with-homebrew/
 if ((BASH_VERSINFO[0] < 4)) && [ -s "/usr/local/bin/bash" ] && ! grep -Fxq "/usr/local/bin/bash" /etc/shells; then
     # See https://superuser.com/questions/136646/how-to-append-to-a-file-as-sudo
@@ -917,7 +911,12 @@ for app in "Activity Monitor" \
 	killall "${app}" &> /dev/null
 done
 
-# Update OS X
-sudo softwareupdate -i -a
+echo "------------------------------"
+echo "Updating OSX.  If this requires a restart, run the script again."
+# Install all available updates
+sudo softwareupdate -ia --verbose
+
+# Install only recommended available updates
+#sudo softwareupdate -ir --verbose
 
 echo "Done. Note that some of these changes require a logout/restart to take effect."

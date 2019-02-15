@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -i
 
 # Colors as per: http://www.tldp.org/LDP/abs/html/colorizing.html
 
@@ -218,6 +218,41 @@ echoerr
 echoerr blue "At any time, press ^C to quit. No changes will be made until you confirm."
 echoerr
 
+# ----------------------------------
+# Try to detect platform
+# ----------------------------------
+platform='unknown'
+unamestr=$(uname)
+
+case $unamestr in
+'Linux')
+  if grep -q Microsoft /proc/version; then
+  	platform='wsl.ubuntu'
+  else
+  	platform='linux'
+  fi
+	;;
+'Darwin')
+	platform='macos'
+	;;
+MINGW*)
+	platform='windows'
+	;;
+CYGWIN*)
+	platform='windows'
+	;;
+'FreeBSD')
+	# platform='freebsd'
+	;;
+'SunOS')
+	# platform='solaris'
+	;;
+'AIX') ;;
+*) ;;
+esac
+
+echoerr green "Detected platform: $platform"
+
 appendshell start
 
 prefix="~/.dotfiles"
@@ -312,41 +347,6 @@ if (($getgitinfo)); then
 	appendshell gitsetemail "$gitemail" $gitinfoglobal
 fi
 
-# ----------------------------------
-# Try to detect platform
-# ----------------------------------
-platform='unknown'
-unamestr=$(uname)
-
-case $unamestr in
-'Linux')
-  if grep -q Microsoft /proc/version; then
-  	platform='wsl.ubuntu'
-  else
-  	platform='linux'
-  fi
-	;;
-'Darwin')
-	platform='macos'
-	;;
-MINGW*)
-	platform='windows'
-	;;
-CYGWIN*)
-	platform='windows'
-	;;
-'FreeBSD')
-	# platform='freebsd'
-	;;
-'SunOS')
-	# platform='solaris'
-	;;
-'AIX') ;;
-*) ;;
-esac
-
-echoerr green "Detected platform: $platform"
-
 if [ -z "$installprofile" ]; then
   installprofile=$platform
 else
@@ -376,6 +376,13 @@ echoerrcolor darkred
 read -p "${warningmessage}This is your last chance to press ^C before actions are taken that should not be interrupted. "
 echoerrnocolor
 
+# Ask for the administrator password upfront
+echoerr blue "To easy accepting licenses and setup system software, you MUST enter sudo password to continue!"
+sudo -v
+
+# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
 if ! (($testmode)); then
 	eval $setupshell
 fi
@@ -384,18 +391,8 @@ echoerr green "Reloading current shell, see you soon..."
 exec "$SHELL"
 
 function runDots() {
-	# Ask for the administrator password upfront
-	sudo -v
-
-	# Keep-alive: update existing `sudo` time stamp until the script has finished
-	while true; do
-		sudo -n true
-		sleep 60
-		kill -0 "$$" || exit
-	done 2>/dev/null &
-
 	git clone --recursive https://github.com/nobitagamer/dotfiles .dotfiles
-	cd ~/.dotfiles && ./install-profile $@
+	cd ~/.dotfiles && . ./install-profile $@
 
 	# Run sections based on command line arguments
 	for ARG in "$@"; do
