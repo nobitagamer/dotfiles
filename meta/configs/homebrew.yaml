@@ -12,12 +12,6 @@
   - stdout: true
     stderr: true
     command: |
-      # # Ask for the administrator password upfront
-      # sudo -v
-
-      # # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-      # while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 - brewfile:
@@ -38,6 +32,7 @@
   - tmux
   - tmate
   # - curl --with-openssl
+  - wget
   - curl
 
 - brew: [zsh, zsh-completions, zsh-syntax-highlighting]
@@ -47,7 +42,7 @@
   - gitkraken
   - iterm2
   - kdiff3
-  - visual-studio
+  # - visual-studio # Will install with Unity
   - visual-studio-code
 
 - shell++:
@@ -71,11 +66,5 @@
   - stdout: true
     stderr: true
     command: |
-      # # Ask for the administrator password upfront
-      # sudo -v
-
-      # # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-      # while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
       sudo xcodebuild -runFirstLaunch
       xcode-select --install

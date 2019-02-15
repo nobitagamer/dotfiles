@@ -1,12 +1,10 @@
 - tap:
-  # - wooga/tools
   - nobitagamer/cask
 
 - brew:
   - imagemagick
   - librsvg
   - rbenv
-  # - wooga/tools/unity-version-manager
 
 - cask:
   - java8
@@ -17,45 +15,58 @@
 - shell++:
   - description: Pre-install latest version of Unity3D
     condition: 'true'
-  - stdall: true
-    # stdin: true
-    # stderr: true
+  - stderr: true
     command: |
-      # # Ask for the administrator password upfront
-      # sudo -v
-
-      # # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-      # while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
       # See https://stackoverflow.com/questions/9132826/stop-developer-tools-access-needs-to-take-control-of-another-process-for-debugg
       sudo /usr/sbin/DevToolsSecurity --enable
 
+      # Unity3D preinstall
+      cd ~/
+
+      # Install Unity v1
+      # curl -O https://raw.githubusercontent.com/sttz/install-unity/legacy/install-unity.py && chmod +x install-unity.py
+      # ~/install-unity.py --package Unity --package iOS --package Android --package VisualStudio --save 2018.3.5f1
+
+      # Install Unity v2
+      curl -s https://api.github.com/repos/sttz/install-unity/releases/latest | grep "browser_download_url.*zip" | cut -d : -f 2,3 | tr -d '"' | wget -qi - -O ~temp.zip
+      unzip -o ~temp.zip install-unity
+      rm ~temp.zip
+      sudo ~/install-unity install -y -p Unity,VisualStudio,iOS,Android 2018.3.5f1
+
+- shell++:
+  - description: Install cocoapods for build iOS
+    condition: 'true'
+  - stderr: true
+    command: |
       # Install Ruby for fastlane
       echo N | rbenv install 2.4.2
 
       # Install bundle package manager
-      rbenv rehash && rbenv shell 2.4.2
+      rbenv rehash
+      rbenv shell 2.4.2
       gem install activesupport -v 4.2.6
       gem install bundle cocoapods
       rbenv rehash
 
-      # Unity3D preinstall
-      cd ~/
-      curl -O https://raw.githubusercontent.com/sttz/install-unity/master/install-unity.py && chmod +x install-unity.py
-      ~/install-unity.py --package Unity --package iOS --package Android --save 2018.3.5f1
-      # uvm install 2018.1.0f2 --android --ios
+- shell++:
+  - description: Accept all licenses
+    condition: 'true'
+  - stderr: true
+    command: |
+      touch ~/.android/repositories.cfg
+
+      # yes | sdkmanager --licenses
+      # Can NOT use yes pipe that will cause deadlock
+      sdkmanager --licenses
 
 - shell++:
   - description: Pre-install Android SDKs
     condition: 'true'
-  - stdall: true
+  - stderr: true
     command: |
-      # Accept all licenses
-      yes | sdkmanager --licenses
-
       # Android SDK build tools
-      touch ~/.android/repositories.cfg
       sdkmanager "platform-tools" "build-tools;28.0.0" "tools" "extras;android;m2repository"
+
       sdkmanager "platforms;android-16" "sources;android-16"
       sdkmanager "platforms;android-27" "sources;android-27"
       sdkmanager "platforms;android-28" "sources;android-28"

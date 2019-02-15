@@ -1,9 +1,9 @@
 import os
 import subprocess
+import time
 import sys
 import dotbot
 from dotbot.messenger.color import Color
-
 
 class AdvancedShell(dotbot.Plugin):
     '''
@@ -40,8 +40,11 @@ class AdvancedShell(dotbot.Plugin):
                 stderr = None
 
         if item.get('condition'):
-            ret = subprocess.call(item['condition'], shell=True, stdin=stdin, stdout=stdout,
-                                  stderr=stderr, cwd=self._context.base_directory())
+            ret = subprocess.call(item['condition'], shell=True,
+                            stdin=stdin,
+                            stdout=stdout,
+                            stderr=stderr,
+                            cwd=self._context.base_directory())
             self._log_cmd(item['condition'], msg)
             if item.get('branch'):
                 if ret not in item['branch']:
@@ -90,11 +93,26 @@ class AdvancedShell(dotbot.Plugin):
         self._log.info('Processing cmd:')
         self._log_cmd(cmd, msg)
         try:
-            ret = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout,
-                                stderr=stderr, cwd=self._context.base_directory())
-            if ret != 0:
-                return False, 'Command [%s] failed' % cmd
+            # See https://www.cyberciti.biz/faq/python-run-external-command-and-get-output/
+            process = subprocess.Popen(cmd,
+                                    shell=True, bufsize=-1, executable=os.environ.get('SHELL'),
+                                    stdin=stdin,
+                                    # stdout=stdout,
+                                    # stdout=None,
+                                    stderr=subprocess.PIPE,
+                                    cwd=self._context.base_directory())
+            while True:
+                out = process.stderr.read(1)
+                if out == b'' and process.poll() is not None:
+                    break
+                if out:
+                    sys.stdout.write(out)
+                    sys.stdout.flush()
+            ret = process.poll()
             return True, None
+        except subprocess.CalledProcessError as e:
+            ret = e.returncode
+            return False, 'Command [%s] failed: %s' % (cmd, e.output)
         except Exception as e:
             return False, 'Cannot run command %s' % str(e)
 
@@ -120,11 +138,30 @@ class AdvancedShell(dotbot.Plugin):
                     cmd = item
                     msg = None
                 self._log_cmd(cmd, msg)
-                ret = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout,
-                                      stderr=stderr, cwd=self._context.base_directory())
-                if ret != 0:
+                try:
+                    process = subprocess.Popen(cmd,
+                                            shell=True, bufsize=-1, executable=os.environ.get('SHELL'),
+                                            stdin=stdin,
+                                            # stdout=None,
+                                            stderr=subprocess.PIPE,
+                                            cwd=self._context.base_directory())
+                    while True:
+                        out = process.stderr.read(1)
+                        if out == b'' and process.poll() is not None:
+                            break
+                        if out:
+                            sys.stdout.write(out)
+                            sys.stdout.flush()
+                    ret = process.poll()
+                    success = True
+                except subprocess.CalledProcessError as e:
+                    ret = e.returncode
+                    self._log.warning('Command [%s] failed %n: %s' % (cmd, e.output))
                     success = False
-                    self._log.warning('Command [%s] failed' % cmd)
+                except Exception as e:
+                    self._log.warning('Execute [%s] failed: %s' % (cmd, e))
+                    success = False
+
         if log_suffix:
             if success:
                 self._log.info('All commands have been executed')
