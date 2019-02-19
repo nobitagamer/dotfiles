@@ -9,8 +9,11 @@ osascript -e 'tell application "System Preferences" to quit'
 # Patch to use latest Bash shell if found, see https://johndjameson.com/blog/updating-your-shell-with-homebrew/
 if ((BASH_VERSINFO[0] < 4)) && [ -s "/usr/local/bin/bash" ] && [ ! $(grep -Fxq "/usr/local/bin/bash" /etc/shells) ]; then
     # See https://superuser.com/questions/136646/how-to-append-to-a-file-as-sudo
-    echo "/usr/local/bin/bash" | sudo tee -a /etc/shells > /dev/null
-    chsh -s /usr/local/bin/bash
+    sudo chsh -s /usr/local/bin/bash $USER
+
+    if [ ! $(grep -Fxq "/usr/local/bin/bash" /etc/shells) ]; then
+      echo "/usr/local/bin/bash" | sudo tee -a /etc/shells > /dev/null
+    fi
 fi
 
 ###############################################################################
