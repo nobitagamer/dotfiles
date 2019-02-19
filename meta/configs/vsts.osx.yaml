@@ -1,0 +1,29 @@
+- brew:
+  - openssl
+
+- shell++:
+  - description: System Prerequisites for VSTS Agent
+    condition: 'true'
+  - stderr: true
+    command: |
+      # Ensure folder exists on machine
+      mkdir -p /usr/local/lib/
+      ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/
+      ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
+
+- shell++:
+  - description: Install VSTS Agent
+    condition: '[[ ! -z "$VSTS_AGENT_INPUT_URL" ]]'
+  - stderr: true
+    command: |
+      mkdir ~/vso
+      cd ~/vso
+      curl -O https://vstsagentpackage.azureedge.net/agent/2.146.0/vsts-agent-osx-x64-2.146.0.tar.gz
+      tar zxvf ./vsts-agent-osx-x64-2.146.0.tar.gz
+
+      # export VSTS_AGENT_INPUT_URL=https://<Account name>.visualstudio.com
+      # export VSTS_AGENT_INPUT_TOKEN=<PAT>
+      # export VSTS_AGENT_INPUT_POOL="<Pool name>"
+      # export VSTS_AGENT_INPUT_AGENT=<Agent name>
+      ./config.sh --unattended --auth pat --acceptTeeEula && ./svc.sh install
+      ./svc.sh start && ./svc.sh status
