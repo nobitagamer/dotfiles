@@ -12,6 +12,7 @@
 - brew:
   - imagemagick
   - librsvg
+  - pcre
   - rbenv
 
 - cask:
