@@ -1,0 +1,16 @@
+{
+  "cacheLifetime": 86400,
+  "defaultPackages": null,
+  "downloadSubdirectory": "Unity {0}",
+  "maxConcurrentDownloads": 4,
+  "maxConcurrentInstalls": 1,
+  "resumeDownloads": true,
+  "requestTimeout": 30,
+  "retryCount": 4,
+  "retryDelay": 5,
+  "progressBar": false,
+  "progressRefreshInterval": 50,
+  "statusRefreshEvery": 20,
+  "enableColoredOutput": true,
+  "installPathMac": "/Applications/Unity {major}.{minor};/Applications/Unity {major}.{minor}.{patch}{type}{build};/Applications/Unity {major}.{minor}.{patch}{type}{build} ({hash})"
+}

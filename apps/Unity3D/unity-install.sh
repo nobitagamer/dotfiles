@@ -7,6 +7,8 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+cp ./config.json "~/Library/Application Support/install-unity/"
+
 UNITY_VERSION=$1
 sudo ~/install-unity install -y -p Unity,iOS,Android "$UNITY_VERSION"
 
