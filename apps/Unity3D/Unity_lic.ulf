@@ -1,0 +1,65 @@
+<root>
+  <License id="Terms">
+    <AlwaysOnline Value="false"/>
+    <ClientProvidedVersion Value=""/>
+    <DeveloperData Value="AQAAAFUzLVZOOUYtU0dGUC1FTEQ2LUVNMlYtQzVBNQ=="/>
+    <Features>
+      <Feature Value="0"/>
+      <Feature Value="1"/>
+      <Feature Value="2"/>
+      <Feature Value="3"/>
+      <Feature Value="4"/>
+      <Feature Value="5"/>
+      <Feature Value="6"/>
+      <Feature Value="9"/>
+      <Feature Value="10"/>
+      <Feature Value="11"/>
+      <Feature Value="12"/>
+      <Feature Value="13"/>
+      <Feature Value="14"/>
+      <Feature Value="15"/>
+      <Feature Value="17"/>
+      <Feature Value="18"/>
+      <Feature Value="19"/>
+      <Feature Value="20"/>
+      <Feature Value="21"/>
+      <Feature Value="23"/>
+      <Feature Value="24"/>
+      <Feature Value="25"/>
+      <Feature Value="26"/>
+      <Feature Value="28"/>
+      <Feature Value="29"/>
+      <Feature Value="30"/>
+      <Feature Value="31"/>
+      <Feature Value="32"/>
+      <Feature Value="33"/>
+      <Feature Value="34"/>
+      <Feature Value="35"/>
+      <Feature Value="36"/>
+      <Feature Value="39"/>
+    </Features>
+    <InitialActivationDate Value="2017-08-22T00:17:35"/>
+    <LicenseVersion Value="6.x"/>
+    <MachineBindings></MachineBindings>
+    <MachineID Value=""/>
+    <SerialHash Value=""/>
+    <SerialMasked Value="U3-VN9F-SGFP-ELD6-EM2V-XXXX"/>
+    <StartDate Value=""/>
+    <StopDate Value=""/>
+    <UpdateDate Value="2027-08-23T00:17:35"/>
+  </License>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="#Terms">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <DigestValue>VwdZfEvOovrGvIXq1VOQQjkzHn8=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>GerT9oJ1XZo9wN9cxXY1BKXNGAfvrttHTTDdRUSZIXXqGKKzyl7p2PzvlcN/brKx9soqsPxinWur/AQcp5JkyDYMQM8ApfdsdhPOVH5krVcZegqBwPBVNt51+3ln88zbXs8KvV0GaVShrGU9UA3u3rn7t/3/5fA2UsjkdhkyZ2E=</SignatureValue>
+  </Signature>
+</root>
