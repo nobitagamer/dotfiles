@@ -65,6 +65,10 @@ PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 # Ensure that a login non-interactive shell has a defined environment.
 shopt -q login_shell && ( [ ! -z "$PS1" ] && [ -s "$HOME/.bashrc" ] ) && source "$HOME/.bashrc"
 
+if ! [ -f "$HOME/.localrc" ]; then
+    touch $HOME/.localrc
+fi
+
 # Use .localrc for SUPER SECRET CRAP that you don't
 # want in your public, versioned repo.
 [ -f $HOME/.localrc ] && . $HOME/.localrc

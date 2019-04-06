@@ -7,9 +7,10 @@ export LANG=en_US.UTF-8
 export JAVA_HOME=$(/usr/libexec/java_home)
 export PATH=${JAVA_HOME}/bin:$PATH
 
-# MUST use android-ndk r10e for Unity 5.5.2f1
-export ANDROID_NDK_HOME=/usr/local/opt/android-ndk/android-ndk-r10e
-export ANDROID_HOME=/usr/local/opt/android-sdk
+# MUST use android-ndk r16b for Unity 2018.3.7f1
+export ANDROID_NDK_ROOT=/usr/local/share/android-ndk
+export ANDROID_NDK_HOME=/usr/local/share/android-ndk/android-ndk-r16b
+export ANDROID_HOME=/usr/local/share/android-sdk
 
 # OPENSSL_ROOT="$(brew --prefix openssl)"
 export PATH=/opt/local/bin:/opt/local/sbin:$PATH
