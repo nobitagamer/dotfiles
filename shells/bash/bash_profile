@@ -24,16 +24,20 @@ export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME
 
 BASHDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/bash"
 
-# Use sensible bash
-if [ -f $BASHDOTDIR/sensible.bash ]; then
-  source $BASHDOTDIR/sensible.bash
+# standard output is a tty
+# do interactive initialization
+if [ -t 1 ]; then
+  # Use sensible bash
+  if [ -f $BASHDOTDIR/sensible.bash ]; then
+    source $BASHDOTDIR/sensible.bash
+  fi
 fi
 
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
 for file in $BASHDOTDIR/.{path,bash_prompt,exports,functions,extra}; do
-    [ -r "$file" ] && [ -f "$file" ] && source "$file";
+  [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file;
 
@@ -66,7 +70,7 @@ PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 shopt -q login_shell && ( [ ! -z "$PS1" ] && [ -s "$HOME/.bashrc" ] ) && source "$HOME/.bashrc"
 
 if ! [ -f "$HOME/.localrc" ]; then
-    touch $HOME/.localrc
+  touch $HOME/.localrc
 fi
 
 # Use .localrc for SUPER SECRET CRAP that you don't
