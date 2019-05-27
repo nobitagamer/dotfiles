@@ -51,13 +51,15 @@ bind "set mark-symlinked-directories on"
 ## SANE HISTORY DEFAULTS ##
 
 # Append to the history file, don't overwrite it
+# HACK: Comment to workaround for CentOS PROMPT_COMMAND: readonly variable
 shopt -s histappend
 
 # Save multi-line commands as one command
 shopt -s cmdhist
 
 # Record each line as it gets issued
-PROMPT_COMMAND='history -a'
+# PROMPT_COMMAND='history -a'
+PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
 
 # Huge history. Doesn't appear to slow things down, so why not?
 HISTSIZE=500000

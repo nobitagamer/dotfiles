@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+iatest=$(expr index "$-" i)
+
 shopt -q login_shell && echo 'This Bash Shell is a Login Shell' || echo 'This Bash Shell is NOT a Login Shell'
 
 # Ensure that a non-login shell has a defined environment.
@@ -26,10 +28,16 @@ BASHDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/bash"
 
 # standard output is a tty
 # do interactive initialization
-if [ -t 1 ]; then
+# if [ -t 1 ]; then
+#   # Use sensible bash
+#   if [ -f $BASHDOTDIR/sensible.bash ]; then
+#     source $BASHDOTDIR/sensible.bash
+#   fi
+# fi
+if [[ $iatest > 0 ]]; then
   # Use sensible bash
-  if [ -f $BASHDOTDIR/sensible.bash ]; then
-    source $BASHDOTDIR/sensible.bash
+  if [ -f "$BASHDOTDIR/sensible.bash" ]; then
+    source "$BASHDOTDIR/sensible.bash"
   fi
 fi
 
@@ -66,13 +74,51 @@ PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 [ -r "$HOME/.smartcd_config" ] && ( [ -n $BASH_VERSION ] || [ -n $ZSH_VERSION ] ) && source ~/.smartcd_config
 
+# Init Linuxbrew
+if [ -d "/home/linuxbrew/.linuxbrew" ]; then
+  export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+fi
+
+# Init Pyenv
+if [ -d "$HOME/.pyenv/plugins/pyenv-virtualenv" ]; then
+  export PATH="$HOME/.pyenv/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+fi
+
+# Init rbenv
+if [ -d "$HOME/.rbenv" ]; then
+  export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
+  eval "$(rbenv init -)"
+fi
+
 # Ensure that a login non-interactive shell has a defined environment.
 shopt -q login_shell && ( [ ! -z "$PS1" ] && [ -s "$HOME/.bashrc" ] ) && source "$HOME/.bashrc"
 
 if ! [ -f "$HOME/.localrc" ]; then
   touch $HOME/.localrc
+  cat >> ~/.localrc <<- EOL
+export VISUAL=nano
+export EDITOR=nano
+
+hash kompose 2>/dev/null && source <(kompose completion bash)
+
+export HH_CONFIG=hicolor         # get more colors
+# if this is interactive shell, then bind hh to Ctrl-r (for Vi mode check doc)
+EOL
+  if hash hstr 2>/dev/null; then
+    # hstr --show-configuration >> ~/.localrc
+    # REMOVED: Already set in sensible.bash
+    # shopt -s histappend              # append new history items to .bash_history
+    # export HISTCONTROL=ignorespace   # leading space hides commands from history
+    # export HISTFILESIZE=10000        # increase history file size (default is 500)
+    # export HISTSIZE=${HISTFILESIZE}  # increase history size (default is 500)
+    # export PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"   # mem/file sync
+    # MUST escape $ and double quote (")
+    echo "if [[ \$- =~ .*i.* ]]; then bind '\"\C-r\": \"\C-a hh \C-j\"'; fi" >> ~/.localrc
+  fi
 fi
 
 # Use .localrc for SUPER SECRET CRAP that you don't
 # want in your public, versioned repo.
-[ -f $HOME/.localrc ] && . $HOME/.localrc
+[ -f "$HOME/.localrc" ] && source "$HOME/.localrc"

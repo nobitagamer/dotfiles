@@ -2,3 +2,6 @@
     - fzf
     - todo-txt
     - gcc
+    # Require libs for pyenv doctor -v
+    - readline
+    - sqlite3

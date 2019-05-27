@@ -1,0 +1,8 @@
+- shell++:
+  - description: Install autoenv
+    condition: '[!  -d ~/.autoenv ]'
+  - stdout: true
+    stderr: true
+    command: |
+      git clone https://github.com/kennethreitz/autoenv.git ~/.autoenv
+      echo 'source ~/.autoenv/activate.sh' >> ~/.localrc

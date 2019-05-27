@@ -13,12 +13,8 @@
     command: |
       export PATH="$HOME/.pyenv/bin:$PATH"
       if [ ! -d ~/.pyenv  ]; then
-        git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-        git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
-        git clone https://github.com/pyenv/pyenv-doctor.git $(pyenv root)/plugins/pyenv-doctor
-        git clone https://github.com/pyenv/pyenv-which-ext.git $(pyenv root)/plugins/pyenv-which-ext
-        git clone https://github.com/pyenv/pyenv-update.git $(pyenv root)/plugins/pyenv-update
-        git clone https://github.com/doloopwhile/pyenv-register.git $(pyenv root)/plugins/pyenv-register
-        git clone https://github.com/massongit/pyenv-pip-update.git $(pyenv root)/plugins/pyenv-pip-update
+        curl https://pyenv.run | bash
+      else
+        pyenv update
       fi
-      pyenv doctor
+      pyenv doctor -v

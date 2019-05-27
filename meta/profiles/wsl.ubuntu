@@ -6,6 +6,7 @@ ruby
 python
 binaries.linux
 bash
+bash.wsl
 zsh.linux
 vim.linux
 tmux.linux

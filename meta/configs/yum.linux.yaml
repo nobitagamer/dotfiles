@@ -1,0 +1,20 @@
+# See https://gitlab.com/flyingchipmunk/dotbot-yum
+- defaults:
+    yum:
+      options: "-q -y"
+      sudo: True
+      stdout: False
+      stderr: True
+
+# - yum:
+#     dev-yumgroup:
+#       options: '-q -y --disablerepo=* --enablerepo=mainline --enablerepo=mainline-extra'
+#       group: True
+
+- yum:
+    - >-
+      epel-release git gcc
+      zlib-devel bzip2 bzip2-devel readline-devel sqlite
+      sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
+
+- yum: [bash-completion, bash-completion-extras, hstr]

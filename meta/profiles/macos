@@ -7,6 +7,7 @@ dev
 ssh
 vscode.osx
 unity3d.osx
+bash
 bash.osx
 zsh.osx
 vsts.osx

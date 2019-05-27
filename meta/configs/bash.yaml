@@ -7,9 +7,25 @@
     - ~/.config/bash
 - link:
     ~/.bash_profile: shells/bash/bash_profile
-    ~/.profile: shells/bash/profile.wsl
     ~/.bashrc: shells/bash/bashrc
-    ~/.bash_aliases: shells/bash/bash_aliases.osx
     ~/.config/bash/.bash_prompt: shells/bash/config/bash/bash_prompt
     ~/.config/bash/sensible.bash: shells/bash/config/bash/sensible.bash
     ~/.config/bash/bashmarks.sh: shells/bash/config/bash/bashmarks.sh
+- shell++:
+  - description: Installing bash addons
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+      # curl https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
+      if [ ! -d ~/.bash_it ]; then
+        git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it
+        ~/.bash_it/install.sh --no-modify-config
+        source ~/.bash_it/bash_it.sh
+      else
+        source ~/.bash_it/bash_it.sh
+        bash-it update
+      fi
+
+      bash-it enable completion docker
+      bash-it enable completion docker-compose

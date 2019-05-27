@@ -1,0 +1,11 @@
+yum.linux
+bash
+brew.linux
+git
+dev
+node
+ruby
+python
+binaries.linux
+autoenv
+smartcd.linux

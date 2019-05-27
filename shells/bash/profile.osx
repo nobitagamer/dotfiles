@@ -1,9 +1,5 @@
 export PATH="$HOME/.fastlane/bin:$PATH"
 
-# Having your locale not set to a UTF-8 locale will cause issues with building and uploading your build.
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
 export JAVA_HOME=$(/usr/libexec/java_home)
 export PATH=${JAVA_HOME}/bin:$PATH
 

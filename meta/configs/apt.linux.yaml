@@ -5,6 +5,8 @@
       ppa_source: 'ppa:git-core/ppa'
     fasd:
       ppa_source: 'ppa:aacebedo/fasd'
+    hstr:
+      ppa_source: 'ppa:ultradvorka/ppa'
 # - aptget:
 #     fish:
 #       ppa_source: 'ppa:c/release-2'
@@ -16,12 +18,13 @@
     - editorconfig
     - fortune-mod
     - apg
+    - hstr
 - aptget:
     - python-pip
     - python3-pip
     - ruby
 - aptget:
-    - wget curl make llvm build-essential xz-utils # Python and Ruby build requirements, see https://github.com/pyenv/pyenv/wiki/Common-build-problems
+    - wget curl make llvm build-essential xz-utils libffi-dev liblzma-dev python-openssl # Python and Ruby build requirements, see https://github.com/pyenv/pyenv/wiki/Common-build-problems
 - aptget:
     - >-
       libssl-dev zlib1g-dev libbz2-dev libreadline-dev

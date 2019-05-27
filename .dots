@@ -229,7 +229,12 @@ case $unamestr in
   if grep -q Microsoft /proc/version; then
   	platform='wsl.ubuntu'
   else
-  	platform='linux'
+    # Detect CentOS distro
+    if [ -f /etc/redhat-release ]; then
+      platform='centos'
+    else
+      platform='linux'
+    fi
   fi
 	;;
 'Darwin')
