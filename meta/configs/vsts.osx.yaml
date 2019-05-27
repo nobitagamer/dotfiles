@@ -18,8 +18,8 @@
     command: |
       mkdir ~/vso
       cd ~/vso
-      curl -O https://vstsagentpackage.azureedge.net/agent/2.146.0/vsts-agent-osx-x64-2.146.0.tar.gz
-      tar zxvf ./vsts-agent-osx-x64-2.146.0.tar.gz
+      curl -O https://vstsagentpackage.azureedge.net/agent/2.150.3/vsts-agent-osx-x64-2.150.3.tar.gz
+      tar zxvf ./vsts-agent-osx-x64-2.150.3.tar.gz
 
       # export VSTS_AGENT_INPUT_URL=https://<Account name>.visualstudio.com
       # export VSTS_AGENT_INPUT_TOKEN=<PAT>
