@@ -1,10 +1,10 @@
 yum.linux
 bash
+ruby
 brew.linux
 git
 dev
 node
-ruby
 python
 binaries.linux
 autoenv
