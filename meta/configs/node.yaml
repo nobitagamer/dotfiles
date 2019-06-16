@@ -21,6 +21,8 @@
         git clone https://github.com/nodenv/nodenv-vars.git $(nodenv root)/plugins/nodenv-vars
         git clone https://github.com/nodenv/node-build-update-defs.git $(nodenv root)/plugins/node-build-update-defs
         git clone https://github.com/nodenv/nodenv-update.git $(nodenv root)/plugins/nodenv-update
+      else
+        nodenv update
       fi
 
       if [ -r ~/.node-version ] && [ ! -d ~/.nodenv/versions/$(cat ~/.node-version) ]; then

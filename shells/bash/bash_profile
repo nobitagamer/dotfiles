@@ -170,6 +170,17 @@ if [ -d "$HOME/.rbenv" ]; then
   eval "$(rbenv init -)"
 fi
 
+############
+# Node.js
+############
+if [[ -d $HOME/.nodenv ]]; then
+  export NODENV_SHIMS=$HOME/.nodenv/shims
+  path=(
+    $HOME/.nodenv/bin
+    $NODENV_SHIMS
+    $path)
+fi
+
 # Ensure that a login non-interactive shell has a defined environment.
 shopt -q login_shell && ( [ ! -z "$PS1" ] && [ -s "$HOME/.bashrc" ] ) && source "$HOME/.bashrc"
 
