@@ -1,6 +1,6 @@
 # coding=utf-8
 import os
-import subprocess
+import subprocess, sys
 import dotbot
 from enum import Enum
 
@@ -87,6 +87,7 @@ class AptGet(dotbot.Plugin):
                                        stderr=subprocess.STDOUT)
             out = process.stdout.read()
             process.stdout.close()
+
             self._log.info('Successfully added PPA "%s"' % source)
             success = True
         except subprocess.CalledProcessError as e:
@@ -129,6 +130,21 @@ class AptGet(dotbot.Plugin):
                                        stderr=subprocess.STDOUT)
             out = process.stdout.read()
             process.stdout.close()
+
+            # ## run it ##
+            # process = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
+
+            # ## But do not wait till netstat finish, start displaying output immediately ##
+            # while True:
+            #     out = process.stderr.read(1)
+            #     if out == b'' and process.poll() is not None:
+            #         break
+            #     if out != '':
+            #         sys.stdout.write(out.decode(sys.stdout.encoding))
+            #         sys.stdout.flush()
+
+            # ret = process.poll()
+
             self._log.info('APT package index updated successfully')
             return True
         except Exception as e:
@@ -140,12 +156,21 @@ class AptGet(dotbot.Plugin):
         cmd = '{}apt-get install {} -y'.format(command_prefix, pkg)
 
         try:
-            process = subprocess.Popen(cmd, shell=True,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.STDOUT)
+            ## run it ##
+            process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-            out = process.communicate()[0]
-            # process.stdout.close() # Allow ps_process to receive a SIGPIPE if process exits.
+            ## But do not wait till netstat finish, start displaying output immediately ##
+            out = ''
+            while True:
+                buff = process.stdout.read(1).decode(sys.stdout.encoding)
+                if buff == '' and process.poll() is not None:
+                    break
+                if buff != '':
+                    out += buff
+                    # sys.stdout.write(buff)
+                    # sys.stdout.flush()
+
+            ret = process.poll()
 
             for key, value in self._strings.items():
                 for text in self._strings[key]:
