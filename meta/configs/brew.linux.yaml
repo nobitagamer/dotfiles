@@ -5,3 +5,4 @@
     # Require libs for pyenv doctor -v
     - readline
     - sqlite3
+    - openssl
