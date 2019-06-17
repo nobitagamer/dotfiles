@@ -175,10 +175,9 @@ fi
 ############
 if [[ -d $HOME/.nodenv ]]; then
   export NODENV_SHIMS=$HOME/.nodenv/shims
-  path=(
-    $HOME/.nodenv/bin
-    $NODENV_SHIMS
-    $path)
+  export PATH="$HOME/.nodenv/bin:$NODENV_SHIMS:$PATH"
+
+  eval "$(nodenv init -)"
 fi
 
 # Ensure that a login non-interactive shell has a defined environment.

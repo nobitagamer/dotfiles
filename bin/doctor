@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Run all *-doctor scripts here
+
+if [[ -d $HOME/.pyenv ]]; then
+  pyenv doctor -v
+fi
+
+if [[ -d $HOME/.rbenv ]]; then
+  curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-doctor | bash
+fi
+
+if [[ -d $HOME/.nodenv ]]; then
+  curl -fsSL https://github.com/nodenv/nodenv-installer/raw/master/bin/nodenv-doctor | bash
+fi
+
+if [[ -d $HOME/.linuxbrew ]]; then
+  brew doctor
+fi

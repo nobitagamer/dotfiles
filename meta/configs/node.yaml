@@ -28,3 +28,5 @@
       if [ -r ~/.node-version ] && [ ! -d ~/.nodenv/versions/$(cat ~/.node-version) ]; then
         nodenv install $(cat ~/.node-version)
       fi
+
+      curl -fsSL https://github.com/nodenv/nodenv-installer/raw/master/bin/nodenv-doctor | bash

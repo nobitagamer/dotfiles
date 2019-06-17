@@ -29,10 +29,9 @@
 
       rbenv init
 
-      curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-doctor | bash
-
       if [ -r ~/.ruby-version ] && [ ! -d ~/.rbenv/versions/$(cat ~/.ruby-version) ]; then
         rbenv download $(cat ~/.ruby-version) || rbenv install $(cat ~/.ruby-version) # CentOS 7 does not have Ruby 2.4.6
       fi
 
       rbenv communize --all
+      curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-doctor | bash
