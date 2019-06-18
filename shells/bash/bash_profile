@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-iatest=$(expr index "$-" i)
+# This does NOT work on macOS, use [[ "$-" =~ 'i' ]] instead
+# iatest=$(expr index "$-" i)
 
 shopt -q login_shell && echo 'This Bash Shell is a Login Shell' || echo 'This Bash Shell is NOT a Login Shell'
 
@@ -94,7 +95,7 @@ export SCM_GIT_IGNORE_UNTRACKED=true
 # export BASH_IT_RELOAD_LEGACY=1
 
 # Load Bash It in Interactive shell only
-if [ $iatest -gt 0 ] && [ -f "$BASH_IT"/bash_it.sh ]; then
+if [[ "$-" =~ 'i' ]] && [ -f "$BASH_IT"/bash_it.sh ]; then
   source "$BASH_IT"/bash_it.sh
 fi
 
@@ -110,7 +111,7 @@ fi
 #     source $BASHDOTDIR/sensible.bash
 #   fi
 # fi
-if [[ $iatest > 0 ]]; then
+if [[ "$-" =~ 'i' ]]; then
   # Use sensible bash
   if [ -f "$BASHDOTDIR/sensible.bash" ]; then
     source "$BASHDOTDIR/sensible.bash"

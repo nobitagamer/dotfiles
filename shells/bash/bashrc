@@ -3,7 +3,8 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-iatest=$(expr index "$-" i)
+# This does NOT work on macOS, use [[ "$-" =~ 'i' ]] instead
+# iatest=$(expr index "$-" i)
 
 # if [ -z "$PS1" ]; then
 #   echo This Bash Shell is NOT an Interactive Shell
@@ -17,7 +18,7 @@ case $- in
 *) echo This Bash Shell is NOT an Interactive Shell ;;
 esac
 
-if [[ $iatest -gt 0 ]]; then bind "set bell-style visible"; fi
+if [[ "$-" =~ 'i' ]]; then bind "set bell-style visible"; fi
 
 # Source global definitions
 # BUG: CentOS this will cause `bash: PROMPT_COMMAND: readonly variable`
