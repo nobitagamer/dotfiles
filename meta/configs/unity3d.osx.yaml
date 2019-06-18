@@ -13,7 +13,7 @@
   - rbenv
 
 - cask:
-  - java8
+  - adoptopenjdk8 # java8: it's gone from Homebrew, use OpenJDK instead (adoptopenjdk8)
   - android-sdk
   - fastlane
 
