@@ -31,6 +31,12 @@ if [[ $(which brew) = "" ]]; then
   export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 fi
 
+# Write update-dotfiles to use later
+UPDATE_FILE=~/update-dotfiles.sh
+if [ ! -f ${UPDATE_FILE} ]; then
+  echo 'cd ~/ && curl -O https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots && . ./.dots' > ${UPDATE_FILE}
+  chmod +x ${UPDATE_FILE}
+fi
 
 while IFS= read -r config; do
     CONFIGS+=" ${config}"
