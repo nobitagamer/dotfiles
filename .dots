@@ -99,6 +99,9 @@ appendshell() {
 	wslumaskfix)
 		add=". ./wsl-umask-fix.sh;"
 		;;
+	osxcmdinstall)
+		add="cd ~/ && curl -O https://raw.githubusercontent.com/nobitagamer/dotfiles/master/osx-install-xcode-command-line.sh && . ./osx-install-xcode-command-line.sh;"
+		;;
 	gitsetname)
 		if (($3)); then
 			global=' --global '
@@ -259,6 +262,9 @@ esac
 echoerr green "Detected platform: $platform"
 
 appendshell start
+  if [ $platform == "macos" ]; then
+    appendshell osxcmdinstall
+  fi
 
 prefix="~/.dotfiles"
 prefixfull="${prefix/\~/${HOME}}"
@@ -266,7 +272,7 @@ prefixfull="${prefix/\~/${HOME}}"
 if ! [ -d $prefixfull ]; then
 	echoerr darkcyan "${prefix} is not in use."
 	appendshell mkprefix $prefix
-	appendshell gitclone
+  appendshell gitclone
 else
 	echoerr darkcyan "${prefix} exists, i will try to update."
 	appendshell useprefix $prefix

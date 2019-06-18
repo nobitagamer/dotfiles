@@ -15,11 +15,11 @@
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 - brewfile:
-    file: Brewfile
+  - ~/.Brewfile
 
 - tap:
-  - caskroom/versions
-  - caskroom/cask
+  - homebrew/cask-versions
+  - homebrew/cask
   # - pivotal/tap
 
 - brew:
