@@ -13,7 +13,7 @@
   - rbenv
 
 - cask:
-  - adoptopenjdk8 # java8: it's gone from Homebrew, use OpenJDK instead (adoptopenjdk8)
+  - homebrew/cask-versions/adoptopenjdk8 # java8: it's gone from Homebrew, use OpenJDK instead (adoptopenjdk8)
   - android-sdk
   - fastlane
 
@@ -34,12 +34,18 @@
     condition: 'true'
   - stderr: true
     command: |
+      RUBY_VERSION=2.4.2
+      if [ -f ~/.ruby-version ];then
+        RUBY_VERSION=$(cat ~/.ruby-version)
+      fi
+
       # Install Ruby for fastlane
-      echo N | rbenv install 2.4.2
+      rbenv init
+      echo N | rbenv install $RUBY_VERSION
 
       # Install bundle package manager
       rbenv rehash
-      rbenv shell 2.4.2
+      rbenv shell $RUBY_VERSION
       gem install activesupport -v 4.2.6
       gem install bundle cocoapods
       rbenv rehash
