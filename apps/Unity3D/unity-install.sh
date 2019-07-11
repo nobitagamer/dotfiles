@@ -19,4 +19,6 @@ UNITY_VERSION=$1
 sudo ~/install-unity install -y -p Unity,iOS,Android "$UNITY_VERSION$UNITY_PATCH"
 
 sudo ./unity-patcher "/Applications/Unity $UNITY_VERSION/Unity.app"
-cp ./Unity_lic.ulf "/Library/Application Support/Unity/"
+if [[ "$3"=="--lic" ]]; then
+  cp ./Unity_lic.ulf "/Library/Application Support/Unity/"
+fi

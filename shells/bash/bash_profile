@@ -27,6 +27,9 @@ export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME
 
 BASHDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/bash"
 
+# Fix Package bash-completion was not found: https://github.com/Linuxbrew/legacy-linuxbrew/issues/46
+export PKG_CONFIG_PATH=/usr/share/pkgconfig:$PKG_CONFIG_PATH
+
 # *********************************
 #   Load Bash-it                  *
 # *********************************

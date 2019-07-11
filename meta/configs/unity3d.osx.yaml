@@ -27,7 +27,9 @@
 
       ~/.Unity3D/unity-init.sh
 
-      ~/.Unity3D/unity-install.sh 2018.3 7f1
+      ~/.Unity3D/unity-install.sh 2018.1 0f2
+      ~/.Unity3D/unity-install.sh 2018.4 3f1
+      ~/.Unity3D/unity-install.sh 2019.1 5f1
 
 - shell++:
   - description: Install cocoapods for build iOS
@@ -66,6 +68,10 @@
     condition: 'true'
   - stderr: true
     command: |
+      # For Unity3D 2018.1.0f2
+      wget -qO- https://dl.google.com/android/repository/android-ndk-r13b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
+
+      # For Unity3D 2018.3+
       wget -qO- https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
 
       # Android SDK build tools
