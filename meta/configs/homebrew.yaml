@@ -41,7 +41,7 @@
   - dotnet
   - gitkraken
   - iterm2
-  - kdiff3
+  # - kdiff3 # not available any more
   # - visual-studio # Will install with Unity
   - visual-studio-code
 

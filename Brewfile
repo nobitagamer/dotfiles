@@ -17,7 +17,7 @@ cask_args appdir: "/Applications"
 # brew "curl", args: ["with-openssl"]
 # brew "git-extras"
 # brew "git-flow-avh"
-brew "gitlab-ci-multi-runner", restart_service: true
+# brew "gitlab-ci-multi-runner", restart_service: true
 # brew "gitversion"
 # brew "imagemagick"
 # brew "librsvg"
