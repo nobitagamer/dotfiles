@@ -52,6 +52,9 @@
       gem install bundle cocoapods
       rbenv rehash
 
+      # Fix VSTS execute bash with --no-profile that will force rbenv use system Ruby.
+      rbenv global $RUBY_VERSION
+
 - shell++:
   - description: Accept all licenses
     condition: 'true'
