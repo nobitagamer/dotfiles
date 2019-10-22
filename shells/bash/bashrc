@@ -15,7 +15,9 @@
 # In any Bourne-style shell, the `i` option indicates whether the shell is interactive
 case $- in
 *i*) echo This Bash Shell is an Interactive Shell ;;
-*) echo This Bash Shell is NOT an Interactive Shell ;;
+# Do NOT output anything in non-interative shelll that cause rsync error: protocol incompatibility (code 2),
+# see https://serverfault.com/questions/304125/rsync-seems-incompatible-with-bashrc-causes-is-your-shell-clean/308604
+*) ;; # echo This Bash Shell is NOT an Interactive Shell ;;
 esac
 
 if [[ "$-" =~ 'i' ]]; then bind "set bell-style visible"; fi
