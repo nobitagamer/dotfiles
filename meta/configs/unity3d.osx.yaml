@@ -80,9 +80,11 @@
       wget -qO- https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
 
       # Android SDK build tools
-      echo y | sdkmanager "tools" "platform-tools" "build-tools;28.0.3" "tools"
+      echo y | sdkmanager "tools" "platform-tools" "build-tools;28.0.3"
 
       echo y | sdkmanager "extras;android;m2repository"
       echo y | sdkmanager "platforms;android-16" "sources;android-16"
-      echo y | sdkmanager "platforms;android-27" "sources;android-27"
-      echo y | sdkmanager "platforms;android-28" "sources;android-28"
+      echo y | sdkmanager "platforms;android-26" "sources;android-26"
+      # echo y | sdkmanager "platforms;android-27" "sources;android-27"
+      # echo y | sdkmanager "platforms;android-28" "sources;android-28"
+      echo y | sdkmanager "platforms;android-29" "sources;android-29" # platforms;android-29 is required for build AndroidX by Unity
