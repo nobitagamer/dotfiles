@@ -30,6 +30,7 @@
       # ~/.Unity3D/unity-install.sh 2018.1 9f2
       ~/.Unity3D/unity-install.sh 2018.4 3f1
       ~/.Unity3D/unity-install.sh 2019.1 10f1
+      ~/.Unity3D/unity-install.sh 2019.2 12f1
 
 - shell++:
   - description: Install cocoapods for build iOS
