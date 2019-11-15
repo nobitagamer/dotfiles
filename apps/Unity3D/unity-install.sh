@@ -16,7 +16,7 @@ mkdir -p "$UNITY_CONFIG_PATH"
 cp ./config.json "$UNITY_CONFIG_PATH"
 
 UNITY_VERSION=$1
-sudo ~/install-unity install -y -p Unity,iOS,Android "$UNITY_VERSION$UNITY_PATCH"
+sudo ~/install-unity install -y -p Unity,iOS,=Android "$UNITY_VERSION$UNITY_PATCH"
 
 if [[ "$3"=="--lic" ]]; then
   sudo ./unity-patcher "/Applications/Unity $UNITY_VERSION/Unity.app"
