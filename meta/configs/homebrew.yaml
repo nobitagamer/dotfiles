@@ -15,7 +15,8 @@
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 - brewfile:
-  - ~/.Brewfile
+    # This accepts the same options as `brew bundle` command:
+    file: ~/.Brewfile
 
 - tap:
   - homebrew/cask-versions
