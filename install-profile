@@ -49,10 +49,11 @@ shift
     --plugin-dir "${META_DIR}/${PLUGIN_DIR}"          \
     --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}"  \
     --plugin-dir "${META_DIR}/dotbot-brew"            \
-    --plugin-dir "${META_DIR}/dotbot-brewfile"        \
     --plugin-dir "${META_DIR}/dotbot-pip"             \
     --plugin-dir "${META_DIR}/dotbot-yum"             \
     -c "${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}"
+
+    # --plugin-dir "${META_DIR}/dotbot-brewfile"        \
 
 for config in ${CONFIGS} "${@}"; do
     echo -e "\nConfiguring $config..."
@@ -62,8 +63,10 @@ for config in ${CONFIGS} "${@}"; do
         --plugin-dir "${META_DIR}/${PLUGIN_DIR}"          \
         --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}"  \
         --plugin-dir "${META_DIR}/dotbot-brew"            \
-        --plugin-dir "${META_DIR}/dotbot-brewfile"        \
         --plugin-dir "${META_DIR}/dotbot-pip"             \
         --plugin-dir "${META_DIR}/dotbot-yum"             \
         -c "${META_DIR}/${CONFIG_DIR}/${config}${CONFIG_SUFFIX}"
+
+        # --plugin-dir "${META_DIR}/dotbot-brewfile"        \
+
 done
