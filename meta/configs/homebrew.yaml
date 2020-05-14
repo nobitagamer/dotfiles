@@ -26,7 +26,7 @@
   - mas
   - git-extras
   - git-flow-avh
-  - gitversion
+  # - gitversion
   - exa
   # - fish
   - tmux
@@ -34,6 +34,8 @@
   # - curl --with-openssl
   - wget
   - curl
+  # Update 12 year old rsync on macOS Mojave
+  - rsync
 
 - brew: [zsh, zsh-completions, zsh-syntax-highlighting]
 
@@ -44,6 +46,15 @@
   # - kdiff3 # not available any more
   # - visual-studio # Will install with Unity
   - visual-studio-code
+
+- shell++:
+  - description: Install GitVersion 5.0.1
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+      # 5.0.1 is latest stable version that support exit code.
+      brew unlink gitversion & brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/56b5ff6813815eec8f8bbbe92856c1ce827ececc/Formula/gitversion.rb
 
 - shell++:
   - description: Install Apps
