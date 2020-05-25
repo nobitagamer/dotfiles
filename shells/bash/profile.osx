@@ -3,16 +3,20 @@ export PATH="$HOME/.fastlane/bin:$PATH"
 export JAVA_HOME=$(/usr/libexec/java_home)
 export PATH=${JAVA_HOME}/bin:$PATH
 
-# MUST use android-ndk r16b for Unity 2018.3.7f1
-export ANDROID_NDK_ROOT=/usr/local/share/android-ndk
-export ANDROID_NDK_HOME=/usr/local/share/android-ndk/android-ndk-r16b
 export ANDROID_HOME=/usr/local/share/android-sdk
+
+# MUST use android-ndk r16b for Unity 2018.3.7f1
+# Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio.
+# See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
+export ANDROID_NDK_ROOT=${ANDROID_HOME}/ndk
+export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/16.1.4479499
 
 # OPENSSL_ROOT="$(brew --prefix openssl)"
 export PATH=/opt/local/bin:/opt/local/sbin:$PATH
 export MANPATH=/opt/local/share/man:$MANPATH
 
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+# Rehash already done by nodenv-package-rehash
+if which rbenv > /dev/null; then eval "$(rbenv init - --no-rehash)"; fi
 
 export PATH="/usr/local/opt/icu4c/bin:$PATH"
 export PATH="/usr/local/opt/icu4c/sbin:$PATH"

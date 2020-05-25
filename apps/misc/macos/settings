@@ -137,14 +137,14 @@ defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 ###############################################################################
 
 # Disable hibernation (speeds up entering sleep mode)
-# sudo pmset -a hibernatemode 0
+sudo pmset -a hibernatemode 0
 
 # Remove the sleep image file to save disk space
-# sudo rm /private/var/vm/sleepimage
+sudo rm /private/var/vm/sleepimage
 # Create a zero-byte file instead…
-# sudo touch /private/var/vm/sleepimage
+sudo touch /private/var/vm/sleepimage
 # …and make sure it can’t be rewritten
-# sudo chflags uchg /private/var/vm/sleepimage
+sudo chflags uchg /private/var/vm/sleepimage
 
 ###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
@@ -200,7 +200,7 @@ sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bo
 sudo systemsetup -settimezone "Asia/Ho_Chi_Minh" > /dev/null
 
 # Stop iTunes from responding to the keyboard media keys
-#launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2> /dev/null
+launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2> /dev/null
 
 ###############################################################################
 # Screen                                                                      #
@@ -690,7 +690,7 @@ defaults write com.googlecode.iterm2 PrefsCustomFolder -string "${HOME}/.dotfile
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
 # Disable local Time Machine backups
-# hash tmutil &> /dev/null && sudo tmutil disablelocal
+hash tmutil &> /dev/null && sudo tmutil disablelocal
 
 ###############################################################################
 # Activity Monitor                                                            #
@@ -913,6 +913,13 @@ for app in "Activity Monitor" \
 	"iCal"; do
 	killall "${app}" &> /dev/null
 done
+
+###############################################################################
+# System configs                                                              #
+###############################################################################
+
+# Enable SSH
+sudo systemsetup -setremotelogin on
 
 echo "------------------------------"
 echo "Updating OSX.  If this requires a restart, run the script again."

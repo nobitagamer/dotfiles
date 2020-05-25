@@ -21,6 +21,7 @@
         git clone https://github.com/nodenv/nodenv-vars.git $(nodenv root)/plugins/nodenv-vars
         git clone https://github.com/nodenv/node-build-update-defs.git $(nodenv root)/plugins/node-build-update-defs
         git clone https://github.com/nodenv/nodenv-update.git $(nodenv root)/plugins/nodenv-update
+        git clone https://github.com/nodenv/nodenv-package-rehash.git "$(nodenv root)"/plugins/nodenv-package-rehash
       else
         nodenv update
       fi
@@ -28,5 +29,7 @@
       if [ -r ~/.node-version ] && [ ! -d ~/.nodenv/versions/$(cat ~/.node-version) ]; then
         nodenv install $(cat ~/.node-version)
       fi
+
+      nodenv package-hooks install --all
 
       curl -fsSL https://github.com/nodenv/nodenv-installer/raw/master/bin/nodenv-doctor | bash
