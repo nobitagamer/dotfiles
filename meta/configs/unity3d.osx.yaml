@@ -33,10 +33,27 @@
       ~/.Unity3D/unity-install.sh 2018.4 3f1
 
       # ~/.Unity3D/unity-install.sh 2019.1 10f1
-      ~/.Unity3D/unity-install.sh 2019.2 12f1
+      # ~/.Unity3D/unity-install.sh 2019.2 12f1
 
       # Install Android dependencies to match Unity version
-      sudo ~/install-unity install -y -p Unity,iOS,Android 2019.3.14f1
+      sudo ~/install-unity install -y -p Unity,iOS,Android 2019.4.3f1
+
+      # Create scripts to quick update Unity3D to latest patch version.
+      # 2019.4
+      cat <<- EOF > ~/update-unity-2019.4.sh
+      #!/bin/bash
+
+      sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2019.4
+      EOF
+
+      # 2018.4
+      cat <<- EOF > ~/update-unity-2018.4.sh
+      #!/bin/bash
+
+      sudo ~/install-unity install --upgrade -y -p Unity,iOS,=Android 2018.4
+      EOF
+
+      chmod +x ~/update-unity-*
 
 - shell++:
   - description: Install cocoapods for build iOS
@@ -64,6 +81,10 @@
 
       pod env
       pod repo update
+
+      # Rebuild native extensions
+      sudo chown -R $USER:staff ~/.rbenv/gems/2.4.0/gems
+      gem pristine --all
 - shell++:
   - description: Accept all licenses
     condition: 'true'

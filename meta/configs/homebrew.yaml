@@ -40,6 +40,19 @@
   - rsync
   - jq
 
+# Support for dedupe.sh, see https://apple.stackexchange.com/questions/69223/how-to-replace-mac-os-x-utilities-with-gnu-core-utilities
+# - brew:
+#   - coreutils
+#   - findutils
+#   - gnu-tar
+#   - gnu-sed
+#   - gawk
+#   - gnutls
+#   - gnu-indent
+#   - grep
+#   - gnu-cp
+#   - jdupes
+
 - brew: [zsh, zsh-completions, zsh-syntax-highlighting]
 
 - cask:
@@ -49,6 +62,7 @@
   # - kdiff3 # not available any more
   # - visual-studio # Will install with Unity
   - visual-studio-code
+  - powershell
 
 - shell++:
   - description: Install GitVersion 5.0.1
@@ -58,6 +72,13 @@
     command: |
       # 5.0.1 is latest stable version that support exit code.
       brew unlink gitversion & brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/56b5ff6813815eec8f8bbbe92856c1ce827ececc/Formula/gitversion.rb
+      brew pin gitversion
+
+      # Update the formulae and Homebrew itself
+      brew update
+
+      # Upgrade everything
+      brew upgrade
 
 - shell++:
   - description: Install Apps
