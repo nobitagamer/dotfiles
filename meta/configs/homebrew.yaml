@@ -7,6 +7,15 @@
     ~/.Brewfile: Brewfile
 
 - shell++:
+  - description: Install Xcode command line tools
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+      # Install Xcode command line tools
+      xcode-select --install
+
+- shell++:
   - description: Install Homebrew
     condition: '! hash brew 2>/dev/null'
   - stdout: true
@@ -103,6 +112,3 @@
     stderr: true
     command: |
       sudo xcodebuild -runFirstLaunch
-
-      # Install Xcode command line tools
-      xcode-select --install

@@ -23,6 +23,11 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="dotbot-plugins"
 PROFILE_PLUGIN_DIR="${PLUGIN_DIR}/$1"
 
+if [[ "$1" = "macos" ]]; then
+  # Install Xcode command line tools first before use git command
+  xcode-select --install || echo Xcode command line tools installed.
+fi
+
 cd "${BASE_DIR}"
 git submodule update --init --recursive --remote
 
