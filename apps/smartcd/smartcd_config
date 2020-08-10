@@ -10,11 +10,17 @@ smartcd setup cd
 smartcd setup pushd
 smartcd setup popd
 
-# smartcd setup prompt-hook
+# support "autocd"
+smartcd setup prompt-hook
 # smartcd setup exit-hook
+
 smartcd setup completion
-# VARSTASH_AUTOCONFIGURE=1
-# VARSTASH_AUTOEDIT=1
+# automatically add stash commands to your enter scripts
+VARSTASH_AUTOCONFIGURE=1
+
+# edit the smartcd config after it is automatically configured
+VARSTASH_AUTOEDIT=1
+
 # SMARTCD_NO_INODE=1
 # SMARTCD_AUTOMIGRATE=1
 # SMARTCD_LEGACY=1

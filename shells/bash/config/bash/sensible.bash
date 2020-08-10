@@ -16,7 +16,9 @@ fi
 
 # Prevent file overwrite on stdout redirection
 # Use `>|` to force redirection to an existing file
-set -o noclobber
+# Turn-off for smartcd: otherwise this will cause error `cannot overwrite existing file` when use `smartcd edit`
+set +o noclobber
+# set -o noclobber
 
 # Update window size after every command
 shopt -s checkwinsize
