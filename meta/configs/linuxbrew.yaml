@@ -4,9 +4,10 @@
   - stdout: true
     stderr: true
     command: |
-      PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-      sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-      echo 'export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"' >>~/.bashrc
-      echo 'export MANPATH="/home/linuxbrew/.linuxbrew/share/man:$MANPATH"' >>~/.bashrc
-      echo 'export INFOPATH="/home/linuxbrew/.linuxbrew/share/info:$INFOPATH"' >>~/.bashrc
-      echo Linuxbrew prefix $(brew --prefix)
+      # OBSOLETED: use Homebrew instead
+      # PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+      # sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+      # echo 'export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"' >>~/.bashrc
+      # echo 'export MANPATH="/home/linuxbrew/.linuxbrew/share/man:$MANPATH"' >>~/.bashrc
+      # echo 'export INFOPATH="/home/linuxbrew/.linuxbrew/share/info:$INFOPATH"' >>~/.bashrc
+      # echo Linuxbrew prefix $(brew --prefix)

@@ -12,7 +12,7 @@
 	ignore = dirty
 [submodule "meta/dotbot-brew"]
 	path = meta/dotbot-brew
-	url = https://github.com/d12frosted/dotbot-brew.git
+	url = https://github.com/nobitagamer/dotbot-brew.git
 [submodule "meta/dotbot-yum"]
 	path = meta/dotbot-yum
 	url = https://gitlab.com/flyingchipmunk/dotbot-yum.git

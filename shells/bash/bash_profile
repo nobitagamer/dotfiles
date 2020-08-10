@@ -154,9 +154,24 @@ PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 [ -r "$HOME/.smartcd_config" ] && ( [ -n $BASH_VERSION ] || [ -n $ZSH_VERSION ] ) && source ~/.smartcd_config
 
-# Init Linuxbrew
-if [ -d "/home/linuxbrew/.linuxbrew" ]; then
-  export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+# Init Linuxbrew, now is Homebrew
+# test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
+# test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+
+if [[ -d $HOME/.linuxbrew/bin ]]; then
+  eval $($HOME/.linuxbrew/bin/brew shellenv)
+  export MANPATH="$(brew --prefix)/share/man:$MANPATH"
+  export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+
+  export CFLAGS="-I$(brew --prefix openssl)/include"
+  export LDFLAGS="-L$(brew --prefix openssl)/lib"
+fi
+
+if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
+  eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+  export MANPATH="$(brew --prefix)/share/man:$MANPATH"
+  export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+
   export CFLAGS="-I$(brew --prefix openssl)/include"
   export LDFLAGS="-L$(brew --prefix openssl)/lib"
 fi

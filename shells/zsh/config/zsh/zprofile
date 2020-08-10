@@ -136,16 +136,25 @@ fi
 ############
 # Linuxbrew
 ############
+# test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
+# test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+
 if [[ -d $HOME/.linuxbrew/bin ]]; then
-  path=($HOME/.linuxbrew/bin $HOME/.linuxbrew/sbin $path)
+  eval $($HOME/.linuxbrew/bin/brew shellenv)
   export MANPATH="$(brew --prefix)/share/man:$MANPATH"
   export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+
+  export CFLAGS="-I$(brew --prefix openssl)/include"
+  export LDFLAGS="-L$(brew --prefix openssl)/lib"
 fi
 
 if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
-  path=(/home/linuxbrew/.linuxbrew/bin /home/linuxbrew/.linuxbrew/sbin $path)
+  eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
   export MANPATH="$(brew --prefix)/share/man:$MANPATH"
   export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+
+  export CFLAGS="-I$(brew --prefix openssl)/include"
+  export LDFLAGS="-L$(brew --prefix openssl)/lib"
 fi
 
 ############
