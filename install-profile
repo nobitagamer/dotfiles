@@ -49,7 +49,9 @@ done < "${META_DIR}/${PROFILES_DIR}/$1"
 
 shift
 
-"${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
+# Force use Python2 to avoid `SyntaxWarning for 'is' with literals` on Python 3.8.5 from MacOS Catalina
+# See https://adamj.eu/tech/2020/01/21/why-does-python-3-8-syntaxwarning-for-is-literal/
+python2 "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
     -d "${BASE_DIR}"                                  \
     --plugin-dir "${META_DIR}/${PLUGIN_DIR}"          \
     --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}"  \
@@ -63,7 +65,9 @@ shift
 for config in ${CONFIGS} "${@}"; do
     echo -e "\nConfiguring $config..."
 
-    "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
+    # Force use Python2 to avoid `SyntaxWarning for 'is' with literals` on Python 3.8.5 from MacOS Catalina
+    # See https://adamj.eu/tech/2020/01/21/why-does-python-3-8-syntaxwarning-for-is-literal/
+    python2 "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
         -d "${BASE_DIR}"                                  \
         --plugin-dir "${META_DIR}/${PLUGIN_DIR}"          \
         --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}"  \

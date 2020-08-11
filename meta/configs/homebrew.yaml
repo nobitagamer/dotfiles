@@ -6,14 +6,15 @@
 - link:
     ~/.Brewfile: Brewfile
 
-- shell++:
-  - description: Install Xcode command line tools
-    condition: 'true'
-  - stdout: true
-    stderr: true
-    command: |
-      # Install Xcode command line tools
-      xcode-select --install
+# Installed outside of dotbot because it's required by git.
+# - shell++:
+#   - description: Install Xcode command line tools
+#     condition: 'true'
+#   - stdout: true
+#     stderr: true
+#     command: |
+#       # Install Xcode command line tools
+#       xcode-select --install
 
 - shell++:
   - description: Install Homebrew

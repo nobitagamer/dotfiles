@@ -60,13 +60,13 @@
     condition: 'true'
   - stderr: true
     command: |
-      RUBY_VERSION=2.4.2
+      RUBY_VERSION=2.4.6
       if [ -f ~/.ruby-version ];then
         RUBY_VERSION=$(cat ~/.ruby-version)
       fi
 
       # Install Ruby for fastlane
-      rbenv init
+      eval "$(rbenv init -)"
       echo N | rbenv install $RUBY_VERSION
 
       # Install bundle package manager
@@ -110,9 +110,9 @@
       # wget -qO- https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
 
       # macOS Catalina https://developer.android.com/studio/projects/install-ndk#specific-version
-      echo "Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio."
+      # echo "Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio."
       # See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
-      echo y | sdkmanager --install "ndk;16.1.4479499"
+      # echo y | sdkmanager --install "ndk;16.1.4479499"
 
       # Unity 2019.3 (use built-in dependencies)
       # echo y | sdkmanager --install "ndk;19.2.5345600"

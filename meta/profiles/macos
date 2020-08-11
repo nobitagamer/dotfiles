@@ -2,13 +2,13 @@ homebrew
 git
 ruby
 node
-go
 dev
 ssh
-vscode.osx
-unity3d.osx
 bash
 bash.osx
 zsh.osx
+vscode.osx
+unity3d.osx
 vsts.osx
+go
 settings.osx

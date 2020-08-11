@@ -27,7 +27,7 @@
         rbenv update
       fi
 
-      rbenv init
+      eval "$(rbenv init -)"
 
       if [ -r ~/.ruby-version ] && [ ! -d ~/.rbenv/versions/$(cat ~/.ruby-version) ]; then
         rbenv download $(cat ~/.ruby-version) || rbenv install $(cat ~/.ruby-version) # CentOS 7 does not have Ruby 2.4.6
