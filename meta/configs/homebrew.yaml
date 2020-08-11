@@ -82,6 +82,7 @@
     command: |
       # 5.0.1 is latest stable version that support exit code.
       brew unlink gitversion & brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/56b5ff6813815eec8f8bbbe92856c1ce827ececc/Formula/gitversion.rb
+      brew link gitversion
       brew pin gitversion
 
       # Update the formulae and Homebrew itself
