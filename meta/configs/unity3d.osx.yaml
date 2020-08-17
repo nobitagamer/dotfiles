@@ -18,6 +18,20 @@
   - android-sdk
 
 - shell++:
+  - description: Install .NET Core runtime 2.1 required by GitVersion
+    condition: 'true'
+  - stderr: true
+    command: |
+      cat <<- EOF > ~/install-dotnet-2.1.sh
+      #!/bin/bash
+
+      curl -sSL https://dot.net/v1/dotnet-install.sh | sudo bash /dev/stdin --install-dir /usr/local/share/dotnet --channel 2.1 --runtime aspnetcore
+      EOF
+
+      chmod +x ~/install-dotnet-*
+      ~/install-dotnet-2.1.sh
+
+- shell++:
   - description: Pre-install latest version of Unity3D
     condition: 'true'
   - stderr: true
@@ -67,14 +81,23 @@
 
       # Install Ruby for fastlane
       eval "$(rbenv init -)"
+
+      brew update
+      brew reinstall openssl
+      brew upgrade ruby-build rbenv
+
       echo N | rbenv install $RUBY_VERSION
 
       # Install bundle package manager
       rbenv rehash
       rbenv shell $RUBY_VERSION
+
       gem install activesupport -v 4.2.6
-      gem install bundle cocoapods
+      gem install bundle cocoapods fastlane
       rbenv rehash
+
+      # pod --version
+      # fastlane
 
       # Fix VSTS execute bash with --no-profile that will force rbenv use system Ruby.
       rbenv global $RUBY_VERSION
@@ -126,5 +149,3 @@
       # echo y | sdkmanager "platforms;android-27" "sources;android-27"
       # echo y | sdkmanager "platforms;android-28" "sources;android-28"
       echo y | sdkmanager "platforms;android-29" "sources;android-29" # platforms;android-29 is required for build AndroidX by Unity
-
-

@@ -18,3 +18,14 @@
       sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 - yum: [bash-completion, bash-completion-extras, hstr, jq, ccze, ncdu]
+
+- shell++:
+  - description: Add the Microsoft package signing key and the Microsoft package repository
+    condition: 'true'
+  - stderr: true
+    command: |
+      sudo rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+
+# Install .NET Core runtime
+- yum:
+  - aspnetcore-runtime-2.1

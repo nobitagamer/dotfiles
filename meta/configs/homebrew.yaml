@@ -49,6 +49,8 @@
   # Update 12 year old rsync on macOS Mojave
   - rsync
   - jq
+  # Required by dotnet
+  - mono-libgdiplus
 
 # Support for dedupe.sh, see https://apple.stackexchange.com/questions/69223/how-to-replace-mac-os-x-utilities-with-gnu-core-utilities
 # - brew:
