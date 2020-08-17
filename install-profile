@@ -51,7 +51,12 @@ shift
 
 # Force use Python2 to avoid `SyntaxWarning for 'is' with literals` on Python 3.8.5 from MacOS Catalina
 # See https://adamj.eu/tech/2020/01/21/why-does-python-3-8-syntaxwarning-for-is-literal/
-python2 "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
+which python3 >/dev/null 2>&1 && alias python=python3
+which python2 >/dev/null 2>&1 && alias python=python2
+which python2.7 >/dev/null 2>&1 && alias python=python2.7
+python --version
+
+python "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
     -d "${BASE_DIR}"                                  \
     --plugin-dir "${META_DIR}/${PLUGIN_DIR}"          \
     --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}"  \
@@ -65,9 +70,7 @@ python2 "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
 for config in ${CONFIGS} "${@}"; do
     echo -e "\nConfiguring $config..."
 
-    # Force use Python2 to avoid `SyntaxWarning for 'is' with literals` on Python 3.8.5 from MacOS Catalina
-    # See https://adamj.eu/tech/2020/01/21/why-does-python-3-8-syntaxwarning-for-is-literal/
-    python2 "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
+    python "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
         -d "${BASE_DIR}"                                  \
         --plugin-dir "${META_DIR}/${PLUGIN_DIR}"          \
         --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}"  \
