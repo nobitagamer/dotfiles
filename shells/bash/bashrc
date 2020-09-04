@@ -32,10 +32,11 @@ if [[ "$-" =~ 'i' ]]; then bind "set bell-style visible"; fi
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+# BUG: Do NOT load login shell script that output to console will cause SFTP - VSCode error `Unexpected packet before version`
 # Ensure that a non-login shell has a defined environment.
-if [[ -s "$HOME/.bash_profile" ]]; then
-  shopt -q login_shell || source "$HOME/.bash_profile"
-fi
+# if [[ -s "$HOME/.bash_profile" ]]; then
+#   shopt -q login_shell || source "$HOME/.bash_profile"
+# fi
 
 # REMOVED: Already set in sensible.bash
 # # don't put duplicate lines or lines starting with space in the history.
