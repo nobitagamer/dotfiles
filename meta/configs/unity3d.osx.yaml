@@ -142,7 +142,8 @@
       # echo y | sdkmanager --install "ndk;19.2.5345600"
 
       # Android SDK build tools
-      echo y | sdkmanager "tools" "platform-tools" "build-tools;28.0.3"
+      # echo y | sdkmanager "tools" "platform-tools" "build-tools;28.0.3"
+      echo y | sdkmanager "tools" "platform-tools" "build-tools;30.0.2" # 11/13/2020 require build tools m29
 
       echo y | sdkmanager "extras;android;m2repository"
       echo y | sdkmanager "platforms;android-16" "sources;android-16"
