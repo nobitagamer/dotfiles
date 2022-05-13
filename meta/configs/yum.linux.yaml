@@ -43,7 +43,7 @@
     - >-
       epel-release git gcc
       zlib-devel bzip2 bzip2-devel readline-devel sqlite
-      sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
+      sqlite-devel openssl11-devel xz xz-devel libffi-devel findutils
 
 - yum: [bash-completion, bash-completion-extras, hstr, jq, ccze, ncdu]
 

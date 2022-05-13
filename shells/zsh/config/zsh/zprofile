@@ -144,8 +144,9 @@ if [[ -d $HOME/.linuxbrew/bin ]]; then
   export MANPATH="$(brew --prefix)/share/man:$MANPATH"
   export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
 
-  export CFLAGS="-I$(brew --prefix openssl)/include"
-  export LDFLAGS="-L$(brew --prefix openssl)/lib"
+  export CFLAGS="-I$(brew --prefix openssl@1.1)/include"
+  export CPPFLAGS="-I$(brew --prefix openssl@1.1)/include"
+  export LDFLAGS="-L$(brew --prefix openssl@1.1)/lib"
 fi
 
 if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
@@ -153,8 +154,9 @@ if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
   export MANPATH="$(brew --prefix)/share/man:$MANPATH"
   export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
 
-  export CFLAGS="-I$(brew --prefix openssl)/include"
-  export LDFLAGS="-L$(brew --prefix openssl)/lib"
+  export CFLAGS="-I$(brew --prefix openssl@1.1)/include"
+  export CPPFLAGS="-I$(brew --prefix openssl@1.1)/include"
+  export LDFLAGS="-L$(brew --prefix openssl@1.1)/lib"
 fi
 
 ############

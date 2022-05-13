@@ -5,4 +5,5 @@
     # Require libs for pyenv doctor -v
     - readline
     - sqlite3
-    - openssl
+    # Update to latest openssl for python-pyenv-doctor
+    - openssl@1.1
