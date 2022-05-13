@@ -68,13 +68,22 @@
 - brew: [zsh, zsh-completions, zsh-syntax-highlighting]
 
 - cask:
-  - dotnet
   - gitkraken
   - iterm2
   # - kdiff3 # not available any more
   # - visual-studio # Will install with Unity
   - visual-studio-code
   - powershell
+  # Obsoleted, use official install scripts instead
+  # - dotnet
+
+- shell++:
+  - description: Install dotnet
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+      brew install cask dotnet
 
 - shell++:
   - description: Install GitVersion 5.0.1

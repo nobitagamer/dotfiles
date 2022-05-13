@@ -65,7 +65,7 @@
       cat <<- EOF > ~/update-unity-2018.4.sh
       #!/bin/bash
 
-      sudo ~/install-unity install --upgrade -y -p Unity,iOS,=Android 2018.4
+      sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2018.4
       EOF
 
       chmod +x ~/update-unity-*
@@ -78,6 +78,9 @@
       RUBY_VERSION=2.7.2
       if [ -f ~/.ruby-version ];then
         RUBY_VERSION=$(cat ~/.ruby-version)
+
+        rm ~/.rbenv/version
+        ln -s ~/.ruby-version ~/.rbenv/version
       fi
 
       # Install Ruby for fastlane
@@ -151,3 +154,4 @@
       # echo y | sdkmanager "platforms;android-27" "sources;android-27"
       # echo y | sdkmanager "platforms;android-28" "sources;android-28"
       echo y | sdkmanager "platforms;android-29" "sources;android-29" # platforms;android-29 is required for build AndroidX by Unity
+      echo y | sdkmanager "platforms;android-30" "sources;android-30"
