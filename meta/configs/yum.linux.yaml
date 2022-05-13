@@ -45,7 +45,7 @@
       zlib-devel bzip2 bzip2-devel readline-devel sqlite
       sqlite-devel openssl11-devel xz xz-devel libffi-devel findutils
 
-- yum: [bash-completion, bash-completion-extras, hstr, jq, ccze, ncdu]
+- yum: [bash-completion, bash-completion-extras, hstr, jq, ccze, ncdu, screen]
 
 - shell++:
   - description: Add the Microsoft package signing key and the Microsoft package repository
