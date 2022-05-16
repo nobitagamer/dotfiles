@@ -26,7 +26,7 @@ git pull --rebase --stat updates "$(git rev-parse --abbrev-ref HEAD)"
 echo "› submodules update"
 # git submodule update --init --recursive --remote --merge --quiet
 # !NOTE: MUST use specific version of dotbot recorded in repo.
-git submodule update --checkout --recursive --force
+git submodule update --init --checkout --recursive --force
 
 # Run all installs
 echo "› $DOTFILES/install"

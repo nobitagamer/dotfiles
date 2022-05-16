@@ -29,7 +29,7 @@ if [[ "$1" = "macos" ]]; then
 fi
 
 cd "${BASE_DIR}"
-git submodule update --checkout --recursive --force
+git submodule update --init --checkout --recursive --force
 
 # HACK to make dotbot-brew work since Linuxbrew does not add PATH automatically.
 if [[ $(which brew) = "" ]]; then

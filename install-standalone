@@ -23,7 +23,7 @@ PLUGIN_DIR="dotbot-plugins"
 
 cd "${BASE_DIR}"
 # !NOTE: MUST use specific version of dotbot recorded in repo.
-git submodule update --checkout --recursive --force
+git submodule update --init --checkout --recursive --force
 
 # HACK to make dotbot-brew work since Linuxbrew does not add PATH automatically.
 if [[ `which brew` = "" ]]; then
