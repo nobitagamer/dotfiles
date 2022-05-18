@@ -11,7 +11,7 @@ smartcd setup pushd
 smartcd setup popd
 
 # support "autocd"
-smartcd setup prompt-hook
+# smartcd setup prompt-hook # !Cause bash error: trap: __bp_install: invalid signal specification
 # smartcd setup exit-hook
 
 smartcd setup completion
