@@ -89,7 +89,7 @@
 
       brew update
       # !NOTE: enable this if openssl error
-      # brew reinstall openssl
+      brew reinstall openssl
       brew upgrade ruby-build rbenv
 
       echo N | rbenv install $RUBY_VERSION
@@ -114,12 +114,15 @@
       # Rebuild native extensions
       sudo chown -R $USER:staff ~/.rbenv/gems/2.4.0/gems
       gem pristine --all
+
 - shell++:
-  - description: Accept all licenses
+  - description: Pre-install Android SDKs
     condition: 'true'
   - stderr: true
     command: |
       touch ~/.android/repositories.cfg
+
+      echo "Accept all licenses..."
 
       # Use Java 8 for sdkmanager
       export JAVA_HOME=$(/usr/libexec/java_home -v 8)
@@ -129,11 +132,6 @@
       # Can NOT use yes pipe that will cause deadlock
       sdkmanager --licenses
 
-- shell++:
-  - description: Pre-install Android SDKs
-    condition: 'true'
-  - stderr: true
-    command: |
       # mkdir -p /usr/local/share/android-ndk/
 
       # For Unity3D 2018.1.0f2
