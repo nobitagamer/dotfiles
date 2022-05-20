@@ -14,7 +14,8 @@
   - fastlane
 
 - cask:
-  - homebrew/cask-versions/adoptopenjdk8 # java8: it's gone from Homebrew, use OpenJDK instead (adoptopenjdk8)
+  # See https://www.yippeecode.com/topics/upgrade-to-openjdk-temurin-using-homebrew/
+  - homebrew/cask-versions/temurin8 # java8: it's gone from Homebrew, use OpenJDK instead (temurin8)
   - android-sdk
 
 - shell++:
@@ -87,7 +88,8 @@
       eval "$(rbenv init -)"
 
       brew update
-      brew reinstall openssl
+      # !NOTE: enable this if openssl error
+      # brew reinstall openssl
       brew upgrade ruby-build rbenv
 
       echo N | rbenv install $RUBY_VERSION
@@ -118,6 +120,10 @@
   - stderr: true
     command: |
       touch ~/.android/repositories.cfg
+
+      # Use Java 8 for sdkmanager
+      export JAVA_HOME=$(/usr/libexec/java_home -v 8)
+      export PATH=${JAVA_HOME}/bin:$PATH
 
       # yes | sdkmanager --licenses
       # Can NOT use yes pipe that will cause deadlock

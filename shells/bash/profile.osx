@@ -1,6 +1,7 @@
 export PATH="$HOME/.fastlane/bin:$PATH"
 
-export JAVA_HOME=$(/usr/libexec/java_home)
+# Use Java 8 for sdkmanager
+export JAVA_HOME=$(/usr/libexec/java_home -v 8)
 export PATH=${JAVA_HOME}/bin:$PATH
 
 export ANDROID_HOME=/usr/local/share/android-sdk
