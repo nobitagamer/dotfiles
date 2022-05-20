@@ -94,12 +94,16 @@
       # 5.0.1 is latest stable version that support exit code.
       BREW_GITVERSION=5.0.1
       brew unlink gitversion &
+      # brew cleanup -s gitversion && brew cleanup --prune-prefix
 
       # See https://stackoverflow.com/questions/3987683/homebrew-install-specific-version-of-formula/55764594#comment102767816_53766019
       # Use --no-git to avoid `brew update` error
       brew tap-new --no-git $USER/local-tap
       # extract with a version seems to run a `git log --grep` under the hood
-      brew extract --version=${BREW_GITVERSION} gitversion $USER/local-tap
+      brew extract --force --version=${BREW_GITVERSION} gitversion $USER/local-tap
+
+      # !BUG: fix `Calling bottle :unneeded is disabled!`
+      sed -i -E 's/ \(bottle\)/ #\1/g' /usr/local/Homebrew/Library/Taps/${USER}/homebrew-local-tap/Formula/gitversion@${BREW_GITVERSION}.rb
       # Install your new version from the tap
       brew install gitversion@${BREW_GITVERSION}
       # Note this "fails" trying to grab a bottle for the package and seems to have
