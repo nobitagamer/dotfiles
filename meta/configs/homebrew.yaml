@@ -38,7 +38,7 @@
   - mas
   - git-extras
   - git-flow-avh
-  # - gitversion
+  - htop
   - exa
   # - fish
   - tmux

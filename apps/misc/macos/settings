@@ -690,7 +690,8 @@ defaults write com.googlecode.iterm2 PrefsCustomFolder -string "${HOME}/.dotfile
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
 # Disable local Time Machine backups
-hash tmutil &> /dev/null && sudo tmutil disablelocal
+# disablelocal: Unrecognized verb on Big Sur
+# hash tmutil &> /dev/null && sudo tmutil disablelocal
 
 ###############################################################################
 # Activity Monitor                                                            #
