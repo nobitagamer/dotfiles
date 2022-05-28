@@ -18,3 +18,6 @@
         pyenv update
       fi
       pyenv doctor -v
+
+      # Fix: re-install correct pip for python 3.5
+      # curl -fsSL https://bootstrap.pypa.io/pip/3.5/get-pip.py | python3.5
