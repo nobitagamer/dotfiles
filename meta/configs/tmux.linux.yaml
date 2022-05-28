@@ -7,7 +7,7 @@
     - description: Install tmuxinator
       stdout: true
       stderr: true
-      command: sudo gem install tmuxinator
+      command: gem install tmuxinator
     - description: Install tmuxifier
       stdout: true
       stderr: true

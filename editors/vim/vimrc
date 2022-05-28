@@ -656,3 +656,6 @@ endif
 
 let g:sonicpi_command = "sonic-pi-tool eval-stdin"
 let g:sonicpi_keymaps_enabled = 1
+
+" Use fzf in Vim
+set rtp+=/home/linuxbrew/.linuxbrew/opt/fzf
