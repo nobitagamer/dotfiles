@@ -8,11 +8,9 @@
 - link:
     ~/.bash_profile: shells/bash/bash_profile
     ~/.bashrc: shells/bash/bashrc
-    ~/.config/common/init_functions.sh: shells/common/init_functions.sh
     ~/.config/bash/.bash_prompt: shells/bash/config/bash/bash_prompt
     ~/.config/bash/sensible.bash: shells/bash/config/bash/sensible.bash
     ~/.config/bash/bashmarks.sh: shells/bash/config/bash/bashmarks.sh
-    ~/.config/starship.toml: shells/plugins/starship/starship.toml
 
 - shell++:
   - description: Inject init scripts for all users' Login Shell
@@ -56,18 +54,6 @@
       else
         bash ~/.local/share/blesh/ble.sh --update
       fi
-
-- aptget:
-    - fontconfig
-
-- shell++:
-  - description: Installing Starship
-    condition: 'true'
-  - stdout: true
-    stderr: true
-    command: |
-      # Install Starship as default for all users, see https://starship.rs/
-      curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 
 - shell++:
   - description: Installing starship for all users

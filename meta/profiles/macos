@@ -4,6 +4,7 @@ ruby
 node
 dev
 ssh
+shell_common
 bash
 bash.osx
 zsh.osx

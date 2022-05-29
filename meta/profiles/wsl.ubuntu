@@ -6,6 +6,7 @@ ruby
 brew.linux
 python
 binaries.linux
+shell_common
 bash
 bash.wsl
 zsh.linux

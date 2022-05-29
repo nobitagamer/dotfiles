@@ -1,4 +1,5 @@
 yum.linux
+shell_common
 bash
 ruby
 brew.linux
