@@ -4,6 +4,9 @@
 
 source ~/.config/common/init_functions.sh
 
+# Display message of the day
+run-parts /etc/update-motd.d 2>/dev/null
+
 # unset DEBUG # Disable debug
 # DEBUG=1 # Enable debug
 
