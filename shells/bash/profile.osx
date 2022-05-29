@@ -1,3 +1,5 @@
+#!/bin/sh
+
 export PATH="$HOME/.fastlane/bin:$PATH"
 
 # Use Java 8 for sdkmanager

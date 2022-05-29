@@ -8,9 +8,20 @@
 - link:
     ~/.bash_profile: shells/bash/bash_profile
     ~/.bashrc: shells/bash/bashrc
+    ~/.config/common/init_functions.sh: shells/common/init_functions.sh
     ~/.config/bash/.bash_prompt: shells/bash/config/bash/bash_prompt
     ~/.config/bash/sensible.bash: shells/bash/config/bash/sensible.bash
     ~/.config/bash/bashmarks.sh: shells/bash/config/bash/bashmarks.sh
+    ~/.config/starship.toml: shells/plugins/starship/starship.toml
+
+- shell++:
+  - description: Inject init scripts for all users' Login Shell
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+      sudo cp ~/.dotfiles/shells/common/init_functions.sh /etc/profile.d/00-dotfiles-init-functions.sh
+
 - shell++:
   - description: Installing bash addons
     condition: 'true'
@@ -24,8 +35,52 @@
         source ~/.bash_it/bash_it.sh
       else
         source ~/.bash_it/bash_it.sh
-        bash-it update stable
+        bash-it update stable --silent
       fi
 
       bash-it enable completion docker
       bash-it enable completion docker-compose
+
+- shell++:
+  - description: Install ble.sh
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+      if [ ! -f ~/.local/share/blesh/ble.sh ]; then
+        cd ~
+        git clone --recursive https://github.com/akinomyoga/ble.sh.git
+        cd ble.sh
+        # INSTALL to ~/.local/share/blesh
+        make install
+      else
+        bash ~/.local/share/blesh/ble.sh --update
+      fi
+
+- aptget:
+    - fontconfig
+
+- shell++:
+  - description: Installing Starship
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+      # Install Starship as default for all users, see https://starship.rs/
+      curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
+
+- shell++:
+  - description: Installing starship for all users
+    condition: '[ "$(. /etc/os-release; echo $NAME)" = "Ubuntu" ]'
+  - stdout: true
+    stderr: true
+    command: |
+      grep "starship init bash" /etc/bash.bashrc || echo 'eval "$(starship init bash)"' | sudo tee -a /etc/bash.bashrc
+
+- shell++:
+  - description: Installing starship for all users
+    condition: '[ "$(. /etc/os-release; echo $NAME)" = "CentOS Linux" ]'
+  - stdout: true
+    stderr: true
+    command: |
+      grep "starship init bash" /etc/bash.bashrc || echo 'eval "$(starship init bash)"' | sudo tee -a /etc/bashrc

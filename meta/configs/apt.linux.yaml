@@ -1,3 +1,7 @@
+- shell++:
+    - - sudo dpkg --configure -a
+      - Fix for dpkg was interrupted on Ubuntu 18.04
+
 - aptget:
     neovim:
       ppa_source: 'ppa:neovim-ppa/stable'

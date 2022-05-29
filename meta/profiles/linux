@@ -3,6 +3,7 @@ git
 dev
 node
 ruby
+brew.linux
 python
 binaries.linux
 bash
@@ -10,4 +11,3 @@ zsh.linux
 vim.linux
 tmux.linux
 smartcd.linux
-brew.linux
