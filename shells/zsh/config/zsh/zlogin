@@ -26,7 +26,7 @@ if (( $ZSH_XTRACE_STARTUP )); then
 fi
 
 if (( $ZSH_ZPROF )); then
-  zprof
+  zprof | less
 fi
 
 ###############################################################################

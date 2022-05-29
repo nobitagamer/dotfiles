@@ -9,5 +9,5 @@
 # Print the message.
 cat <<-EOF
 Thank you. Come again!
-  -- Trieunk
+  -- TrieuNK
 EOF

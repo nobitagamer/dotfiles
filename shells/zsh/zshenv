@@ -10,4 +10,7 @@ export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME GNUPGHOME
 
 ZDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/zsh"
 
+# Reduce 5s load time
+skip_global_compinit=1
+
 source "$ZDOTDIR"/.zshenv

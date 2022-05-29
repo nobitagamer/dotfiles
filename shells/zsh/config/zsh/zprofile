@@ -138,25 +138,22 @@ fi
 ############
 # test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
 # test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+if [[ -d $HOME/.linuxbrew/bin ]] || [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
+  debug_echo "Loading linuxbrew..."
+  if [[ -d $HOME/.linuxbrew/bin ]]; then
+    eval $($HOME/.linuxbrew/bin/brew shellenv)
+  elif [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+  fi
 
-if [[ -d $HOME/.linuxbrew/bin ]]; then
-  eval $($HOME/.linuxbrew/bin/brew shellenv)
-  export MANPATH="$(brew --prefix)/share/man:$MANPATH"
-  export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+  BREW_PREFIX=$(brew --prefix)
+  export MANPATH="$BREW_PREFIX/share/man:$MANPATH"
+  export INFOPATH="$BREW_PREFIX/share/info:$INFOPATH"
 
-  export CFLAGS="-I$(brew --prefix openssl@1.1)/include"
-  export CPPFLAGS="-I$(brew --prefix openssl@1.1)/include"
-  export LDFLAGS="-L$(brew --prefix openssl@1.1)/lib"
-fi
-
-if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
-  eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-  export MANPATH="$(brew --prefix)/share/man:$MANPATH"
-  export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
-
-  export CFLAGS="-I$(brew --prefix openssl@1.1)/include"
-  export CPPFLAGS="-I$(brew --prefix openssl@1.1)/include"
-  export LDFLAGS="-L$(brew --prefix openssl@1.1)/lib"
+  OPENSSL_PREFIX=$(brew --prefix openssl@1.1)
+  export CFLAGS="-I$OPENSSL_PREFIX/include"
+  export CPPFLAGS="-I$OPENSSL_PREFIX/include"
+  export LDFLAGS="-L$OPENSSL_PREFIX/lib"
 fi
 
 ############
@@ -220,6 +217,7 @@ path=(
 # Node.js
 ############
 if [[ -d $HOME/.nodenv ]]; then
+  debug_echo "Loading nodenv..."
   export NODENV_SHIMS=$HOME/.nodenv/shims
   path=(
     $HOME/.nodenv/bin
@@ -230,6 +228,7 @@ fi
 ############
 # Misc
 ############
+debug_echo "Loading misc..."
 if [[ -d $DOTFILES/bin ]]; then
   path+=($DOTFILES/bin)
   [[ -d $DOTFILES/bin/$UNAME ]] && path+=($DOTFILES/bin/$UNAME)
@@ -246,6 +245,7 @@ fi
 ############
 # GoLang
 ############
+debug_echo "Loading golang..."
 export GOPATH=/usr/local/lib/golang
 export GOBIN=$GOPATH/bin
 
@@ -308,11 +308,13 @@ setopt IGNORE_EOF
 # Use .localrc for SUPER SECRET CRAP that you don't
 # want in your public, versioned repo.
 # shellcheck disable=SC1090
+
+debug_echo "Loading local profile..."
 [ -f $HOME/.localrc ] && . $HOME/.localrc
 
 # Make Zsh the default shell
 [[ $SHELL =~ "zsh" ]] || export SHELL=`builtin which zsh`
 
-[[ -o interactive ]] && echo "This ZSH Shell is an Interactive Shell" || echo "This ZSH Shell is Not an Interactive Shell"
+[[ -o interactive ]] && echo "$(debug_timestamp)This ZSH Shell is an Interactive Shell" || echo "$(debug_timestamp)This ZSH Shell is Not an Interactive Shell"
 
-[[ -o login ]] && echo "This ZSH Shell is a Login Shell" || echo "This ZSH Shell is Not a Login Shell"
+[[ -o login ]] && echo "$(debug_timestamp)This ZSH Shell is a Login Shell" || echo "$(debug_timestamp)This ZSH Shell is Not a Login Shell"
