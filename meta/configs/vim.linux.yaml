@@ -25,6 +25,12 @@
     ~/.vim/plugins.vim: editors/vim/plugins/plugins_linux.vim
     ~/.vim/plugins_shared.vim: editors/vim/plugins/plugins_shared.vim
 - brew:
+    # See https://github.com/Homebrew/linuxbrew-core/issues/20946
+    - tcl-tk # Require for neovim's dependencies: krb5
+- shell++:
+    - - brew link tcl-tk
+      - Re-link tcl headers
+- brew:
     - neovim
 - shell++:
     # - - pip2 install neovim
