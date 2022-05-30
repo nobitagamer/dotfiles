@@ -9,7 +9,7 @@
 #
 
 ## Fix missing umask value for WSL (see https://github.com/Microsoft/WSL/issues/795)
-umask 022
+# umask 022 # Included in .profile loaded by .zprofile below
 
 # Check for the minimum supported version.
 min_zsh_version='4.3.11'
@@ -26,6 +26,9 @@ run-parts /etc/update-motd.d 2>/dev/null
 
 # unset DEBUG # Disable debug
 DEBUG=1 # Enable debug
+
+# Reduce 5s load time
+skip_global_compinit=1
 
 ###############################################################################
 # Temporary Files
@@ -82,13 +85,13 @@ fi
 # Ensure that a non-login, non-interactive shell has a defined environment.
 # if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
 if [[ ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
-  debug_echo "Loading .zprofile..."
+  debug_echo "Ensure that a non-login, non-interactive shell has a defined environment..."
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 
 # Fix shim paths for neovim libvterm
 if [[ -n $VIMRUNTIME ]]; then
-  debug_echo "Fix VIMRUNTIME .zprofile..."
+  debug_echo "Fix shim paths for neovim libvterm..."
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 

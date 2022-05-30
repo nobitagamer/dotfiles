@@ -1,16 +1,17 @@
+# ~/.zshenv should only be a one-liner that sources this file
+# echo ". ~/.config/zsh/.zshenv" > ~/.zshenv
 #!/usr/bin/env zsh
+
 # XDG stuff
 XDG_CACHE_HOME="$HOME"/.cache
 XDG_CONFIG_HOME="$HOME"/.config
 XDG_DATA_HOME="$HOME"/.local/share
+XDG_RUNTIME_DIR="$HOME"/.xdg
 
 GNUPGHOME="$XDG_CONFIG_HOME"/gnupg
 
-export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME GNUPGHOME
-
 ZDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/zsh"
 
-# Reduce 5s load time
-skip_global_compinit=1
+export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME XDG_RUNTIME_DIR GNUPGHOME ZDOTDIR
 
 source "$ZDOTDIR"/.zshenv
