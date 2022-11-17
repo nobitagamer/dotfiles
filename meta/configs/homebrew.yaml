@@ -46,6 +46,7 @@
   # - curl --with-openssl
   - wget
   - curl
+  - gawk
   # Update 12 year old rsync on macOS Mojave
   - rsync
   - jq

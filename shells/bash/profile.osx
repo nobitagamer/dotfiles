@@ -12,7 +12,7 @@ export ANDROID_HOME=/usr/local/share/android-sdk
 # Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio.
 # See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
 export ANDROID_NDK_ROOT=${ANDROID_HOME}/ndk
-export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/16.1.4479499
+#export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/16.1.4479499
 
 export OPENSSL_ROOT="$(brew --prefix openssl@1.1)"
 # See https://github.com/pyenv/pyenv/issues/1067#issuecomment-472798576
