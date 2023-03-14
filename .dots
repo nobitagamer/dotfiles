@@ -262,9 +262,9 @@ esac
 echoerr green "Detected platform: $platform"
 
 appendshell start
-  if [ $platform == "macos" ]; then
-    appendshell osxcmdinstall
-  fi
+if [ $platform = "macos" ]; then
+  appendshell osxcmdinstall
+fi
 
 prefix="~/.dotfiles"
 prefixfull="${prefix/\~/${HOME}}"
