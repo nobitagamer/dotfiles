@@ -219,6 +219,7 @@ fi
 ############
 # ble.sh
 ############
+# NOTE: avoid freeze, see end of this file.
 if [[ -f ~/.local/share/blesh/ble.sh ]]; then
   debug_echo "Loading ble.sh..."
   # This lines at the top of .bashrc:
@@ -284,5 +285,11 @@ debug_echo "Loading local profile..."
 # Load after .localrc so KUBE_CONTEXT will available
 hash starship 2>/dev/null && (debug_echo "Loading starship..." && eval "$(starship init bash)")
 
-# ! This line MUST at the end of .bashrc:
-[[ ${BLE_VERSION-} ]] && ble-attach
+# !BUG: hang input when using with screen on macOS, use Ctrl+A \ to kill hung session.
+# This line MUST at the end of .bashrc:
+[[ ${BLE_VERSION-} && "$(uname)" != "Darwin" ]] && ble-attach
+
+if [[ -f ~/.local/share/blesh/ble.sh ]] && [[ "$(uname)" == "Darwin" ]]; then
+  debug_echo 'NOTE: load ble.sh by source to avoid freeze input caused by XShell with `screen -ARR -l -s -$SHELL`...'
+  [[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh
+fi
