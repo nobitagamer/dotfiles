@@ -11,6 +11,8 @@
       ppa_source: 'ppa:aacebedo/fasd'
     hstr:
       ppa_source: 'ppa:ultradvorka/ppa'
+    deadsnakes: # Python 3.9+
+      ppa_source: 'ppa:deadsnakes/ppa'
 # - aptget:
 #     fish:
 #       ppa_source: 'ppa:c/release-2'
