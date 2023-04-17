@@ -6,14 +6,14 @@
 # Some systems start X on boot, so this file is not always very useful.
 #
 
-# Execute code that does not affect the current session in the background.
-{
-  # Compile the completion dump to increase startup speed.
-  zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
-  if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
-    zcompile "$zcompdump"
-  fi
-} &!
+# # Execute code that does not affect the current session in the background.
+# {
+#   # Compile the completion dump to increase startup speed.
+#   zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
+#   if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
+#     zcompile "$zcompdump"
+#   fi
+# } &!
 
 _startup_time_prompt '\x1b[33m'  # yellow
 
@@ -29,27 +29,27 @@ if (( $ZSH_ZPROF )); then
   zprof | less
 fi
 
-###############################################################################
-# Autostart TMUX
-###############################################################################
-if [[ $TERM_PROGRAM == 'Apple_Terminal' ]]; then return; fi
+# ###############################################################################
+# # Autostart TMUX
+# ###############################################################################
+# if [[ $TERM_PROGRAM == 'Apple_Terminal' ]]; then return; fi
 
-if [[ -f "$HOME/.no_tmux" ]]; then
-  builtin cd $(cat $HOME/.no_tmux)
-  command rm -f $HOME/.no_tmux
-elif [[ -z "$TMUX" ]]; then
-  if [[ -f "$HOME/.tmux_new" ]]; then
-    command rm -f $HOME/.tmux_new
-    tmux new
-  else
-    sleep 0.01; tmux new -A -s main
-  fi
-fi
+# if [[ -f "$HOME/.no_tmux" ]]; then
+#   builtin cd $(cat $HOME/.no_tmux)
+#   command rm -f $HOME/.no_tmux
+# elif [[ -z "$TMUX" ]]; then
+#   if [[ -f "$HOME/.tmux_new" ]]; then
+#     command rm -f $HOME/.tmux_new
+#     tmux new
+#   else
+#     sleep 0.01; tmux new -A -s main
+#   fi
+# fi
 
-# Print a random, hopefully interesting, adage.
-if (( $+commands[fortune] )); then
-  if [[ -t 0 || -t 1 ]]; then
-    fortune -s
-    print
-  fi
-fi
+# # Print a random, hopefully interesting, adage.
+# if (( $+commands[fortune] )); then
+#   if [[ -t 0 || -t 1 ]]; then
+#     fortune -s
+#     print
+#   fi
+# fi

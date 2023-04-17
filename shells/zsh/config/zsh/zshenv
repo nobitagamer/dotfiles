@@ -25,7 +25,7 @@ source ~/.config/common/init_functions.sh
 run-parts /etc/update-motd.d 2>/dev/null
 
 # unset DEBUG # Disable debug
-DEBUG=1 # Enable debug
+# DEBUG=1 # Enable debug
 
 # Reduce 5s load time
 skip_global_compinit=1

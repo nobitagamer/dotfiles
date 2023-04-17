@@ -182,112 +182,112 @@ if [[ -d $HOME/.linuxbrew/bin ]] || [[ -d /home/linuxbrew/.linuxbrew/bin ]]; the
   export LDFLAGS="-L$OPENSSL_PREFIX/lib"
 fi
 
-############
-# Python
-############
-# See https://github.com/sorin-ionescu/prezto/blob/master/modules/python/init.zsh
-# if [[ -d $HOME/.pyenv ]]; then
-#   export PYENV_SHIMS=$HOME/.pyenv/shims
-#   path=(
-#     $HOME/.pyenv/bin
-#     $PYENV_SHIMS
-#     $path)
+# ############
+# # Python
+# ############
+# # See https://github.com/sorin-ionescu/prezto/blob/master/modules/python/init.zsh
+# # if [[ -d $HOME/.pyenv ]]; then
+# #   export PYENV_SHIMS=$HOME/.pyenv/shims
+# #   path=(
+# #     $HOME/.pyenv/bin
+# #     $PYENV_SHIMS
+# #     $path)
+# # fi
+
+# # pip should only run if there is a virtualenv currently activated
+# export PIP_REQUIRE_VIRTUALENV=false
+
+# # Cache pip-installed packages to avoid re-downloading
+# export PIP_DOWNLOAD_CACHE=$HOME/.pip/cache
+
+# # Python startup file
+# export PYTHONSTARTUP=$HOME/.pythonrc
+
+# # if [[ -d $HOME/lib/anaconda3 ]]; then
+# #   path+=($HOME/lib/anaconda3/bin)
+# # fi
+
+# # Re-activate any active VIRTUAL_ENV on shell start up
+# if [[ -n $VIRTUAL_ENV ]]; then
+#   source ${VIRTUAL_ENV}/bin/activate
 # fi
 
-# pip should only run if there is a virtualenv currently activated
-export PIP_REQUIRE_VIRTUALENV=false
-
-# Cache pip-installed packages to avoid re-downloading
-export PIP_DOWNLOAD_CACHE=$HOME/.pip/cache
-
-# Python startup file
-export PYTHONSTARTUP=$HOME/.pythonrc
-
-# if [[ -d $HOME/lib/anaconda3 ]]; then
-#   path+=($HOME/lib/anaconda3/bin)
+# # Re-activate any active anaconda env on shell start up
+# if [[ -n $CONDA_DEFAULT_ENV ]]; then
+#   echo "Sourcing conda env: $CONDA_DEFAULT_ENV"
+#   source activate $CONDA_DEFAULT_ENV
 # fi
 
-# Re-activate any active VIRTUAL_ENV on shell start up
-if [[ -n $VIRTUAL_ENV ]]; then
-  source ${VIRTUAL_ENV}/bin/activate
-fi
+# ############
+# # Ruby
+# ############
+# # See https://github.com/sorin-ionescu/prezto/blob/master/modules/ruby/init.zsh
+# # if [[ -d $HOME/.rbenv ]]; then
+# #   export RBENV_SHIMS=$HOME/.rbenv/shims
+# #   path=(
+# #     $HOME/.rbenv/bin
+# #     $RBENV_SHIMS
+# #     $path)
+# # fi
 
-# Re-activate any active anaconda env on shell start up
-if [[ -n $CONDA_DEFAULT_ENV ]]; then
-  echo "Sourcing conda env: $CONDA_DEFAULT_ENV"
-  source activate $CONDA_DEFAULT_ENV
-fi
-
-############
-# Ruby
-############
-# See https://github.com/sorin-ionescu/prezto/blob/master/modules/ruby/init.zsh
-# if [[ -d $HOME/.rbenv ]]; then
-#   export RBENV_SHIMS=$HOME/.rbenv/shims
-#   path=(
-#     $HOME/.rbenv/bin
-#     $RBENV_SHIMS
-#     $path)
-# fi
-
-# Make sure *vendored* gems are run first than anything (useful with rbenv)
-# See:
-#   + http://jimeh.me/blog/2011/11/01/my-ruby-development-environment/
-#   + http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/
-path=(
-  ./vendor/bundle/bin
-  $path
-)
-
-############
-# Node.js
-############
-if [[ -d $HOME/.nodenv ]]; then
-  debug_echo "Loading nodenv..."
-  export NODENV_SHIMS=$HOME/.nodenv/shims
-  path=(
-    $HOME/.nodenv/bin
-    $NODENV_SHIMS
-    $path)
-fi
-
-############
-# Misc
-############
-debug_echo "Loading misc..."
-if [[ -d $DOTFILES/bin ]]; then
-  path+=($DOTFILES/bin)
-  [[ -d $DOTFILES/bin/$UNAME ]] && path+=($DOTFILES/bin/$UNAME)
-fi
-
-if [[ -d $HOME/.fzf/bin ]]; then
-  path+=($HOME/.fzf/bin)
-fi
-
-if [[ -d $HOME/.tmuxifier/bin ]]; then
-  path+=($HOME/.tmuxifier/bin)
-fi
-
-############
-# GoLang
-############
-debug_echo "Loading golang..."
-export GOPATH=/usr/local/lib/golang
-export GOBIN=$GOPATH/bin
-
-if [[ -n $GOPATH ]]; then
-  path+=(/usr/local/opt/go/libexec/bin)
-fi
-
-# This must be last
-if [[ -d $GOBIN ]]; then
-  path=($path $GOBIN)
-fi
-
-# Set the the list of directories that cd searches.
-# cdpath=(
-#   $cdpath
+# # Make sure *vendored* gems are run first than anything (useful with rbenv)
+# # See:
+# #   + http://jimeh.me/blog/2011/11/01/my-ruby-development-environment/
+# #   + http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/
+# path=(
+#   ./vendor/bundle/bin
+#   $path
 # )
+
+# ############
+# # Node.js
+# ############
+# if [[ -d $HOME/.nodenv ]]; then
+#   debug_echo "Loading nodenv..."
+#   export NODENV_SHIMS=$HOME/.nodenv/shims
+#   path=(
+#     $HOME/.nodenv/bin
+#     $NODENV_SHIMS
+#     $path)
+# fi
+
+# ############
+# # Misc
+# ############
+# debug_echo "Loading misc..."
+# if [[ -d $DOTFILES/bin ]]; then
+#   path+=($DOTFILES/bin)
+#   [[ -d $DOTFILES/bin/$UNAME ]] && path+=($DOTFILES/bin/$UNAME)
+# fi
+
+# if [[ -d $HOME/.fzf/bin ]]; then
+#   path+=($HOME/.fzf/bin)
+# fi
+
+# if [[ -d $HOME/.tmuxifier/bin ]]; then
+#   path+=($HOME/.tmuxifier/bin)
+# fi
+
+# ############
+# # GoLang
+# ############
+# debug_echo "Loading golang..."
+# export GOPATH=/usr/local/lib/golang
+# export GOBIN=$GOPATH/bin
+
+# if [[ -n $GOPATH ]]; then
+#   path+=(/usr/local/opt/go/libexec/bin)
+# fi
+
+# # This must be last
+# if [[ -d $GOBIN ]]; then
+#   path=($path $GOBIN)
+# fi
+
+# # Set the the list of directories that cd searches.
+# # cdpath=(
+# #   $cdpath
+# # )
 
 export CHECKPOINT_DISABLE=1
 export HOMEBREW_NO_ANALYTICS=1
@@ -326,7 +326,7 @@ if [[ "$(tput colors)" == "256" ]]; then
 fi
 
 # Disable Ctrl-d to logout
-bindkey -r '^D'
+# bindkey -r '^D'
 setopt IGNORE_EOF
 
 # export BSPWM_STATE=$TMPDIR/bspwm-state.json
