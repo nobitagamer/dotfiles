@@ -33,7 +33,7 @@
     condition: 'true'
   - stderr: true
     command: |
-      sudo rpm -Uvh http://www.city-fan.org/ftp/contrib/yum-repo/rhel7/x86_64/city-fan.org-release-2-2.rhel7.noarch.rpm
+      sudo rpm -Uvh http://www.city-fan.org/ftp/contrib/yum-repo/rhel7/x86_64/city-fan.org-release-3-10.rhel7.noarch.rpm
       sudo yum install -y yum-utils
       sudo yum-config-manager --disable city-fan.org
       sudo yum --enablerepo=city-fan.org -y install libcurl libcurl-devel
