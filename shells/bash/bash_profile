@@ -190,6 +190,14 @@ if [[ -d $HOME/.linuxbrew/bin ]] || [[ -d /home/linuxbrew/.linuxbrew/bin ]]; the
   export LDFLAGS="-L$OPENSSL_PREFIX/lib"
 fi
 
+############
+# Homebrew
+############
+if [[ -d /opt/homebrew/bin/brew ]]; then
+  debug_echo "Loading Homebrew..."
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 # Init Pyenv
 if [ -d "$HOME/.pyenv/plugins/pyenv-virtualenv" ]; then
   debug_echo "Loading pyenv..."
