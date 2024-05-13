@@ -54,6 +54,7 @@
   - mono-libgdiplus
   # For git-restore-mtime (replace git-settimes.pl)
   - git-tools
+  - gitversion
 
 # Support for dedupe.sh, see https://apple.stackexchange.com/questions/69223/how-to-replace-mac-os-x-utilities-with-gnu-core-utilities
 # - brew:
@@ -88,41 +89,41 @@
     command: |
       brew install cask dotnet
 
-- shell++:
-  - description: Install GitVersion 5.0.1
-    condition: 'true'
-  - stdout: true
-    stderr: true
-    command: |
-      # 5.0.1 is latest stable version that support exit code.
-      BREW_GITVERSION=5.0.1
-      brew unlink gitversion &
-      # brew cleanup -s gitversion && brew cleanup --prune-prefix
+# - shell++:
+#   - description: Install GitVersion 5.0.1
+#     condition: 'true'
+#   - stdout: true
+#     stderr: true
+#     command: |
+#       # 5.0.1 is latest stable version that support exit code.
+#       BREW_GITVERSION=5.0.1
+#       brew unlink gitversion &
+#       # brew cleanup -s gitversion && brew cleanup --prune-prefix
 
-      # See https://stackoverflow.com/questions/3987683/homebrew-install-specific-version-of-formula/55764594#comment102767816_53766019
-      # Use --no-git to avoid `brew update` error
-      brew tap-new --no-git $USER/local-tap
-      # extract with a version seems to run a `git log --grep` under the hood
-      brew extract --force --version=${BREW_GITVERSION} gitversion $USER/local-tap
+#       # See https://stackoverflow.com/questions/3987683/homebrew-install-specific-version-of-formula/55764594#comment102767816_53766019
+#       # Use --no-git to avoid `brew update` error
+#       brew tap-new --no-git $USER/local-tap
+#       # extract with a version seems to run a `git log --grep` under the hood
+#       brew extract --force --version=${BREW_GITVERSION} gitversion $USER/local-tap
 
-      # !BUG: fix `Calling bottle :unneeded is disabled!`
-      sed -i -E 's/ \(bottle\)/ #\1/g' /usr/local/Homebrew/Library/Taps/${USER}/homebrew-local-tap/Formula/gitversion@${BREW_GITVERSION}.rb
-      # Install your new version from the tap
-      brew install gitversion@${BREW_GITVERSION}
-      # Note this "fails" trying to grab a bottle for the package and seems to have
-      # some odd doubling of the version in that output, but this isn't fatal.
+#       # !BUG: fix `Calling bottle :unneeded is disabled!`
+#       sed -i -E 's/ \(bottle\)/ #\1/g' /usr/local/Homebrew/Library/Taps/${USER}/homebrew-local-tap/Formula/gitversion@${BREW_GITVERSION}.rb
+#       # Install your new version from the tap
+#       brew install gitversion@${BREW_GITVERSION}
+#       # Note this "fails" trying to grab a bottle for the package and seems to have
+#       # some odd doubling of the version in that output, but this isn't fatal.
 
-      ## Obsoleted
-      # brew unlink gitversion & brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/56b5ff6813815eec8f8bbbe92856c1ce827ececc/Formula/gitversion.rb
+#       ## Obsoleted
+#       # brew unlink gitversion & brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/56b5ff6813815eec8f8bbbe92856c1ce827ececc/Formula/gitversion.rb
 
-      brew link gitversion@${BREW_GITVERSION}
-      brew pin gitversion@${BREW_GITVERSION}
+#       brew link gitversion@${BREW_GITVERSION}
+#       brew pin gitversion@${BREW_GITVERSION}
 
-      # Update the formulae and Homebrew itself
-      brew update
+#       # Update the formulae and Homebrew itself
+#       brew update
 
-      # Upgrade everything
-      brew upgrade
+#       # Upgrade everything
+#       brew upgrade
 
 - shell++:
   - description: Install Apps
