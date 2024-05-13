@@ -30,7 +30,7 @@
 #     no-upgrade: true
 
 - tap:
-  - homebrew/cask-versions
+  # - homebrew/cask-versions # Deprecated by default homebrew install
   - homebrew/cask
   # - pivotal/tap
 
