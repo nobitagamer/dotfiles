@@ -29,17 +29,18 @@
 #     file: ~/.Brewfile
 #     no-upgrade: true
 
-- tap:
-  # - homebrew/cask-versions # Deprecated by default homebrew install
-  - homebrew/cask
-  # - pivotal/tap
+# Deprecated by default homebrew install
+# - tap:
+#   - homebrew/cask-versions
+#   - homebrew/cask
+#   - pivotal/tap
 
 - brew:
   - mas
   - git-extras
   - git-flow-avh
   - htop
-  - exa
+  # - exa
   # - fish
   - tmux
   - tmate
