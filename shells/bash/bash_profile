@@ -217,6 +217,11 @@ if [[ -d $HOME/.nodenv ]]; then
 fi
 
 ############
+# fzf
+############
+[ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
+
+############
 # ble.sh
 ############
 # NOTE: avoid freeze, see end of this file.

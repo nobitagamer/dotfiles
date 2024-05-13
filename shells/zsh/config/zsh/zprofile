@@ -302,6 +302,11 @@ export ZPLUG_CACHE_DIR=$XDG_CACHE_HOME/zplug
 
 export ANDROID_HOME=/usr/local/opt/android-sdk
 
+############
+# fzf
+############
+[ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
+
 ###############################################################################
 # Miscellaneous
 ###############################################################################
@@ -334,13 +339,6 @@ setopt IGNORE_EOF
 # Disable macOS's "Save/Restore Shell State" feature for Zsh that initialized in /etc/zshrc_Apple_Terminal.
 # See https://superuser.com/questions/1610587/disable-zsh-session-folder-completely
 export SHELL_SESSIONS_DISABLE=1
-
-# Use .localrc for SUPER SECRET CRAP that you don't
-# want in your public, versioned repo.
-# shellcheck disable=SC1090
-
-debug_echo "Loading local profile..."
-[ -f $HOME/.localrc ] && . $HOME/.localrc
 
 # Make Zsh the default shell
 [[ $SHELL =~ "zsh" ]] || export SHELL=`builtin which zsh`
