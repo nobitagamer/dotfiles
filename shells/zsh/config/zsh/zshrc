@@ -399,7 +399,7 @@ zinit svn wait'!' lucid for \
 # zplug "modules/completion", from:prezto, frozen:1, defer:1
 
 
-# # Fasd is a command-line productivity booster, inspired by tools like autojump, z and v, 
+# # Fasd is a command-line productivity booster, inspired by tools like autojump, z and v,
 # # it offers quick access to files and directories by keeping track of files and directories that were previously accessed.
 # # For shell completion to work, this module must be loaded after the completion module.
 # debug_echo "- Loading prezto fasd, see https://github.com/sorin-ionescu/prezto/blob/master/modules/fasd..."
@@ -725,5 +725,14 @@ if [[ -o INTERACTIVE && ! -o LOGIN ]]; then
   _startup_time_prompt '\x1b[35m'  # purple
 fi
 
+# Display message of the day
+run-parts /etc/update-motd.d 2>/dev/null
+
+# Use .localrc for SUPER SECRET CRAP that you don't
+# want in your public, versioned repo.
+# shellcheck disable=SC1090
+
+debug_echo "Loading local profile..."
+[ -f $HOME/.localrc ] && . $HOME/.localrc
 
 debug_echo "Loaded .zshrc"

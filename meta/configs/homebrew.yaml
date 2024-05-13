@@ -52,6 +52,8 @@
   - jq
   # Required by dotnet
   - mono-libgdiplus
+  # For git-restore-mtime (replace git-settimes.pl)
+  - git-tools
 
 # Support for dedupe.sh, see https://apple.stackexchange.com/questions/69223/how-to-replace-mac-os-x-utilities-with-gnu-core-utilities
 # - brew:
