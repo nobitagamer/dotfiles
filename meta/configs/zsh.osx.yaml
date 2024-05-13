@@ -10,7 +10,7 @@
     ~/.zshenv: shells/zsh/zshenv
     ~/.config/zsh/.zshenv: shells/zsh/config/zsh/zshenv
     ~/.config/zsh/.zprofile: shells/zsh/config/zsh/zprofile
-    ~/.config/zsh/.zshrc: shells/zsh/config/zsh/zshrc
+    ~/.config/zsh/.zshrc: shells/zsh/config/zsh/zshrc.osx
     ~/.config/zsh/.zlogin: shells/zsh/config/zsh/zlogin
     ~/.config/zsh/.zlogout: shells/zsh/config/zsh/zlogout
     ~/.config/zsh/aliases/aliases.zsh: shells/zsh/config/zsh/aliases/aliases.zsh
