@@ -12,6 +12,8 @@
   - pcre
   - rbenv
   - fastlane
+  # See https://github.com/Homebrew/homebrew-core/issues/109379
+  - temurin@8 # For sdkmanager (openjdk@8: The x86_64 architecture is required for this software)
   - openjdk@11 # For Unity 2022.3+
 
 - shell++:
@@ -23,6 +25,7 @@
       # brew link openjdk@11
       sudo ln -sfn /opt/homebrew/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
 
+      /usr/libexec/java_home -V
       export JAVA_HOME=$(/usr/libexec/java_home -v 11)
       java -version
 
@@ -52,18 +55,41 @@
   - stderr: true
     command: |
 
-      # Usage: install-unity.sh <version> <changeset>
-      cat <<- EOF > ~/install-unity.sh
+      cat <<- "EOF" > ~/install-unity.sh
       #!/bin/bash
 
-      # Do NOT use Apple silicon version of Unity3D for now
-      sudo /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless install --architecture x86_64 --version \$1 --changeset \$2 \
-        && sudo /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless  install-modules --architecture x86_64 --cm -m ios -m android -m android-sdk-ndk-tools -m android-open-jdk --version \$1
+      if [ -z "$2" ]; then
+        sudo ~/install-unity list -v
+        echo "Usage: ./install-unity.sh <UNITY_VERSION> <UNITY_CHANGESET>"
+        /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless editors --all
+        echo 'For a full list of modules, please visit https://docs.unity3d.com/hub/manual/HubCLI.html'
+        exit -1
+      fi
+
+      UNITY_VERSION=$1
+      UNITY_CHANGESET=$2
+
+      echo "Installing Unity $UNITY_VERSION ($UNITY_CHANGESET) with modules: visualstudio, ios, android, android-sdk-ndk-tools, android-open-jdk"
+      sudo /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- \
+        --headless install \
+        --architecture $(uname -m) \
+        --version $UNITY_VERSION \
+        --changeset $UNITY_CHANGESET \
+        && sudo /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- \
+          --headless install-modules --cm \
+          --architecture $(uname -m) \
+          -m ios \
+          -m android -m android-sdk-ndk-tools -m android-open-jdk \
+          -m visualstudio \
+          --version $UNITY_VERSION
       EOF
 
       chmod +x ~/install-unity.sh
 
-      ~/install-unity.sh 2022.3.20f1 61c2feb0970d
+      # Usage: install-unity.sh <version> <changeset>
+      ~/install-unity.sh 2022.3.20f1 61c2feb0970d # ORC, DT
+      ~/install-unity.sh 2021.3.15f1 e8e88683f834 # DWW
+      ~/install-unity.sh 2021.3.11f1 0a5ca18544bf # DT2, MZ, MAM, SZ/SZ2
 
 - shell++:
   - description: Pre-install default version of Unity3D (Legacy)
@@ -75,42 +101,42 @@
 
       ~/.Unity3D/unity-init.sh
 
-      sudo ~/install-unity list
+      sudo ~/install-unity list --installed
 
-      # NOTE: Use this script will make legal license invalid.
-      # ~/.Unity3D/unity-install.sh 2018.1 9f2
-      # ~/.Unity3D/unity-install.sh 2018.4 3f1
+      # # NOTE: Use this script will make legal license invalid.
+      # # ~/.Unity3D/unity-install.sh 2018.1 9f2
+      # # ~/.Unity3D/unity-install.sh 2018.4 3f1
 
-      # ~/.Unity3D/unity-install.sh 2019.1 10f1
-      # ~/.Unity3D/unity-install.sh 2019.2 12f1
+      # # ~/.Unity3D/unity-install.sh 2019.1 10f1
+      # # ~/.Unity3D/unity-install.sh 2019.2 12f1
 
-      # Install Android dependencies to match Unity version
-      sudo ~/install-unity install -y -p Unity,iOS,Android 2021.3.11f1
-      sudo ~/install-unity install -y -p Unity,iOS,Android 2021.3.9f1
+      # # Install Android dependencies to match Unity version
+      # sudo ~/install-unity install -y -p Unity,iOS,Android 2021.3.11f1
+      # sudo ~/install-unity install -y -p Unity,iOS,Android 2021.3.9f1
 
-      # Create scripts to quick update Unity3D to latest patch version.
-      # 2019.4
-      cat <<- EOF > ~/update-unity-2019.4.sh
-      #!/bin/bash
-
-      sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2019.4
-      EOF
-
-      # # 2018.4
-      # cat <<- EOF > ~/update-unity-2018.4.sh
+      # # Create scripts to quick update Unity3D to latest patch version.
+      # # 2019.4
+      # cat <<- EOF > ~/update-unity-2019.4.sh
       # #!/bin/bash
 
-      # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2018.4
+      # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2019.4
       # EOF
 
-      # 2021.3
-      cat <<- EOF > ~/update-unity-2021.3.sh
-      #!/bin/bash
+      # # # 2018.4
+      # # cat <<- EOF > ~/update-unity-2018.4.sh
+      # # #!/bin/bash
 
-      sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2021.3
-      EOF
+      # # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2018.4
+      # # EOF
 
-      chmod +x ~/update-unity-*
+      # # 2021.3
+      # cat <<- EOF > ~/update-unity-2021.3.sh
+      # #!/bin/bash
+
+      # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2021.3
+      # EOF
+
+      # chmod +x ~/update-unity-*
 
 - shell++:
   - description: Install cocoapods for build iOS
@@ -166,7 +192,7 @@
       echo "Accept all licenses..."
 
       # Use Java 8 for sdkmanager
-      export JAVA_HOME=$(/usr/libexec/java_home -v 8)
+      export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
       export PATH=${JAVA_HOME}/bin:$PATH
 
       # yes | sdkmanager --licenses
@@ -201,4 +227,5 @@
       # echo y | sdkmanager "platforms;android-28" "sources;android-28"
       echo y | sdkmanager "platforms;android-29" "sources;android-29" # platforms;android-29 is required for build AndroidX by Unity
       echo y | sdkmanager "platforms;android-30" "sources;android-30"
-      echo y | sdkmanager "platforms;android-30" "sources;android-31"
+      echo y | sdkmanager "platforms;android-31" "sources;android-31"
+      echo y | sdkmanager "platforms;android-33" "sources;android-33"
