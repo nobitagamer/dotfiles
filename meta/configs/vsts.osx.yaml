@@ -7,17 +7,17 @@
   - stderr: true
     command: |
       # Ensure folder exists on machine
-      mkdir -p /usr/local/lib/
-      ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/
-      ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
+      sudo mkdir -p /usr/local/lib/
+      sudo ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/
+      sudo ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
 
 - shell++:
   - description: Install VSTS Agent
     condition: '[[ ! -z "$VSTS_AGENT_INPUT_URL" ]]'
   - stderr: true
     command: |
-      mkdir ~/vso
-      cd ~/vso
+      mkdir ~/azagent
+      cd ~/azagent
 
       AZ_AGENT_VERSION=2.155.1
       curl -O https://vstsagentpackage.azureedge.net/agent/${AZ_AGENT_VERSION}/vsts-agent-osx-x64-${AZ_AGENT_VERSION}.tar.gz
