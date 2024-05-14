@@ -1,5 +1,13 @@
 #!/bin/sh
 
+############
+# Homebrew
+############
+if [ -f /opt/homebrew/bin/brew ]; then
+  debug_echo "Loading Homebrew..."
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 export PATH="$HOME/.fastlane/bin:$PATH"
 
 # Use Java 8 for sdkmanager

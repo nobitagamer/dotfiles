@@ -32,8 +32,16 @@ cd "${BASE_DIR}"
 git submodule update --init --checkout --recursive --force
 
 # HACK to make dotbot-brew work since Linuxbrew does not add PATH automatically.
-if [[ $(which brew) = "" ]]; then
+if ! which brew; then
+  echo "Loading Homebrew..."
   export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+
+  ############
+  # Homebrew
+  ############
+  if [ -f /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
 fi
 
 # Write update-dotfiles to use later
