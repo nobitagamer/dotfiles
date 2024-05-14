@@ -5,13 +5,13 @@ alias reload!='exec "$SHELL" -l'
 
 # Use colors in coreutils utilities output
 # alias ls='ls --color=auto'
-alias ls='exa'
+alias ls='lsd'
 alias grep='grep --color'
 
 # ls aliases
-alias ll='exa -glh --git --color-scale'
-alias la='exa -glah --git --color-scale'
-alias l='exa -lh --git --color-scale'
+alias ll='lsd -glh --git'
+alias la='lsd -glah --git'
+alias l='lsd -lh --git'
 # alias ll='ls -lah'
 # alias la='ls -A'
 # alias l='ls'

@@ -40,7 +40,7 @@
   - git-extras
   - git-flow-avh
   - htop
-  # - exa
+  - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
   # - fish
   - tmux
   - tmate
