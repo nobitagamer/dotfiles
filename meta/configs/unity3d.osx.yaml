@@ -12,11 +12,20 @@
   - pcre
   - rbenv
   - fastlane
+  - openjdk@11 # For Unity 2022.3+
+
+- shell++:
+  - description: Create symlink to allow system Java wrappers to find JDK 11
+    condition: 'true'
+  - stderr: true
+    command: |
+
+      # brew link openjdk@11
+      sudo ln -sfn /opt/homebrew/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
 
 - cask:
   # See https://www.yippeecode.com/topics/upgrade-to-openjdk-temurin-using-homebrew/
   # - homebrew/cask-versions/temurin8 # java8: it's gone from Homebrew, use OpenJDK instead (temurin8)
-  - openjdk@11 # For Unity 2022.3+
   - android-sdk
 
 - shell++:
