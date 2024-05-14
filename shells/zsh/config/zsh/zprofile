@@ -69,7 +69,7 @@ if [ -z "$SSH_CONNECTION" ]; then
   export EDITOR="$EMACSCLIENT -t -a 'vim'"
   export ALTERNATE_EDITOR=""
 else
-  export EDITOR=$(type -P emacs || type -P vim || type -P vi)
+  export EDITOR=$(type emacs || type vim || type vi)
 
   # macOS only
   if [[ "$OSTYPE" == darwin* ]]; then
