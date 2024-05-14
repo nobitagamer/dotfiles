@@ -23,10 +23,14 @@
       # brew link openjdk@11
       sudo ln -sfn /opt/homebrew/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
 
+      export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+      java -version
+
 - cask:
   # See https://www.yippeecode.com/topics/upgrade-to-openjdk-temurin-using-homebrew/
   # - homebrew/cask-versions/temurin8 # java8: it's gone from Homebrew, use OpenJDK instead (temurin8)
   - android-sdk
+  - unity-hub
 
 - shell++:
   - description: Install .NET Core runtime 2.1 required by GitVersion
@@ -43,7 +47,26 @@
       ~/install-dotnet-2.1.sh
 
 - shell++:
-  - description: Pre-install latest version of Unity3D
+  - description: Install Unity3D versions using Unity Hub
+    condition: 'true'
+  - stderr: true
+    command: |
+
+      # Usage: install-unity.sh <version> <changeset>
+      cat <<- EOF > ~/install-unity.sh
+      #!/bin/bash
+
+      # Do NOT use Apple silicon version of Unity3D for now
+      sudo /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless install --architecture x86_64 --version \$1 --changeset \$2 \
+        && sudo /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless  install-modules --architecture x86_64 --cm -m ios -m android -m android-sdk-ndk-tools -m android-open-jdk --version \$1
+      EOF
+
+      chmod +x ~/install-unity.sh
+
+      ~/install-unity.sh 2022.3.20f1 61c2feb0970d
+
+- shell++:
+  - description: Pre-install default version of Unity3D (Legacy)
     condition: 'true'
   - stderr: true
     command: |
