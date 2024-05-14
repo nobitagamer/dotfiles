@@ -106,7 +106,7 @@ class AdvancedShell(dotbot.Plugin):
                 if out == b'' and process.poll() is not None:
                     break
                 if out:
-                    sys.stdout.write(out.decode(sys.stdout.encoding))
+                    sys.stdout.write(out.decode(sys.stdout.encoding, 'ignore'))
                     sys.stdout.flush()
             ret = process.poll()
             return True, None
@@ -150,7 +150,7 @@ class AdvancedShell(dotbot.Plugin):
                         if out == b'' and process.poll() is not None:
                             break
                         if out:
-                            sys.stdout.write(out.decode(sys.stdout.encoding))
+                            sys.stdout.write(out.decode(sys.stdout.encoding, 'ignore'))
                             sys.stdout.flush()
                     ret = process.poll()
                     success = True
