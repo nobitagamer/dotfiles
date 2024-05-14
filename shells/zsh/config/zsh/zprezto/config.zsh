@@ -12,7 +12,15 @@ SAVEHIST=10000
 
 # don't nice background tasks
 setopt NO_BG_NICE
-setopt NO_HUP
+
+# In zsh, if you have a background job running when the shell exits,
+# the shell will assume you want that to be killed; in this case it is
+# sent a particular signal called SIGHUP... If you often start jobs that
+# should go on even when the shell has exited, then you can set the option
+# NO_HUP, and background jobs will be left alone.
+# See https://stackoverflow.com/questions/19302913/exit-zsh-but-leave-running-jobs-open
+# setopt NO_HUP
+
 setopt NO_LIST_BEEP
 # allow functions to have local options
 setopt LOCAL_OPTIONS
