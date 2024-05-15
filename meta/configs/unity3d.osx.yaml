@@ -168,6 +168,11 @@
       rbenv shell $RUBY_VERSION
 
       gem install activesupport -v 4.2.6
+
+      # The last version of bundler (>= 0) to support your Ruby & RubyGems was 2.4.22
+      # Latest bundler requires Ruby version >= 3.0.0.
+      gem install bundler -v 2.4.22
+
       gem install bundle cocoapods fastlane
       rbenv rehash
 
