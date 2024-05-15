@@ -82,6 +82,10 @@
           -m android -m android-sdk-ndk-tools -m android-open-jdk \
           -m visualstudio \
           --version $UNITY_VERSION
+
+      echo "Take owner after install Unity with root permission"
+      sudo chown -R $USER: $HOME/Library/Unity
+      sudo chown -R $USER: $HOME/Library/Logs/Unity/
       EOF
 
       chmod +x ~/install-unity.sh
