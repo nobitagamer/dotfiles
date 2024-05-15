@@ -33,15 +33,37 @@ git submodule update --init --checkout --recursive --force
 
 # HACK to make dotbot-brew work since Linuxbrew does not add PATH automatically.
 if ! which brew; then
-  echo "Loading Homebrew..."
-  export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+  echo "Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
   ############
-  # Homebrew
+  # Linuxbrew
+  ############
+  if [ -d /home/linuxbrew/.linuxbrew/bin ]; then
+    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+  fi
+
+  ############
+  # Homebrew (Apple Silicon)
   ############
   if [ -f /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
+fi
+
+if ! which python2.7; then
+  echo "Installing Python2 to avoid 'SyntaxWarning for 'is' with literals' on Python 3.8.5 from MacOS Catalina..."
+
+  cat <<- "EOF" > ~/install-python2-monterey.sh
+  #!/bin/bash
+
+  export NONINTERACTIVE=1
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+  brew install kamilturek/python2/python@2
+EOF
+
+  chmod +x ~/install-python2-monterey.sh && ~/install-python2-monterey.sh
 fi
 
 # Write update-dotfiles to use later
