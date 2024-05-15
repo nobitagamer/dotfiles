@@ -143,9 +143,30 @@
       mas install 823766827
 
 - shell++:
-  - description: Run XCode First Lauch to accept license
-    condition: '! xcodebuild -checkFirstLaunchStatus'
+  - description: Prepare XCode and Create update-xcode.sh
+    condition: 'true'
   - stdout: true
     stderr: true
     command: |
-      sudo xcodebuild -runFirstLaunch
+
+      cat <<- EOF > ~/update-xcode.sh
+      #!/bin/bash
+
+      echo "Updating cocoapods..."
+      # Cleanup corrupted pods
+      # rm -rf "${HOME}/Library/Caches/CocoaPods"
+      gem install cocoapods
+
+      # See xcode-select --install
+      # sudo rm -rf /Library/Developer/CommandLineTools
+      xcode-select --install
+
+      if ! xcodebuild -checkFirstLaunchStatus; then
+        echo "Running XCode First Lauch to accept license..."
+        sudo xcodebuild -runFirstLaunch
+      fi
+
+      sudo xcodebuild -downloadPlatform iOS
+      EOF
+
+      chmod +x ~/update-xcode.sh && ~/update-xcode.sh
