@@ -99,7 +99,9 @@
       # See https://stackoverflow.com/questions/9132826/stop-developer-tools-access-needs-to-take-control-of-another-process-for-debugg
       sudo /usr/sbin/DevToolsSecurity --enable
 
-      ~/.Unity3D/unity-init.sh
+      if [ ! -f ~/install-unity ]; then
+        ~/.Unity3D/unity-init.sh
+      fi
 
       sudo ~/install-unity list --installed
 
@@ -156,7 +158,7 @@
 
       brew update
       # !NOTE: enable this if openssl error
-      brew reinstall openssl
+      # brew reinstall openssl
       brew upgrade ruby-build rbenv
 
       echo N | rbenv install $RUBY_VERSION
@@ -179,7 +181,7 @@
       pod repo update
 
       # Rebuild native extensions
-      sudo chown -R $USER:staff ~/.rbenv/gems/2.4.0/gems
+      sudo chown -R $USER:staff ~/.rbenv/gems/2.7.0/gems
       gem pristine --all
 
 - shell++:
