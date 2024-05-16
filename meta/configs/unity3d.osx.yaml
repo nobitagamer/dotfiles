@@ -15,6 +15,7 @@
   # See https://github.com/Homebrew/homebrew-core/issues/109379
   - temurin@8 # For sdkmanager (openjdk@8: The x86_64 architecture is required for this software)
   - openjdk@11 # For Unity 2022.3+
+  - openjdk@17 # For android-commandlinetools cask
 
 - shell++:
   - description: Create symlink to allow system Java wrappers to find JDK 11
@@ -22,17 +23,21 @@
   - stderr: true
     command: |
 
-      # brew link openjdk@11
+      # alias sudo='nocorrect sudo' is required by zsh's auto-completion feature to work, see https://unix.stackexchange.com/questions/260563/sudo-nocorrect-command-not-found
+      alias sudo='nocorrect sudo'
       sudo ln -sfn /opt/homebrew/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+      sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
 
       /usr/libexec/java_home -V
       export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+      export PATH=${JAVA_HOME}/bin:$PATH
       java -version
 
 - cask:
   # See https://www.yippeecode.com/topics/upgrade-to-openjdk-temurin-using-homebrew/
   # - homebrew/cask-versions/temurin8 # java8: it's gone from Homebrew, use OpenJDK instead (temurin8)
-  - android-sdk
+  # android-sdk has been officially discontinued upstream, see https://stackoverflow.com/questions/64312200/android-sdk-has-been-officially-discontinued-upstream
+  - android-commandlinetools # class file version 61.0 (Java 17+)
   - unity-hub
 
 - shell++:
@@ -203,7 +208,8 @@
       echo "Accept all licenses..."
 
       # Use Java 8 for sdkmanager
-      export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+      # export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+      export JAVA_HOME=$(/usr/libexec/java_home -v 17)
       export PATH=${JAVA_HOME}/bin:$PATH
 
       # yes | sdkmanager --licenses
@@ -226,16 +232,15 @@
       # Unity 2019.3 (use built-in dependencies)
       # echo y | sdkmanager --install "ndk;19.2.5345600"
 
-      # Android SDK build tools
-      # echo y | sdkmanager "tools" "platform-tools" "build-tools;28.0.3"
-      # echo y | sdkmanager "tools" "platform-tools" "build-tools;30.0.2" # 11/13/2020 require build tools m29
-      echo y | sdkmanager "tools" "platform-tools" "build-tools;33.0.0"
-
+      echo y | sdkmanager "tools" "platform-tools"
       echo y | sdkmanager "extras;android;m2repository"
-      # echo y | sdkmanager "platforms;android-16" "sources;android-16"
-      # echo y | sdkmanager "platforms;android-26" "sources;android-26"
-      # echo y | sdkmanager "platforms;android-27" "sources;android-27"
-      # echo y | sdkmanager "platforms;android-28" "sources;android-28"
+
+      # Android SDK build tools
+      # echo y | sdkmanager "build-tools;30.0.2" # 11/13/2020 require build tools m29
+      echo y | sdkmanager "build-tools;33.0.0"
+      echo y | sdkmanager "build-tools;34.0.0"
+
+
       echo y | sdkmanager "platforms;android-29" "sources;android-29" # platforms;android-29 is required for build AndroidX by Unity
       echo y | sdkmanager "platforms;android-30" "sources;android-30"
       echo y | sdkmanager "platforms;android-31" "sources;android-31"
