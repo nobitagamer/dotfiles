@@ -36,8 +36,8 @@
 - cask:
   # See https://www.yippeecode.com/topics/upgrade-to-openjdk-temurin-using-homebrew/
   # - homebrew/cask-versions/temurin8 # java8: it's gone from Homebrew, use OpenJDK instead (temurin8)
-  # android-sdk has been officially discontinued upstream, see https://stackoverflow.com/questions/64312200/android-sdk-has-been-officially-discontinued-upstream
-  - android-commandlinetools # class file version 61.0 (Java 17+)
+  - android-sdk # Required by Unity3D 2022.3 (02/2024) but officially discontinued upstream, see https://stackoverflow.com/questions/64312200/android-sdk-has-been-officially-discontinued-upstream
+  # - android-commandlinetools # class file version 61.0 (Java 17+)
   - unity-hub
 
 - shell++:
@@ -114,40 +114,40 @@
 
       sudo ~/install-unity list --installed
 
-      # # NOTE: Use this script will make legal license invalid.
-      # # ~/.Unity3D/unity-install.sh 2018.1 9f2
-      # # ~/.Unity3D/unity-install.sh 2018.4 3f1
+    # # NOTE: Use this script will make legal license invalid.
+    # # ~/.Unity3D/unity-install.sh 2018.1 9f2
+    # # ~/.Unity3D/unity-install.sh 2018.4 3f1
 
-      # # ~/.Unity3D/unity-install.sh 2019.1 10f1
-      # # ~/.Unity3D/unity-install.sh 2019.2 12f1
+    # # ~/.Unity3D/unity-install.sh 2019.1 10f1
+    # # ~/.Unity3D/unity-install.sh 2019.2 12f1
 
-      # # Install Android dependencies to match Unity version
-      # sudo ~/install-unity install -y -p Unity,iOS,Android 2021.3.11f1
-      # sudo ~/install-unity install -y -p Unity,iOS,Android 2021.3.9f1
+    # # Install Android dependencies to match Unity version
+    # sudo ~/install-unity install -y -p Unity,iOS,Android 2021.3.11f1
+    # sudo ~/install-unity install -y -p Unity,iOS,Android 2021.3.9f1
 
-      # # Create scripts to quick update Unity3D to latest patch version.
-      # # 2019.4
-      # cat <<- EOF > ~/update-unity-2019.4.sh
-      # #!/bin/bash
+    # # Create scripts to quick update Unity3D to latest patch version.
+    # # 2019.4
+    # cat <<- EOF > ~/update-unity-2019.4.sh
+    # #!/bin/bash
 
-      # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2019.4
-      # EOF
+    # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2019.4
+    # EOF
 
-      # # # 2018.4
-      # # cat <<- EOF > ~/update-unity-2018.4.sh
-      # # #!/bin/bash
+    # # # 2018.4
+    # # cat <<- EOF > ~/update-unity-2018.4.sh
+    # # #!/bin/bash
 
-      # # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2018.4
-      # # EOF
+    # # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2018.4
+    # # EOF
 
-      # # 2021.3
-      # cat <<- EOF > ~/update-unity-2021.3.sh
-      # #!/bin/bash
+    # # 2021.3
+    # cat <<- EOF > ~/update-unity-2021.3.sh
+    # #!/bin/bash
 
-      # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2021.3
-      # EOF
+    # sudo ~/install-unity install --upgrade -y -p Unity,iOS,Android 2021.3
+    # EOF
 
-      # chmod +x ~/update-unity-*
+    # chmod +x ~/update-unity-*
 
 - shell++:
   - description: Install cocoapods for build iOS
@@ -208,8 +208,8 @@
       echo "Accept all licenses..."
 
       # Use Java 8 for sdkmanager
-      # export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
-      export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+      export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # android-sdk
+      # export JAVA_HOME=$(/usr/libexec/java_home -v 17) # android-commandlinetools
       export PATH=${JAVA_HOME}/bin:$PATH
 
       # yes | sdkmanager --licenses
@@ -234,12 +234,12 @@
 
       echo y | sdkmanager "tools" "platform-tools"
       echo y | sdkmanager "extras;android;m2repository"
+      echo y | sdkmanager "cmdline-tools;9.0" # JDK 11
 
       # Android SDK build tools
       # echo y | sdkmanager "build-tools;30.0.2" # 11/13/2020 require build tools m29
       echo y | sdkmanager "build-tools;33.0.0"
       echo y | sdkmanager "build-tools;34.0.0"
-
 
       echo y | sdkmanager "platforms;android-29" "sources;android-29" # platforms;android-29 is required for build AndroidX by Unity
       echo y | sdkmanager "platforms;android-30" "sources;android-30"
