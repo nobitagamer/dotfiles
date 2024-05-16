@@ -12,8 +12,8 @@
   - pcre
   - rbenv
   - fastlane
-  # See https://github.com/Homebrew/homebrew-core/issues/109379
-  - temurin@8 # For sdkmanager (openjdk@8: The x86_64 architecture is required for this software)
+  # See https://github.com/Homebrew/homebrew-core/issues/109379, https://github.com/orgs/Homebrew/discussions/2172
+  - temurin@8 # For sdkmanager on Apple Silicon (openjdk@8: The x86_64 architecture is required for this software)
   - openjdk@11 # For Unity 2022.3+
   - openjdk@17 # For android-commandlinetools cask
 
@@ -241,7 +241,8 @@
       echo y | sdkmanager "build-tools;33.0.0"
       echo y | sdkmanager "build-tools;34.0.0"
 
-      echo y | sdkmanager "platforms;android-29" "sources;android-29" # platforms;android-29 is required for build AndroidX by Unity
-      echo y | sdkmanager "platforms;android-30" "sources;android-30"
-      echo y | sdkmanager "platforms;android-31" "sources;android-31"
-      echo y | sdkmanager "platforms;android-33" "sources;android-33"
+      # See https://developer.android.com/tools/releases/platforms
+      echo y | sdkmanager "platforms;android-29" # Android 10.0: Required for build AndroidX by Unity
+      echo y | sdkmanager "platforms;android-30" # Android 11.0
+      echo y | sdkmanager "platforms;android-31" # 31/32 Android 12.0
+      echo y | sdkmanager "platforms;android-33" # Android 13.0: Unity3D 2022.3
