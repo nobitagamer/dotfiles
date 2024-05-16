@@ -170,7 +170,7 @@
       # brew reinstall openssl
       brew upgrade ruby-build rbenv
 
-      echo N | rbenv install $RUBY_VERSION
+      rbenv install --skip-existing $RUBY_VERSION
 
       # Install bundle package manager
       rbenv rehash
