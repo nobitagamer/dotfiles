@@ -71,7 +71,10 @@
 #   - gnu-cp
 #   - jdupes
 
-- brew: [zsh, zsh-completions, zsh-syntax-highlighting]
+- brew:
+  # - zsh # arm64 on Apple Silicon
+  - zsh-completions
+  - zsh-syntax-highlighting
 
 - cask:
   - gitkraken

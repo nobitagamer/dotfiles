@@ -34,7 +34,7 @@ export MANPATH=/opt/local/share/man:$MANPATH
 # Rehash already done by nodenv-package-rehash
 if which rbenv > /dev/null; then eval "$(rbenv init - --no-rehash)"; fi
 
-export PATH="/usr/local/opt/icu4c/bin:$PATH"
-export PATH="/usr/local/opt/icu4c/sbin:$PATH"
+export PATH="$(brew --prefix icu4c)/bin:$PATH"
+export PATH="$(brew --prefix icu4c)/sbin:$PATH"
 
 echo '.profile loaded successfully.'

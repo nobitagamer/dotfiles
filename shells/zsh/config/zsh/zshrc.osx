@@ -1,4 +1,19 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
+# vim: set ft=zsh:
+#
+# Executes commands at the start of an interactive session.
+# .zshrc is for interactive shell configuration. You set options for
+# the interactive shell there with the setopt and unsetopt commands.
+# You can also load shell modules, set your history options, change your
+# prompt, set up zle and completion, et cetera. You also set any variables
+# that are only used in the interactive shell (e.g. $LS_COLORS).
+#
+
+[[ -o interactive ]] && echo "$(debug_timestamp)This ZSH Shell is an Interactive Shell" || echo "$(debug_timestamp)This ZSH Shell is Not an Interactive Shell"
+
+# This just makes my username disappear from prompt
+# export DEFAULT_USER="trieunk"
+
 # alias for rm (requires trash script)
 if (( $+commands[trash] )); then
     alias rm=trash
@@ -23,31 +38,31 @@ docker-mount() {
 }
 
 
-# shortcut to this dotfiles path is $DOTFILES
-export DOTFILES="$HOME/.dotfiles"
+# # shortcut to this dotfiles path is $DOTFILES
+# export DOTFILES="$HOME/.dotfiles"
 
-# your project folder that we can `c [tab]` to
-export PROJECTS="$HOME/Code"
+# # your project folder that we can `c [tab]` to
+# export PROJECTS="$HOME/Code"
 
-# your default editor
-export EDITOR='code'
+# # your default editor
+# export EDITOR='code'
 
-# all of our zsh files
-typeset -U config_files
-config_files=($DOTFILES/**/*.zsh)
+# # all of our zsh files
+# typeset -U config_files
+# config_files=($DOTFILES/**/*.zsh)
 
-# load the path files
-for file in ${(M)config_files:#*/path.zsh}; do
-  source "$file"
-done
+# # load the path files
+# for file in ${(M)config_files:#*/path.zsh}; do
+#   source "$file"
+# done
 
-# load antibody plugins
-source ~/.zsh_plugins.sh
+# # load antibody plugins
+# source ~/.zsh_plugins.sh
 
-# load everything but the path and completion files
-for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
-  source "$file"
-done
+# # load everything but the path and completion files
+# for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
+#   source "$file"
+# done
 
 autoload -Uz compinit
 typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
@@ -57,14 +72,735 @@ else
   compinit -C -i
 fi
 
-# load every completion after autocomplete loads
-for file in ${(M)config_files:#*/completion.zsh}; do
-  source "$file"
-done
+# # load every completion after autocomplete loads
+# for file in ${(M)config_files:#*/completion.zsh}; do
+#   source "$file"
+# done
 
-unset config_files updated_at
+# unset config_files updated_at
+
+
+## From Ubuntu 16.04 (WSL1)
+###############################################################################
+# Zinit: see https://zdharma-continuum.github.io/zinit/wiki/INTRODUCTION/
+###############################################################################
+debug_echo "Loading Zinit..."
+
+### Added by Zinit's installer
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+if [[ ! -f $ZINIT_HOME/zinit.zsh ]]; then
+    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+    # command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+    # command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" \
+    [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME" \
+        && print -P "%F{33} %F{34}Installation successful to ${ZINIT_HOME}.%f%b" \
+        || print -P "%F{160} The clone has failed.%f%b"
+fi
+
+source "${ZINIT_HOME}/zinit.zsh"
+
+# If you source zinit.zsh after compinit, add the following snippet after sourcing zinit.zsh:
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Upgrade outdated zsh (ERROR: A plugin named zsh-users/zsh already exists, aborting.)
+# zinit pack"5.9" for zsh
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+### End of Zinit's installer chunk
+
+############
+# starship
+############
+# Load after .localrc so KUBE_CONTEXT will available
+# !NOTE: `hash` can't use to check command exists on zsh, see https://www.topbug.net/blog/2016/10/11/speed-test-check-the-existence-of-a-command-in-bash-and-zsh/
+(( $+commands[starship] )) && debug_echo "Loading starship..." && eval "$(starship init zsh)"
+
+# !BUG: Can't download starship from gh-r anymore.
+# # Load starship theme
+# zinit ice as"command" from"gh-r" \ # `starship` binary as command, from github release
+#           atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \ # starship setup at clone(create init.zsh, completion)
+#           atpull"%atclone" src"init.zsh" # pull behavior same as clone, source init.zsh
+zinit light starship/starship
+
+##########################
+# OMZ Libs and Plugins   #
+##########################
+
+# IMPORTANT:
+# Ohmyzsh plugins and libs are loaded first as some these sets some defaults which are required later on.
+# Otherwise something will look messed up
+# ie. some settings help zsh-autosuggestions to clear after tab completion
+
+setopt promptsubst
+
+# Loading tmux first, to prevent jumps when tmux is loaded after .zshrc
+# It will only be loaded on first start
+# zinit ice atinit"
+#         ZSH_TMUX_FIXTERM=true;
+#         ZSH_TMUX_AUTOSTART=true;
+#         ZSH_TMUX_AUTOCONNECT=true;"
+# zinit snippet OMZP::tmux
+
+	# OMZL::directories.zsh \
+	# OMZL::git.zsh \
+	# OMZL::history.zsh \
+	# OMZL::spectrum.zsh \
+	# OMZP::git \
+    # atload"
+    #     alias gcd='gco dev'
+    # " \
+
+	# OMZL::termsupport.zsh \
+
+	# OMZL::key-bindings.zsh \
+
+zinit wait lucid for \
+	OMZL::clipboard.zsh \
+	OMZL::compfix.zsh \
+	OMZL::completion.zsh \
+	OMZL::correction.zsh \
+    atload"
+        alias ..='cd ..'
+        alias ...='cd ../..'
+        alias ....='cd ../../..'
+        alias .....='cd ../../../..'
+    " \
+	OMZL::directories.zsh \
+	OMZL::grep.zsh \
+	OMZL::key-bindings.zsh \
+	# OMZP::fzf \
+    # atload"
+    #     alias dcupb='docker-compose up --build'
+    # " \
+	# OMZP::docker-compose \
+	# as"completion" \
+    # OMZP::docker/_docker \
+    # djui/alias-tips \
+    # hlissner/zsh-autopair \
+    # chriskempson/base16-shell \
+
+#####################
+# PLUGINS           #
+#####################
+# @source: https://github.com/crivotz/dot_files/blob/master/linux/zplugin/zshrc
+
+# IMPORTANT:
+# These plugins should be loaded after ohmyzsh plugins
+
+zinit wait lucid for \
+    light-mode atinit"ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20" atload"!_zsh_autosuggest_start" \
+        zsh-users/zsh-autosuggestions \
+    light-mode atinit"typeset -gA FAST_HIGHLIGHT; FAST_HIGHLIGHT[git-cmsg-len]=100; zpcompinit; zpcdreplay" \
+        zdharma/fast-syntax-highlighting \
+    light-mode blockf atpull'zinit creinstall -q .' \
+    atinit"
+        zstyle ':completion:*' completer _expand _complete _ignored _approximate
+        zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+        zstyle ':completion:*' menu select=2
+        zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+        zstyle ':completion:*:descriptions' format '-- %d --'
+        zstyle ':completion:*:processes' command 'ps -au$USER'
+        zstyle ':completion:complete:*:options' sort false
+        zstyle ':fzf-tab:complete:_zlua:*' query-string input
+        zstyle ':completion:*:*:*:*:processes' command 'ps -u $USER -o pid,user,comm,cmd -w -w'
+        zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview=$extract'ps --pid=$in[(w)1] -o cmd --no-headers -w -w' --preview-window=down:3:wrap
+        zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract'exa -1 --color=always ${~ctxt[hpre]}$in'
+    " \
+        zsh-users/zsh-completions \
+    bindmap"^R -> ^H" atinit"
+        zstyle :history-search-multi-word page-size 10
+        zstyle :history-search-multi-word highlight-color fg=red,bold
+        zstyle :plugin:history-search-multi-word reset-prompt-protect 1
+    " \
+        zdharma/history-search-multi-word \
+    reset \
+    atclone"local P=${${(M)OSTYPE:#*darwin*}:+g}
+            \${P}sed -i \
+            '/DIR/c\DIR 38;5;63;1' LS_COLORS; \
+            \${P}dircolors -b LS_COLORS > c.zsh" \
+    atpull'%atclone' pick"c.zsh" nocompile'!' \
+    atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”' \
+    	trapd00r/LS_COLORS
+
+    # atload'bindkey "$terminfo[kcuu1]" history-substring-search-up; bindkey "$terminfo[kcud1]" history-substring-search-down' \
+    #     zsh-users/zsh-history-substring-search
+
+# ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+# zinit ice wait"0a" lucid atload"_zsh_autosuggest_start"
+# zinit light zsh-users/zsh-autosuggestions
+
+# zinit ice wait"0b" lucid atload'bindkey "$terminfo[kcuu1]" history-substring-search-up; bindkey "$terminfo[kcud1]" history-substring-search-down'
+# zinit light zsh-users/zsh-history-substring-search
+# atload"
+#     bindkey '^[[A' history-substring-search-up;
+#     bindkey '^[[B' history-substring-search-down;
+#     bindkey -M vicmd 'k' history-substring-search-up;
+#     bindkey -M vicmd 'j' history-substring-search-down;
+# " \
+
+# zinit ice wait"0b" lucid bindmap'^R -> ^H' atinit'zstyle ":history-search-multi-word" page-size "10"; zstyle ":history-search-multi-word" highlight-color "fg=red,bold";'
+# zinit load zdharma/history-search-multi-word
+#
+
+# TAB COMPLETIONS
+# zinit ice wait"0b" lucid blockf
+# zinit light zsh-users/zsh-completions
+
+# Find a way to change after syntax is loaded
+# FAST_THEME_NAME=spa
+# zinit ice wait"0c" lucid atinit"typeset -gA FAST_HIGHLIGHT; FAST_HIGHLIGHT[git-cmsg-len]=100; zpcompinit; zpcdreplay"
+# zinit light zdharma/fast-syntax-highlighting
+
+
+# zinit wait lucid light-mode for \
+#   atinit"zicompinit; zicdreplay" \
+#       zdharma-continuum/fast-syntax-highlighting \
+#   atload"_zsh_autosuggest_start" \
+#       zsh-users/zsh-autosuggestions \
+#   blockf atpull'zinit creinstall -q .' \
+#       zsh-users/zsh-completions
+
+# # zinit wait lucid for \
+# zinit for \
+#   PZTM::environment \
+#   PZTM::helper \
+#   PZTM::terminal \
+#   PZTM::history \
+#   PZTM::directory \
+#   PZTM::command-not-found \
+#   OMZP::common-aliases \
+#   OMZP::copypath \
+#   OMZP::cp \
+#   OMZP::encode64 \
+#   OMZP::extract \
+#   OMZP::git \
+#   if"[[ $+commands[sudo] ]]" OMZP::sudo \
+#   if"[[ $+commands[systemd] ]]" OMZP::systemd \
+#   if"[[ $+commands[go] ]]" OMZP::golang \
+#   if"[[ $+commands[npm] ]]" OMZP::npm \
+#       OMZP::/urltools \
+#       pick"zshrc" tcnksm/docker-alias
+
+# # This work
+# # zinit svn wait'!' for \
+# zinit svn wait'!' lucid for \
+#       PZTM::archive \
+#       PZTM::utility
+
+# =================== TESTING ========================
+
+# zinit ice svn wait'!' multisrc"{functions/*}" src"/dev/null" nocompile'!'
+# zinit for \
+#     PZT::modules/utility
+
+
+# zinit ice wait'!' pick"modules/utility/*.zsh"  atload"fpath+=( \$PWD/modules/utility/functions );"
+# zinit load sorin-ionescu/prezto
+
+
+# zinit ice svn multisrc"functions/*" pick"/dev/null"
+# zinit for \
+#   PZT::modules/archive
+
+# zinit ice svn pick"/dev/null" compile"{functions/*}"
+# zinit for \
+#   PZT::modules/archive
+
+# zinit ice svn multisrc"functions/*"
+# # zinit for \
+# #   PZT::modules/utility
+
+# zinit ice svn wait'!' nocompletions \
+#       compile"{functions/*}"
+# zinit ice svn compile"{functions/*}"
+# zinit for \
+#   PZT::modules/utility
+#   PZT::modules/git
+
+# zinit ice atinit'fpath+=($PWD/functions)'
+
+# ###############################################################################
+# # Zplug
+# ###############################################################################
+# export ZPLUG_HOME=$HOME/.zplug
+
+# # Check if zplug is installed
+# if [[ ! -d $ZPLUG_HOME ]]; then
+#   git clone https://github.com/zplug/zplug $ZPLUG_HOME
+# fi
+
+# debug_echo "Loading zplug's init.zsh..."
+# # Essential
+# source ~/.zplug/init.zsh
+
+#  # `update --self`` is obsoleted, see: https://github.com/zplug/zplug/commit/31c380d33a2132beda51e268b72f3a46baf9f0e8
+# debug_echo "Loading zplug hook-build..."
+# zplug "zplug/zplug", hook-build:"zplug --self-manage"
+
+# # ###############################################################################
+# # # oh-my-zsh
+# # ###############################################################################
+# # # debug_echo "Loading oh-my-zsh modules..."
+
+# # ###############################################################################
+# # zsh-users
+# # ###############################################################################
+# # !Note: To specify the order in which packages should be loaded, use the defer
+# # !      tag described in the next section
+# # Set the priority when loading
+# # e.g., zsh-syntax-highlighting must be loaded
+# # after executing compinit command and sourcing other plugins
+# # (If the defer tag is given 2 or above, run after compinit command)
+
+# # # Gathering/developing new completion scripts that are not available in Zsh yet, see https://github.com/zsh-users/zsh-completions
+# # debug_echo "Loading zplug completions..."
+# # zplug "zsh-users/zsh-completions", defer:0 # Completions
+
+# # # ! NOTE: implicit loaded by zplug load, see https://github.com/zplug/zplug/blob/master/base/core/load.zsh#L34
+# # # zplug ...  more plugins
+# # # zplug "compinit" # to trigger compinit -d "${ZPLUG_HOME}/zcompdump"
+# # # or zplug compinit
+
+# # # zplug "zsh-users/zsh-syntax-highlighting", defer:2 # Syntax highlighting on CLI
+# # # Feature-rich Syntax Highlighting for Zsh, see https://github.com/zdharma-continuum/fast-syntax-highlighting
+# # # To elaborate, the relative order of loading the modules would be syntax-highlighting -> history-substring-search -> autosuggestions and prompt.
+# # debug_echo "Loading zplug zdharma-continuum/fast-syntax-highlighting..."
+# # zplug "zdharma-continuum/fast-syntax-highlighting", defer:2 # Syntax highlighting on CLI
+
+# # # Fish shell's history search feature: type in any part of any command from history and then press chosen keys,
+# # # such as the UP and DOWN arrows, to cycle through matches.
+# # # If you want to use zsh-syntax-highlighting along with this plugin, then make sure that you load it before you load this plugin.
+# # # See https://github.com/zplug/zplug/issues/26
+# # debug_echo "Loading zplug zsh-history-substring-search, see See https://github.com/zsh-users/zsh-history-substring-search..."
+# # zplug "zsh-users/zsh-history-substring-search", defer:2
+
+# # # Type some chars from a previous command and hit arrow-up to sort through matching commands from history, see https://github.com/zsh-users/zsh-autosuggestions
+# # zplug "zsh-users/zsh-autosuggestions", defer:3, on:"zsh-users/zsh-completions"
+
+# # plugins
+# debug_echo "Loading zplug k and zsh-bd..."
+# # zplug "Schnouki/git-annex-zsh-completion", at:e87e7db, frozen:1
+# # zplug "lukechilds/zsh-better-npm-completion", at:c20b07c, frozen:1, defer:2
+# ## zplug "lukechilds/zsh-better-npm-completion", frozen:1, defer:2
+# # Directory listings for zsh with git features, see https://github.com/supercrabtree/k
+# zplug "supercrabtree/k", frozen:1
+# # Quick ls-replacement with git status (ex: bd 2), see https://github.com/Tarrasch/zsh-bd
+# zplug "tarrasch/zsh-bd", frozen:1 # Jump back to a specific directory, without doing `cd ../../..`
+# # zplug "rupa/z", use:z.sh # Obsoleted: Use fasd instead
+
+# ###############################################################################
+# # Prezto: https://github.com/sorin-ionescu/prezto
+# ###############################################################################
+# debug_echo "Loading prezto modules, see https://github.com/sorin-ionescu/prezto/tree/master/modules#readme..."
+# zplug 'modules/environment', from:prezto # Sets general shell options and defines environment variables.
+
+# ## !NOTE: DO NOT DISABLE MODULES
+
+# # Sets terminal window and tab titles.
+# debug_echo "- Loading prezto terminal, see https://github.com/sorin-ionescu/prezto/tree/master/modules/terminal..."
+# zplug 'modules/terminal', from:prezto, frozen:1
+
+# # Sets history options and defines history aliases.
+# debug_echo "- Loading prezto history, see https://github.com/sorin-ionescu/prezto/tree/master/modules/history..."
+# zplug "modules/history", from:prezto, frozen:1
+
+# # Sets directory options and defines directory aliases.
+# # Options:
+# #   AUTO_CD auto changes to a directory without typing cd.
+# #   AUTO_PUSHD pushes the old directory onto the stack on cd.
+# #   PUSHD_IGNORE_DUPS does not store duplicates in the stack.
+# #   PUSHD_SILENT does not print the directory stack after pushd or popd.
+# #   PUSHD_TO_HOME pushes to the home directory when no argument is given.
+# #   CDABLE_VARS changes directory to a path stored in a variable.
+# #   MULTIOS writes to multiple descriptors.
+# #   EXTENDED_GLOB uses extended globbing syntax.
+# #   CLOBBER does not overwrite existing files with > and >>. Use >! and >>! to bypass.
+# # Aliases
+# #   d prints the contents of the directory stack.
+# #   1 ... 9 changes the directory to the n previous one.
+# debug_echo "- Loading prezto directory, see https://github.com/sorin-ionescu/prezto/tree/master/modules/directory..."
+# zplug "modules/directory", from:prezto, frozen:1
+
+# debug_echo "- Loading prezto command-not-found, see https://github.com/sorin-ionescu/prezto/tree/master/modules/command-not-found..."
+# zplug "modules/command-not-found", from:prezto, frozen:1
+
+# # Provides functions to create, list, and extract archives.
+# # This module must be loaded before the completion module so that the provided completion definitions are loaded automatically by completion module.
+# debug_echo "- Loading prezto archive, see https://github.com/sorin-ionescu/prezto/tree/master/modules/archive..."
+# zplug "modules/archive", from:prezto, frozen:1
+
+# # NOTE: Some of the utilities configured in this module might be provided via GNU utilities with incompatible arguments on non-GNU systems.
+# # In such cases, using gnu-utility module is recommended and it must be loaded before this module.
+# # To elaborate, the relative order of loading the modules would be gnu-utility, utility and completion.
+# debug_echo "- Loading prezto utility. see https://github.com/sorin-ionescu/prezto/tree/master/modules/utility..."
+# zplug 'modules/utility', from:prezto, frozen:1
+
+# # Enhances the Git distributed version control system by providing aliases, functions and by exposing repository status information to prompts.
+# # This module must be loaded before the completion module so that the provided completion definitions are loaded automatically by completion module.
+# # !Note: Git 2.11 is the minimum required version for better git-rev-list and git-submodule support.
+# debug_echo "- Loading prezto git, see https://github.com/sorin-ionescu/prezto/tree/master/modules/git..."
+# zplug "modules/git", from:prezto, frozen:1
+
+# # Loads and configures TAB completion and provides additional completions from the zsh-completions project.
+# # Options
+# #   COMPLETE_IN_WORD complete from both ends of a word.
+# #   ALWAYS_TO_END move cursor to the end of a completed word.
+# #   PATH_DIRS perform path search even on command names with slashes.
+# #   AUTO_MENU show completion menu on a successive TAB press.
+# #   AUTO_LIST automatically list choices on ambiguous completion.
+# #   AUTO_PARAM_SLASH if completed parameter is a directory, add a trailing slash (/).
+# #   EXTENDED_GLOB needed for file modification glob modifiers with compinit.
+# #   MENU_COMPLETE do not autoselect the first completion entry.
+# #   FLOW_CONTROL disable start/stop characters in shell editor.
+# # Variables
+# #   LS_COLORS used by default for Zsh standard style 'list-colors'.
+# # This module must be loaded late after the utility module and all other modules that provide completion definitions.
+# # ! This make TAB very slow on WSL, see https://github.com/sorin-ionescu/prezto/issues/1820
+# # WORKAROUND Disable windows paths with appendWindowsPath in wsl.conf:
+# # https://devblogs.microsoft.com/commandline/automatically-configuring-wsl/
+# debug_echo "- Loading prezto completion, see https://github.com/sorin-ionescu/prezto/tree/master/modules/completion..."
+# zplug "modules/completion", from:prezto, frozen:1, defer:1
+
+
+# # Fasd is a command-line productivity booster, inspired by tools like autojump, z and v,
+# # it offers quick access to files and directories by keeping track of files and directories that were previously accessed.
+# # For shell completion to work, this module must be loaded after the completion module.
+# debug_echo "- Loading prezto fasd, see https://github.com/sorin-ionescu/prezto/blob/master/modules/fasd..."
+# zplug "modules/fasd", from:prezto, frozen:1, defer:2
+
+# # # !BUG: DOES NOT WORK (`no such directory`)
+# # debug_echo "- Loading settings, aliases and zle from ${ZDOTDIR:-$HOME/.zsh}..."
+# # zplug "${ZDOTDIR:-$HOME/.zsh}/settings", from:local, defer:3 # MUST load after modules/fasd
+# # zplug "${ZDOTDIR:-$HOME/.zsh}/aliases", from:local, defer:2
+# # zplug "${ZDOTDIR:-$HOME/.zsh}/zle", from:local, defer:2
+
+# # ## Can manage local plugins
+# # zplug "~/.zsh", from:local
+
+# ## !ENDNOTE: DO NOT DISABLE MODULES
+
+# # Integrates zsh-syntax-highlighting into Prezto.
+# # To elaborate, the relative order of loading the modules would be syntax-highlighting, history-substring-search, autosuggestions and prompt.
+# debug_echo "- Loading prezto syntax-highlighting, see https://github.com/sorin-ionescu/prezto/tree/master/modules/syntax-highlighting..."
+# zplug 'modules/syntax-highlighting', from:prezto, defer:2
+
+# # Integrates zsh-history-substring-search into Prezto, which implements the Fish shell's history search feature,
+# # where the user can type in any part of a previously entered command and press up and down to cycle through matching commands.
+# debug_echo "- Loading prezto history-substring-search, see https://github.com/sorin-ionescu/prezto/tree/master/modules/history-substring-search..."
+# zplug 'modules/history-substring-search', from:prezto, defer:2
+
+# # Integrates zsh-autosuggestions into Prezto, which implements the Fish shell's autosuggestions feature,
+# #  where the user can type in any part of a previously entered command and Zsh suggests commands as you type based on history and completions.
+# debug_echo "- Loading prezto autosuggestions, see https://github.com/sorin-ionescu/prezto/tree/master/modules/autosuggestions..."
+# zplug 'modules/autosuggestions', from:prezto, defer:3
+
+# # Sets editor specific key bindings options and variables.
+# # debug_echo "- Loading prezto editor, see https://github.com/sorin-ionescu/prezto/tree/master/modules/editor..."
+# # zplug 'modules/editor', from:prezto, frozen:1
+
+# # debug_echo "- Loading prezto spectrum..."
+# # zplug "modules/spectrum", from:prezto, frozen:1
+
+# # zplug "modules/gpg", from:prezto, frozen:1
+# # debug_echo "- Loading prezto node..."
+# # zplug "modules/node", from:prezto, frozen:1
+# ##zplug 'modules/osx', from:prezto, frozen:1 # Aliases and functions
+# # zplug 'modules/pacman', from:prezto, frozen:1
+# # debug_echo "- Loading prezto python..."
+# # zplug "modules/python", from:prezto, frozen:1
+# # debug_echo "- Loading prezto rsync..."
+# # zplug "modules/rsync", from:prezto, frozen:1
+# # debug_echo "- Loading prezto ruby..."
+# # zplug "modules/ruby", from:prezto, frozen:1
+# ##zplug "modules/haskell", from:prezto, frozen:1
+# # debug_echo "- Loading prezto ssh..."
+# # zplug "modules/ssh", from:prezto, frozen:1
+# # debug_echo "- Loading prezto tmux..."
+# # zplug "modules/tmux", from:prezto, frozen:1
+
+# # Obsoleted (use starship instead): Loads prompt themes.
+# # debug_echo "- Loading prezto prompt, see https://github.com/sorin-ionescu/prezto/tree/master/modules/prompt..."
+# # zplug "modules/prompt", from:prezto, frozen:1
+
+# debug_echo "Configuring prezto modules..."
+# # Dirty hacks for Prezto for checking if module is loaded doesn't work (fasd tab completion)
+# # @see https://github.com/zplug/zplug/issues/373
+# zstyle ":prezto:module:completion" loaded 'yes'
+
+# zstyle ':prezto:*:*' color 'yes'
+
+# # ############
+# # # Git
+# # ############
+# debug_echo "- Configure prezto:module git..."
+# # Ignore submodules when they are 'dirty', 'untracked', 'all', or 'none'.
+# zstyle ':prezto:module:git:status:ignore' submodules 'all'
+
+# ############
+# # Editor
+# ############
+# debug_echo "- Configure prezto:module editor..."
+# # Set the key mapping style to 'emacs' or 'vi'.
+# zstyle ':prezto:module:editor' key-bindings 'vi'
+
+# # Auto convert .... to ../..
+# zstyle ':prezto:module:editor' dot-expansion 'yes'
+
+# ############
+# # Terminal
+# ############
+# debug_echo "- Configure prezto:module terminal..."
+# # Auto set the tab and window titles.
+# zstyle ':prezto:module:terminal' auto-title 'yes'
+
+# zstyle ':prezto:module:terminal:window-title' format '%n@%m: %s'
+# zstyle ':prezto:module:terminal:tab-title' format '%m: %s'
+# zstyle ':prezto:module:terminal:multiplexer-title' format '%s'
+
+# ############
+# # SSH
+# ############
+# # Load default identities
+# zstyle ':prezto:module:ssh:load' identities 'id_rsa' 'id_github'
+
+# ############
+# # Completion
+# ############
+# debug_echo "Loading zstyle completions..."
+
+# # Matches case insensitive for lowercase
+# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# # Pasting with tabs doesn't perform completion
+# zstyle ':completion:*' insert-tab pending
+
+# # Forces zsh to realize new commands
+# zstyle ':completion:*' completer _oldlist _expand _complete _match _ignored _approximate
+
+# # Rehash if command not found (possibly recently installed)
+# zstyle ':completion:*' rehash true
+
+# # Menu if nb items > 2
+# zstyle ':completion:*' menu select=2
+
+# ############
+# # Utility
+# # ############
+# # LS_COLORS loaded from .zprofile
+# # To disable ls color, add the following to ${ZDOTDIR:-$HOME}/.zpreztorc.
+# # When coloring is disabled, type indicators (\*, /, =>, @, =, |, %) will be appended to entries.
+# # zstyle ':prezto:module:utility:ls' color 'no'
+
+# # Tab completion in dotfiles directory
+# dotfiles() { cd $DOTFILES/$1; }
+# compctl -f -W $DOTFILES/ dotfiles
+
+# ############
+# # Prompt
+# ############
+# # debug_echo "Loading zplug prompt..."
+# # # # Set the prompt theme to load.
+
+# # # Async for zsh, used by pure
+# # zplug "mafredri/zsh-async", from:github, defer:0 # Load this first
+
+# # # See https://github.com/sindresorhus/pure
+# # # zplug "mafredri/zsh-async", from:github, defer:0  # Load this first
+# # # zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
+
+# # # TrieuNK: customized theme
+# # zplug "${ZDOTDIR:-$HOME/.zsh}/themes", use:prompt_pure_setup, from:local, as:theme
+# # # zplug "nobitagamer/pure", at:trieunk, use:pure.zsh, from:github, as:theme
+
+# # # Official https://github.com/spaceship-prompt/spaceship-prompt
+# # # zplug "spaceship-prompt/spaceship-prompt", use:spaceship.zsh, from:github, as:theme
+# # # See https://github.com/spaceship-prompt/spaceship-prompt/blob/master/docs/options.md
+# # SPACESHIP_KUBECONTEXT_SHOW=true
+
+# # # See https://github.com/caiogondim/bullet-train.zsh
+# # # setopt prompt_subst # Make sure prompt is able to be generated properly.
+# # # zplug "caiogondim/bullet-train.zsh", use:bullet-train.zsh-theme, defer:3 # defer until other plugins like oh-my-zsh is loaded
+# # # ZSH_THEME="bullet-train"
+
+# # # Load theme file
+# # zstyle ':prezto:module:prompt' theme 'pure'
+# # # zstyle ':prezto:module:prompt' theme 'anishathalye'
+# # # zstyle ':prezto:module:prompt' theme 'ayk'
+# # # zstyle ':prezto:module:prompt' theme 'squeak'
+# # # zstyle ':prezto:module:prompt' theme 'sorin'
+
+# # # Theme Settings
+# # # See https://github.com/sindresorhus/pure/issues/24
+# # PURE_CMD_MAX_EXEC_TIME=1
+# # # PURE_GIT_UNTRACKED_DIRTY=0 # Do not include untracked files in dirtiness check. Mostly useful on large repos (like WebKit), this will clear startup time.
+# # PURE_PROMPT_SYMBOL="λ"
+
+# # zstyle ':prezto:module:prompt' theme 'spaceship'
+# # ===== Base16 Shell
+# # zplug "chriskempson/base16-shell", frozen:1 # Base16 for Shells https://github.com/chriskempson/base16
+# # BASE16_SCHEME="default"
+# # BASE16_SHELL="$XDG_CONFIG_HOME/plugins/base16/base16-$BASE16_SCHEME.dark.sh"
+# # [[ -s $BASE16_SHELL ]] && . $BASE16_SHELL
+
+# # Theme Settings
+# # Using awesome patched font
+# # # POWERLEVEL9K_MODE='awesome-patched'
+# # # POWERLEVEL9K_MODE='nerdfont-complete'
+
+# # # POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
+# # # POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status anaconda time)
+
+# # #POWERLEVEL9K_CUSTOM_TIME_FORMAT="%D{\uf017 %H:%M:%S}"
+# # POWERLEVEL9K_TIME_FORMAT="%D{\uf017 %H:%M \uf073 %d.%m.%y}"
+# # # POWERLEVEL9K_ANACONDA_LEFT_DELIMITER=''
+# # # POWERLEVEL9K_ANACONDA_RIGHT_DELIMITER=''
+# # # POWERLEVEL9K_ANACONDA_BACKGROUND=244
+# # # POWERLEVEL9K_ANACONDA_FOREGROUND="black"
+
+# # POWERLEVEL9K_CHANGESET_HASH_LENGTH=7
+# # # POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"
+# # # POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
+# # POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+# # POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=""
+# # # POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX=' \u03bb ' # " λ "
+# # POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX=' \u276f ' # " ❯ "
+
+# # zstyle ':prezto:module:prompt' theme 'powerlevel9k'
+
+# # zplug "pxgamer/9070c3dbd6483d69a4b376f9dbcb9e62", use:starship.zsh, from:gist, as:theme
+
+# debug_echo "Checking for installed zplug modules..."
+# if ! zplug check --verbose; then
+#  printf "Install? [y/N]: "
+#  if read -q; then
+#    echo; zplug install
+#  fi
+# fi
+
+# # See https://github.com/cmderdev/cmder/issues/1044
+# # For anyone ran into the same issue with index lock, there's a workaround that disabling
+# # Settings -> Git Extensions -> Performance -> Show number of changed files on commit button
+# # so that Git Extensions won't call git status as soon as any file updates which blocking the
+# # current processing git commands and introducing the lock.
+# debug_echo "Loading zplug modules..."
+# # ZPLUG_USE_CACHE=false
+# ZPLUG_LOG_LOAD_SUCCESS=false
+# # Defaults to false. If true, zplug spit the log about its failure operation out to file (you can see it with zplug --log).
+# ZPLUG_LOG_LOAD_FAILURE=true
+# zplug load --verbose
+# # zplug load
+
+# # ! This fix prezto completion TAB very slow on WSL, see https://github.com/sorin-ionescu/prezto/issues/1820
+# # WORKAROUND Disable windows paths with appendWindowsPath in wsl.conf:
+# # https://devblogs.microsoft.com/commandline/automatically-configuring-wsl/
+# unsetopt PATH_DIRS
+
+# # load shell bookmarks
+# if [[ -f ${ZDOTDIR:-$HOME/.zsh}/shell_bookmarks.zsh ]]; then
+#   debug_echo "Loading shell bookmarks..."
+#   source ${ZDOTDIR:-$HOME/.zsh}/shell_bookmarks.zsh
+#   alias bookmarks="vim ${ZDOTDIR:-$HOME/.zsh}/shell_bookmarks.zsh"
+# fi
+
+# ###############################################################################
+# # Neovim Pane Switching
+# ###############################################################################
+# # vim
+# debug_echo "Loading Neovim Pane Switching..."
+# if (( $+commands[nvim] )); then
+#   alias vim=nvim
+#   alias vi=nvim
+# else
+#   alias vi=vim
+# fi
+
+# # only defined in neovim libvterm
+# if [[ -n $NVIM_LISTEN_ADDRESS ]]; then
+
+#   _nvr_up()    { nvr -c 'TmuxNavigateUp' }
+#   _nvr_right() { nvr -c 'TmuxNavigateRight' }
+#   _nvr_down()  { nvr -c 'TmuxNavigateDown' }
+#   _nvr_left()  { nvr -c 'TmuxNavigateLeft' }
+#   zle -N nvr_up _nvr_up
+#   zle -N nvr_right _nvr_right
+#   zle -N nvr_down _nvr_down
+#   zle -N nvr_left _nvr_left
+#   bindkey '^K' nvr_up
+#   bindkey '^L' nvr_right
+#   bindkey '^J' nvr_down
+#   bindkey '^H' nvr_left
+
+#   sp () { nvr -o $@ }
+#   vsp () { nvr -O $@ }
+#   ds() { nvr -c "DirectionalSplit $@" }
+
+#   alias nvim=nvr
+#   alias vim=nvr
+#   alias vi=nvr
+#   export EDITOR=nvr
+
+#   command_not_found_handler() {
+#     if [[ "$@" =~ ^: ]]; then
+#       nvr --remote-send "<C-\\><C-n>${@}<CR>"
+#     else
+#       return 127
+#     fi
+#   }
+
+#   fe() { nvr --remote-send "<esc><esc>:GitFZF $PWD<cr>" }
+
+# elif [[ -n $TMUX ]]; then
+#   alias ':q'='tmux kill-pane'
+# fi
+
+# ###############################################################################
+# # vim fzf
+# ###############################################################################
+# if [[ -f ~/.fzf.zsh ]]; then
+#   debug_echo "Loading fzf..."
+#   source ~/.fzf.zsh
+#   export FZF_COMPLETION_TRIGGER='jk'
+
+#   export FZF_DEFAULT_COMMAND="$(which rg_git_list); rg_git_list"
+#   export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+
+#   export FZF_DEFAULT_OPTS='--ansi -x -m --bind=alt-k:up,alt-j:down'
+#   bindkey '^F' fzf-file-widget
+# fi
+
+# ###############################################################################
+# # Special Settings
+# ###############################################################################
+# debug_echo "Loading special settings..."
+# [[ -f "$HOME/.zshrc.os" ]] && source "$HOME/.zshrc.os"         # OS Specific
+# [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"   # Local
+# [[ -f "$HOME/.secret_zshrc" ]] && source "$HOME/.secret_zshrc" # Secret!
+
+###############################################################################
+# direnv (use smartcd instead)
+###############################################################################
+# TODO(aleks, 08/13/17): too slow
+# if (( $+commands[direnv] )); then
+#   eval "$(direnv hook zsh)"
+# fi
 
 # use .localrc for SUPER SECRET CRAP that you don't
 # want in your public, versioned repo.
 # shellcheck disable=SC1090
-[ -f ~/.localrc ] && . ~/.localrc
+debug_echo "Loading local profile..."
+[ -f $HOME/.localrc ] && . $HOME/.localrc
+
+if [[ -o INTERACTIVE && ! -o LOGIN ]]; then
+  _startup_time_prompt '\x1b[35m'  # purple
+fi
+
+debug_echo "Loaded .zshrc"

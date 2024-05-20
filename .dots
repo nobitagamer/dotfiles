@@ -1,4 +1,5 @@
-#!/bin/bash -i
+#!/bin/bash
+# Don't use interactive mode as a hash-bang!, see https://stackoverflow.com/questions/6431741/how-to-stop-a-zsh-script-from-being-suspended-tty-output
 
 # Colors as per: http://www.tldp.org/LDP/abs/html/colorizing.html
 
