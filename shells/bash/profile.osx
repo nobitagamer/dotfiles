@@ -26,15 +26,16 @@ export ANDROID_HOME=/opt/homebrew/share/android-sdk # Apple Silicon
 # export ANDROID_NDK_ROOT=${ANDROID_HOME}/ndk # Obsoleted by Unity3D 2021.3+
 #export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/16.1.4479499
 
-export OPENSSL_ROOT="$(brew --prefix openssl@1.1)"
+# export OPENSSL_ROOT="$(brew --prefix openssl@1.1)"
 # See https://github.com/pyenv/pyenv/issues/1067#issuecomment-472798576
-export PATH=$OPENSSL_ROOT/bin:/opt/local/bin:/opt/local/sbin:$PATH
+# export PATH=$OPENSSL_ROOT/bin:/opt/local/bin:/opt/local/sbin:$PATH
+export PATH=/usr/local/bin:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:$PATH
 export MANPATH=/opt/local/share/man:$MANPATH
 
 # Rehash already done by nodenv-package-rehash
 if which rbenv > /dev/null; then eval "$(rbenv init - --no-rehash)"; fi
 
-export PATH="$(brew --prefix icu4c)/bin:$PATH"
-export PATH="$(brew --prefix icu4c)/sbin:$PATH"
+# export PATH="$(brew --prefix icu4c)/bin:$PATH"
+# export PATH="$(brew --prefix icu4c)/sbin:$PATH"
 
 echo '.profile loaded successfully.'
