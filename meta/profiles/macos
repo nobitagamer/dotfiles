@@ -1,3 +1,4 @@
+brew
 homebrew
 git
 ruby
@@ -7,7 +8,8 @@ ssh
 shell_common
 bash
 bash.osx
+lsd
+nano
 zsh.osx
 vscode.osx
 unity3d.osx
-nano.yaml

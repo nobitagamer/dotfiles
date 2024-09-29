@@ -3,6 +3,7 @@ git
 dev
 node
 ruby
+brew
 brew.linux
 python
 binaries.linux
@@ -12,5 +13,5 @@ bash.wsl
 zsh.linux
 vim.linux
 tmux.linux
-lsd.yaml
-nano.yaml
+lsd
+nano

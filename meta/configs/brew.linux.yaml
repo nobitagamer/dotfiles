@@ -4,16 +4,12 @@
     - libgnutls-openssl27
 
 - brew:
-    - fzf
-    - todo-txt
-    - gcc
     # Require libs for pyenv doctor -v
     - readline
     - sqlite3
     # Update to latest openssl for python-pyenv-doctor
     # - openssl@1.1
     # - neofetch # Ubuntu 16.04 only
-    - fastfetch
 
 - shell++:
   - description: Build and install latest curl on Ubuntu 16.04

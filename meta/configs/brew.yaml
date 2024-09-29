@@ -1,0 +1,5 @@
+- brew:
+    - fzf
+    - todo-txt
+    - gcc
+    - fastfetch

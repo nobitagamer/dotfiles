@@ -2,11 +2,12 @@ yum.linux
 shell_common
 bash
 ruby
+brew
 brew.linux
 git
 dev
 node
 python
 binaries.linux
-lsd.yaml
-nano.yaml
+lsd
+nano
