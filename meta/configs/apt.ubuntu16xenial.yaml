@@ -2,19 +2,16 @@
     - - sudo dpkg --configure -a
       - Fix for dpkg was interrupted on Ubuntu 18.04
 
-# - aptget:
-    # Obsoleted by Homebrew
-    # neovim:
-    #   ppa_source: 'ppa:neovim-ppa/stable'
-    # git:
-    #   ppa_source: 'ppa:git-core/ppa'
-    # Obsoleted by Homebrew, use zoxide from zinit instead
-    # fasd:
-    #   ppa_source: 'ppa:aacebedo/fasd'
-    # Obsoleted by Homebrew, use fzf instead
-    # hstr:
-    #   ppa_source: 'ppa:ultradvorka/ppa'
-    # deadsnakes: # Python 3.9+
+- aptget:
+    neovim:
+      ppa_source: 'ppa:neovim-ppa/stable'
+    git:
+      ppa_source: 'ppa:git-core/ppa'
+    fasd:
+      ppa_source: 'ppa:aacebedo/fasd'
+    hstr:
+      ppa_source: 'ppa:ultradvorka/ppa'
+    # python3: # Python 3.9+
     #   ppa_source: 'ppa:deadsnakes/ppa'
 # - aptget:
 #     fish:
@@ -30,10 +27,8 @@
     - jq
     - ccze
     - ncdu
-    - mise
-    - fzf
 - aptget:
-    # - python-pip
+    - python-pip
     - python3-pip
     - ruby
 - aptget:

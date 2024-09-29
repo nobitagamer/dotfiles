@@ -32,6 +32,9 @@
       - Re-link tcl headers
 - brew:
     - neovim
+- aptget:
+    # See https://github.com/fsharp/zarchive-vim-fsharp/issues/96#issuecomment-1194243502
+    - python3-pynvim
 - shell++:
     # - - pip2 install neovim
     #   - Installing Python 2 NeoVim plugin

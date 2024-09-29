@@ -238,6 +238,7 @@
 
       # Android SDK build tools
       # echo y | sdkmanager "build-tools;30.0.2" # 11/13/2020 require build tools m29
+      echo y | sdkmanager "build-tools;30.0.3" # 21/05/2024: Latest supported build-tools version is 30.0.3
       echo y | sdkmanager "build-tools;33.0.0"
       echo y | sdkmanager "build-tools;34.0.0"
 

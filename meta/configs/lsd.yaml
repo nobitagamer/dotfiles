@@ -1,0 +1,11 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+- link:
+    ~/.config/lsd/config.yaml: apps/lsd/config.yaml
+    # ~/.config/lsd/icons.yaml: apps/lsd/icons.yaml
+
+- brew:
+    - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)

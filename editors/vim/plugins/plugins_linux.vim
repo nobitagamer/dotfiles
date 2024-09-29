@@ -5,7 +5,8 @@ source ~/.vim/plugins_shared.vim
 call plug#end()
 
 if has('nvim')
-	let g:deoplete#enable_smart_case = 1
+	" let g:deoplete#enable_smart_case = 1
+	call deoplete#custom#option("smart_case", 1)
 	let g:deoplete#enable_at_startup = 1
 
 	inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"

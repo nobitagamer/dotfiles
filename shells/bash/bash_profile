@@ -41,7 +41,7 @@ BASHDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/bash"
 export PKG_CONFIG_PATH=/usr/share/pkgconfig:$PKG_CONFIG_PATH
 
 # *********************************
-#   Load Bash-it                  *
+#   Load Bash-it (+5s)            *
 # *********************************
 
 # Path to the bash it configuration
@@ -107,11 +107,11 @@ export SCM_GIT_IGNORE_UNTRACKED=true
 # Uncomment this to make Bash-it create alias reload.
 # export BASH_IT_RELOAD_LEGACY=1
 
-# Load Bash It in Interactive shell only
-if [[ "$-" =~ 'i' ]] && [ -f "$BASH_IT"/bash_it.sh ]; then
-  debug_echo "Loading bash_it..."
-  source "$BASH_IT"/bash_it.sh
-fi
+# # Load Bash It in Interactive shell only
+# if [[ "$-" =~ 'i' ]] && [ -f "$BASH_IT"/bash_it.sh ]; then
+#   debug_echo "Loading bash_it..."
+#   source "$BASH_IT"/bash_it.sh
+# fi
 
 # *********************************
 #   End Bash-it                  *
@@ -166,19 +166,26 @@ fi;
 # set PATH so it includes user's private bin directories
 PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
-[ -r "$HOME/.smartcd_config" ] && ( [ -n $BASH_VERSION ] || [ -n $ZSH_VERSION ] ) && source ~/.smartcd_config
+# !OBSOLETED: use direnv instead
+# [ -r "$HOME/.smartcd_config" ] && ( [ -n $BASH_VERSION ] ) && source ~/.smartcd_config
+# See https://github.com/direnv/direnv/issues/68#issuecomment-1517041422
+# export DIRENV_LOG_FORMAT=""
+debug_echo "Loading direnv..."
+# See https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-from-a-bash-script
+if command -v direnv 2>&1 >/dev/null; then
+  # See https://askubuntu.com/a/1022440 (readlink /proc/$$/exe`: does NOT work on macOS)
+  _shell_type=$(sh -c 'ps -p $$ -o ppid=' | xargs ps -o comm= -p)
+  eval "$(direnv hook ${_shell_type#-})"
+fi
 
 # Init Linuxbrew, now is Homebrew
 # test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
 # test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-
-if [[ -d $HOME/.linuxbrew/bin ]] || [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
+# !NOTE: MUST use default install path to allows the use of most binary packages (bottles)
+# See https://docs.brew.sh/Homebrew-on-Linux
+if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
   debug_echo "Loading linuxbrew..."
-  if [[ -d $HOME/.linuxbrew/bin ]]; then
-    eval $($HOME/.linuxbrew/bin/brew shellenv)
-  elif [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
-    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-  fi
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
   BREW_PREFIX=$(brew --prefix)
   export MANPATH="$BREW_PREFIX/share/man:$MANPATH"
@@ -190,46 +197,60 @@ if [[ -d $HOME/.linuxbrew/bin ]] || [[ -d /home/linuxbrew/.linuxbrew/bin ]]; the
   export LDFLAGS="-L$OPENSSL_PREFIX/lib"
 fi
 
-# Init Pyenv
-if [ -d "$HOME/.pyenv/plugins/pyenv-virtualenv" ]; then
-  debug_echo "Loading pyenv..."
-  export PATH="$HOME/.pyenv/bin:$PATH"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-fi
-
-# Init rbenv
-if [ -d "$HOME/.rbenv" ]; then
-  debug_echo "Loading rbenv..."
-  export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
-  eval "$(rbenv init -)"
-fi
-
-############
-# Node.js
-############
-if [[ -d $HOME/.nodenv ]]; then
-  debug_echo "Loading nodenv..."
-  export NODENV_SHIMS=$HOME/.nodenv/shims
-  export PATH="$HOME/.nodenv/bin:$NODENV_SHIMS:$PATH"
-
-  eval "$(nodenv init -)"
-fi
-
 ############
 # fzf
 ############
-[ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
+# Ubuntu 16.04 only
+# [ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
+debug_echo "Loading fzf..."
+eval "$(fzf --bash)"
+
+# !NOTE: mise inside of direnv (use mise in .envrc), see https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
+# ############
+# # Mise (https://mise.jdx.dev/configuration.html)
+# ############
+# debug_echo "Loading mise..."
+# eval "$(mise activate bash)"
+
+# ############
+# # Pyenv
+# ############
+# if [ -d "$HOME/.pyenv/plugins/pyenv-virtualenv" ]; then
+#   debug_echo "Loading pyenv..."
+#   export PATH="$HOME/.pyenv/bin:$PATH"
+#   eval "$(pyenv init -)"
+#   eval "$(pyenv virtualenv-init -)"
+# fi
+
+# ############
+# # rbenv
+# ############
+# if [ -d "$HOME/.rbenv" ]; then
+#   debug_echo "Loading rbenv..."
+#   export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
+#   eval "$(rbenv init -)"
+# fi
+
+# ############
+# # Node.js
+# ############
+# if [[ -d $HOME/.nodenv ]]; then
+#   debug_echo "Loading nodenv..."
+#   export NODENV_SHIMS=$HOME/.nodenv/shims
+#   export PATH="$HOME/.nodenv/bin:$NODENV_SHIMS:$PATH"
+
+#   eval "$(nodenv init -)"
+# fi
 
 ############
 # ble.sh
 ############
 # NOTE: avoid freeze, see end of this file.
-if [[ -f ~/.local/share/blesh/ble.sh ]]; then
-  debug_echo "Loading ble.sh..."
-  # This lines at the top of .bashrc:
-  [[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh --noattach
-fi
+# if [[ -f ~/.local/share/blesh/ble.sh ]]; then
+#   debug_echo "Loading ble.sh..."
+#   # This lines at the top of .bashrc:
+#   [[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh --noattach
+# fi
 
 # Ensure that a login non-interactive shell has a defined environment.
 shopt -q login_shell && ( [ ! -z "$PS1" ] && [ -s "$HOME/.bashrc" ] ) && source "$HOME/.bashrc"
@@ -290,11 +311,11 @@ debug_echo "Loading local profile..."
 # Load after .localrc so KUBE_CONTEXT will available
 hash starship 2>/dev/null && (debug_echo "Loading starship..." && eval "$(starship init bash)")
 
-# !BUG: hang input when using with screen on macOS, use Ctrl+A \ to kill hung session.
-# This line MUST at the end of .bashrc:
-[[ ${BLE_VERSION-} && "$(uname)" != "Darwin" ]] && ble-attach
+# # !BUG: hang input when using with screen on macOS, use Ctrl+A \ to kill hung session.
+# # This line MUST at the end of .bashrc:
+# [[ ${BLE_VERSION-} && "$(uname)" != "Darwin" ]] && ble-attach
 
-if [[ -f ~/.local/share/blesh/ble.sh ]] && [[ "$(uname)" == "Darwin" ]]; then
-  debug_echo 'NOTE: load ble.sh by source to avoid freeze input caused by XShell with `screen -ARR -l -s -$SHELL`...'
-  [[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh
-fi
+# if [[ -f ~/.local/share/blesh/ble.sh ]] && [[ "$(uname)" == "Darwin" ]]; then
+#   debug_echo 'NOTE: load ble.sh by source to avoid freeze input caused by XShell with `screen -ARR -l -s -$SHELL`...'
+#   [[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh
+# fi

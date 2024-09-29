@@ -164,24 +164,24 @@ fi
 ############
 # test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
 # test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-if [[ -d $HOME/.linuxbrew/bin ]] || [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
+# !NOTE: MUST use default install path to allows the use of most binary packages (bottles)
+# See https://docs.brew.sh/Homebrew-on-Linux
+if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
   debug_echo "Loading linuxbrew..."
-  if [[ -d $HOME/.linuxbrew/bin ]]; then
-    eval $($HOME/.linuxbrew/bin/brew shellenv)
-  elif [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
-    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-  fi
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
   BREW_PREFIX=$(brew --prefix)
   export MANPATH="$BREW_PREFIX/share/man:$MANPATH"
   export INFOPATH="$BREW_PREFIX/share/info:$INFOPATH"
 
-  OPENSSL_PREFIX=$(brew --prefix openssl@1.1)
-  export CFLAGS="-I$OPENSSL_PREFIX/include"
-  export CPPFLAGS="-I$OPENSSL_PREFIX/include"
-  export LDFLAGS="-L$OPENSSL_PREFIX/lib"
+  ## Obsoleted
+  # OPENSSL_PREFIX=$(brew --prefix openssl@1.1)
+  # export CFLAGS="-I$OPENSSL_PREFIX/include"
+  # export CPPFLAGS="-I$OPENSSL_PREFIX/include"
+  # export LDFLAGS="-L$OPENSSL_PREFIX/lib"
 fi
 
+## Use Mise instead, see https://gist.github.com/AntonFriberg/e30c8bf64fbd07d3199369db551da5ad
 # ############
 # # Python
 # ############
@@ -303,7 +303,9 @@ export ZPLUG_CACHE_DIR=$XDG_CACHE_HOME/zplug
 ############
 # fzf
 ############
-[ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
+# Ubuntu 16.04 only
+# [ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
+source <(fzf --zsh)
 
 ###############################################################################
 # Miscellaneous

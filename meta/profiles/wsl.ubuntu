@@ -12,4 +12,4 @@ bash.wsl
 zsh.linux
 vim.linux
 tmux.linux
-smartcd.linux
+lsd.yaml

@@ -11,8 +11,9 @@
     - readline
     - sqlite3
     # Update to latest openssl for python-pyenv-doctor
-    - openssl@1.1
-    - neofetch # Ubuntu 16.04
+    # - openssl@1.1
+    # - neofetch # Ubuntu 16.04 only
+    - fastfetch
 
 - shell++:
   - description: Build and install latest curl on Ubuntu 16.04
@@ -41,7 +42,7 @@
 
 - shell++:
   - description: Install latest fzf on Ubuntu 16.04/18.04
-    # condition: '[ "$(. /etc/os-release; echo $VERSION_ID)" = "16.04" ]'
+    condition: '[ "$(. /etc/os-release; echo $VERSION_ID)" = "16.04" ]'
   - stdout: true
     stderr: true
     command: |

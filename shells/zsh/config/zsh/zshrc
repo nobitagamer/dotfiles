@@ -13,6 +13,7 @@
 
 # This just makes my username disappear from prompt
 export DEFAULT_USER="trieunk"
+alias ls='lsd' # Set ls to homebrew `lsd`, used by zinit's PZTM::utility module
 
 ###############################################################################
 # Zinit: see https://zdharma-continuum.github.io/zinit/wiki/INTRODUCTION/
@@ -44,6 +45,10 @@ zinit light-mode for \
     zdharma-continuum/zinit-annex-rust
 
 ### End of Zinit's installer chunk
+
+# A feature-rich mixture of autoenv and smartcd: enter/leave events, nesting, stashing (Zsh-only).
+# See https://github.com/Tarrasch/zsh-autoenv?tab=readme-ov-file
+zinit load Tarrasch/zsh-autoenv
 
 ############
 # starship
@@ -234,7 +239,6 @@ zinit svn wait'!' lucid for \
 # zinit ice wait'!' pick"modules/utility/*.zsh"  atload"fpath+=( \$PWD/modules/utility/functions );"
 # zinit load sorin-ionescu/prezto
 
-
 # zinit ice svn multisrc"functions/*" pick"/dev/null"
 # zinit for \
 #   PZT::modules/archive
@@ -398,12 +402,22 @@ zinit svn wait'!' lucid for \
 # debug_echo "- Loading prezto completion, see https://github.com/sorin-ionescu/prezto/tree/master/modules/completion..."
 # zplug "modules/completion", from:prezto, frozen:1, defer:1
 
-
+# !OBSOLETED: use zoxide instead, see https://github.com/ajeetdsouza/zoxide/issues/175
 # # Fasd is a command-line productivity booster, inspired by tools like autojump, z and v,
 # # it offers quick access to files and directories by keeping track of files and directories that were previously accessed.
 # # For shell completion to work, this module must be loaded after the completion module.
 # debug_echo "- Loading prezto fasd, see https://github.com/sorin-ionescu/prezto/blob/master/modules/fasd..."
 # zplug "modules/fasd", from:prezto, frozen:1, defer:2
+
+############
+# zoxide (better z/fasd), see https://github.com/ajeetdsouza/zoxide/issues/175
+############
+zinit ice wait"2" as"command" from"gh-r" lucid \
+  mv"zoxide*/zoxide -> zoxide" \
+  atclone"./zoxide init zsh > init.zsh" \
+  atpull"%atclone" src"init.zsh" nocompile'!' \
+  atload'export _ZO_ECHO=1; eval "$(_ZO_ECHO=1 zoxide init zsh)"' # See https://github.com/ajeetdsouza/zoxide?tab=readme-ov-file#environment-variables
+zinit light ajeetdsouza/zoxide
 
 # # # !BUG: DOES NOT WORK (`no such directory`)
 # # debug_echo "- Loading settings, aliases and zle from ${ZDOTDIR:-$HOME/.zsh}..."
@@ -717,22 +731,31 @@ zinit svn wait'!' lucid for \
 # direnv (use smartcd instead)
 ###############################################################################
 # TODO(aleks, 08/13/17): too slow
-# if (( $+commands[direnv] )); then
-#   eval "$(direnv hook zsh)"
-# fi
-
-if [[ -o INTERACTIVE && ! -o LOGIN ]]; then
-  _startup_time_prompt '\x1b[35m'  # purple
+# 240929: tested, very fast (use with mise).
+# See https://github.com/direnv/direnv/issues/68#issuecomment-1517041422
+# export DIRENV_LOG_FORMAT=""
+debug_echo "Loading direnv..."
+# See https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-from-a-bash-script
+if command -v direnv 2>&1 >/dev/null; then
+  # See https://askubuntu.com/a/1022440 (readlink /proc/$$/exe`: does NOT work on macOS)
+  _shell_type=$(sh -c 'ps -p $$ -o ppid=' | xargs ps -o comm= -p)
+  eval "$(direnv hook ${_shell_type#-})"
 fi
 
 # Display message of the day
-run-parts /etc/update-motd.d 2>/dev/null
+# run-parts /etc/update-motd.d 2>/dev/null
+
+# See https://gist.github.com/linuswillner/f8c15385e8a88017a70bdc3f18a688a2
+fastfetch
 
 # Use .localrc for SUPER SECRET CRAP that you don't
 # want in your public, versioned repo.
 # shellcheck disable=SC1090
-
 debug_echo "Loading local profile..."
 [ -f $HOME/.localrc ] && . $HOME/.localrc
+
+if [[ -o INTERACTIVE && ! -o LOGIN ]]; then
+  _startup_time_prompt '\x1b[35m'  # purple
+fi
 
 debug_echo "Loaded .zshrc"
