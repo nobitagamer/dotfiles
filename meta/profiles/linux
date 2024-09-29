@@ -12,3 +12,5 @@ zsh.linux
 vim.linux
 tmux.linux
 smartcd.linux
+lsd.yaml
+nano.yaml

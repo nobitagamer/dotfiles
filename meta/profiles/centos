@@ -8,5 +8,5 @@ dev
 node
 python
 binaries.linux
-autoenv
-smartcd.linux
+lsd.yaml
+nano.yaml

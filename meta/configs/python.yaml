@@ -5,19 +5,20 @@
       force: true
 # - link:
 #     ~/.config/zsh/settings/pyenv.zsh: development/python/zsh/settings/pyenv.zsh
-- shell++:
-  - description: Install pyenv
-    condition: '! hash pyenv 2>/dev/null || test -h $(which pyenv)'
-  - stdout: true
-    stderr: true
-    command: |
-      export PATH="$HOME/.pyenv/bin:$PATH"
-      if [ ! -d ~/.pyenv  ]; then
-        curl https://pyenv.run | bash
-      else
-        pyenv update
-      fi
-      pyenv doctor -v
+# Obsoleted by mise
+# - shell++:
+#   - description: Install pyenv
+#     condition: '! hash pyenv 2>/dev/null || test -h $(which pyenv)'
+#   - stdout: true
+#     stderr: true
+#     command: |
+#       export PATH="$HOME/.pyenv/bin:$PATH"
+#       if [ ! -d ~/.pyenv  ]; then
+#         curl https://pyenv.run | bash
+#       else
+#         pyenv update
+#       fi
+#       pyenv doctor -v
 
-      # Fix: re-install correct pip for python 3.5
-      # curl -fsSL https://bootstrap.pypa.io/pip/3.5/get-pip.py | python3.5
+#       # Fix: re-install correct pip for python 3.5
+#       # curl -fsSL https://bootstrap.pypa.io/pip/3.5/get-pip.py | python3.5

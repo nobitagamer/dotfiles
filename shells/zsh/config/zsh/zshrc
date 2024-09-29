@@ -728,7 +728,7 @@ zinit light ajeetdsouza/zoxide
 # [[ -f "$HOME/.secret_zshrc" ]] && source "$HOME/.secret_zshrc" # Secret!
 
 ###############################################################################
-# direnv (use smartcd instead)
+# direnv (replace smartcd)
 ###############################################################################
 # TODO(aleks, 08/13/17): too slow
 # 240929: tested, very fast (use with mise).
