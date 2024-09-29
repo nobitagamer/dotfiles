@@ -38,7 +38,7 @@
 - brew:
   - mas
   - git-extras
-  - git-flow-avh
+  # - git-flow-avh
   - htop
   - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
   # - fish
@@ -52,10 +52,10 @@
   - rsync
   - jq
   # Required by dotnet
-  - mono-libgdiplus
+  # - mono-libgdiplus
   # For git-restore-mtime (replace git-settimes.pl)
   - git-tools
-  - gitversion
+  # - gitversion
   - git-credential-manager # Require for Apple Silicon, see https://github.com/git-ecosystem/git-credential-manager/issues/574
 
 # Support for dedupe.sh, see https://apple.stackexchange.com/questions/69223/how-to-replace-mac-os-x-utilities-with-gnu-core-utilities
