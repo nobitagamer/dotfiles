@@ -3,16 +3,16 @@ if (( ! $+commands[git] )); then
   return 1
 fi
 
-# Use hub (http://hub.github.com/) if available
-if (( $+commands[hub] )); then
-  alias git=hub
-  compdef g=hub
-else
-  compdef g=git
-fi
+# # Use hub (http://hub.github.com/) if available
+# if (( $+commands[hub] )); then
+#   alias git=hub
+#   compdef g=hub
+# else
+#   compdef g=git
+# fi
 
 # conflicts with gpa (GnuPG Privacy Assistant)
-unalias gpa
+unalias gpa 2>/dev/null
 
 # git related aliases
 alias gag='git exec ag'
@@ -39,7 +39,7 @@ alias gs='git status'
 
 # No arguments: `git status`
 # With arguments: acts like `git`
-unalias g
+unalias g 2>/dev/null
 function g() {
   if [[ $# > 0 ]]; then
     git $@
@@ -51,7 +51,7 @@ function g() {
 
 # Allows commit message without typing quotes (can't have quotes in the commit msg though).
 # https://github.com/r00k/dotfiles/blob/master/zsh/functions#L44
-unalias gc
+unalias gc 2>/dev/null
 function gc {
   git commit -m "$*"
 }

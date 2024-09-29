@@ -9,7 +9,7 @@ python
 binaries.linux
 shell_common
 bash
-zsh.linux
+zsh
 vim.linux
 tmux.linux
 smartcd.linux

@@ -10,7 +10,7 @@
     ~/.zshenv: shells/zsh/zshenv
     ~/.config/zsh/.zshenv: shells/zsh/config/zsh/zshenv
     ~/.config/zsh/.zprofile: shells/zsh/config/zsh/zprofile
-    ~/.config/zsh/.zshrc: shells/zsh/config/zsh/zshrc.osx
+    ~/.config/zsh/.zshrc: shells/zsh/config/zsh/zshrc
     ~/.config/zsh/.zlogin: shells/zsh/config/zsh/zlogin
     ~/.config/zsh/.zlogout: shells/zsh/config/zsh/zlogout
     ~/.config/zsh/aliases/aliases.zsh: shells/zsh/config/zsh/aliases/aliases.zsh
@@ -40,7 +40,7 @@
     ~/.config/zsh/functions/spectrum: shells/zsh/config/zsh/functions/spectrum
     ~/.config/zsh/functions/take: shells/zsh/config/zsh/functions/take
     ~/.config/zsh/settings/abbreviations.zsh: shells/zsh/config/zsh/settings/abbreviations.zsh
-    ~/.config/zsh/settings/bindkeys.zsh: shells/zsh/config/zsh/settings/bindkeys.zsh
+    # ~/.config/zsh/settings/bindkeys.zsh: shells/zsh/config/zsh/settings/bindkeys.zsh
     ~/.config/zsh/settings/externals: shells/zsh/config/zsh/settings/externals
     # ~/.config/zsh/settings/fasd.zsh: shells/zsh/config/zsh/settings/fasd.zsh
     ~/.config/zsh/settings/zshsetopts.zsh: shells/zsh/config/zsh/settings/zshsetopts.zsh
@@ -53,5 +53,5 @@
     ~/.config/zsh/zle/last-command.zsh: shells/zsh/config/zsh/zle/last-command.zsh
     ~/.config/zsh/zle/select-history.zsh: shells/zsh/config/zsh/zle/select-history.zsh
     ~/.config/zsh/zle/zleiab.zsh: shells/zsh/config/zsh/zle/zleiab.zsh
-    # ~/.config/plugins/dircolors.extra: shells/plugins/dircolors.extra
-    # ~/.config/plugins/dircolors-solarized/dircolors.256dark: shells/plugins/dircolors-solarized/dircolors.256dark
+    ~/.config/plugins/dircolors.extra: shells/plugins/dircolors.extra
+    ~/.config/plugins/dircolors-solarized/dircolors.256dark: shells/plugins/dircolors-solarized/dircolors.256dark

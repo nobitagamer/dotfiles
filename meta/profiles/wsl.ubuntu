@@ -10,7 +10,7 @@ binaries.linux
 shell_common
 bash
 bash.wsl
-zsh.linux
+zsh
 vim.linux
 tmux.linux
 lsd

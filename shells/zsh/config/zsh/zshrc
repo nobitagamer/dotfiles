@@ -12,29 +12,73 @@
 [[ -o interactive ]] && echo "$(debug_timestamp)This ZSH Shell is an Interactive Shell" || echo "$(debug_timestamp)This ZSH Shell is Not an Interactive Shell"
 
 # This just makes my username disappear from prompt
-export DEFAULT_USER="trieunk"
-alias ls='lsd' # Set ls to homebrew `lsd`, used by zinit's PZTM::utility module
+# export DEFAULT_USER="trieunk"
 
+# # your default editor
+# export EDITOR='code'
+
+# shortcut to this dotfiles path is $DOTFILES
+export DOTFILES="$HOME/.dotfiles"
+
+# your project folder that we can `c [tab]` to
+export PROJECTS="$HOME/Projects"
+
+# all of our zsh files
+typeset -U config_files
+config_files=($XDG_CONFIG_HOME/zsh/**/*.zsh)
+
+# load the path files, see https://zsh.sourceforge.io/Guide/zshguide05.html (Parameter flags and pattern substitutions)
+for file in ${(R)config_files:#*/path.zsh}; do
+  source "$file"
+done
+
+# load everything but the path and completion files
+for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
+  source "$file"
+done
+
+# autoload -Uz compinit
+# typeset -i updated_at=$(date +'%j' -r ${ZDOTDIR:-$HOME}/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ${ZDOTDIR:-$HOME}/.zcompdump 2>/dev/null)
+# if [ $(date +'%j') != $updated_at ]; then
+#   compinit -i # Super slow +14s
+# else
+#   compinit -C -i
+# fi
+
+# load every completion after autocomplete loads
+for file in ${(M)config_files:#*/completion.zsh}; do
+  source "$file"
+done
+
+unset config_files updated_at
+
+
+## From Ubuntu 16.04 (WSL1)
 ###############################################################################
 # Zinit: see https://zdharma-continuum.github.io/zinit/wiki/INTRODUCTION/
 ###############################################################################
 debug_echo "Loading Zinit..."
 
 ### Added by Zinit's installer
-if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+if [[ ! -f $ZINIT_HOME/zinit.zsh ]]; then
     print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
-    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
-    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
-        print -P "%F{33} %F{34}Installation successful.%f%b" || \
-        print -P "%F{160} The clone has failed.%f%b"
+    [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+    # command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+    # command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" \
+    [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME" \
+        && print -P "%F{33} %F{34}Installation successful to ${ZINIT_HOME}.%f%b" \
+        || print -P "%F{160} The clone has failed.%f%b"
 fi
 
-source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
+source "${ZINIT_HOME}/zinit.zsh"
 
-# Upgrade outdated zsh
-zinit pack"5.8" for zsh
+# # If you source zinit.zsh after compinit, add the following snippet after sourcing zinit.zsh:
+# autoload -Uz _zinit
+# (( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Upgrade outdated zsh (ERROR: A plugin named zsh-users/zsh already exists, aborting.)
+# zinit pack"5.9" for zsh
 
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)
