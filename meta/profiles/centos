@@ -1,5 +1,6 @@
 yum.linux
 shell_common
+starship.xshell
 bash
 ruby
 brew

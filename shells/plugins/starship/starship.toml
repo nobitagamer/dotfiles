@@ -30,12 +30,7 @@ disabled = false
 # format = "via [🤖 $version](bold green) "
 
 [git_branch]
-# symbol = "🌱 "
+symbol = "🌱 "
 truncation_length = 4
 truncation_symbol = ""
 ignore_branches = ["master", "main"]
-
-# Use `starship preset nerd-font-symbols>>~/.config/starship.toml` instead
-# # Fix ssh_symbol on XShell
-# [hostname]
-# ssh_symbol = " "

@@ -6,6 +6,7 @@ node
 dev
 ssh
 shell_common
+starship.xshell
 bash
 bash.osx
 lsd

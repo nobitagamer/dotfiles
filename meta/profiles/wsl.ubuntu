@@ -8,6 +8,7 @@ brew.linux
 python
 binaries.linux
 shell_common
+starship
 bash
 bash.wsl
 zsh

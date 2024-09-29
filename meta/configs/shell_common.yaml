@@ -5,7 +5,6 @@
       force: true
 - link:
     ~/.config/common/init_functions.sh: shells/common/init_functions.sh
-    ~/.config/starship.toml: shells/plugins/starship/starship.toml
 
 - shell++:
   - description: Inject init scripts for all users' Login Shell
@@ -14,12 +13,3 @@
     stderr: true
     command: |
       sudo cp ~/.dotfiles/shells/common/init_functions.sh /etc/profile.d/00-dotfiles-init-functions.sh
-
-- shell++:
-  - description: Installing Starship
-    condition: 'true'
-  - stdout: true
-    stderr: true
-    command: |
-      # Install Starship as default for all users, see https://starship.rs/
-      curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
