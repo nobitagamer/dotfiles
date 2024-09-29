@@ -40,19 +40,19 @@
   # - android-commandlinetools # class file version 61.0 (Java 17+)
   - unity-hub
 
-- shell++:
-  - description: Install .NET Core runtime 2.1 required by GitVersion
-    condition: 'true'
-  - stderr: true
-    command: |
-      cat <<- EOF > ~/install-dotnet-2.1.sh
-      #!/bin/bash
+# - shell++:
+#   - description: Install .NET Core runtime 2.1 required by GitVersion
+#     condition: 'true'
+#   - stderr: true
+#     command: |
+#       cat <<- EOF > ~/install-dotnet-2.1.sh
+#       #!/bin/bash
 
-      curl -sSL https://dot.net/v1/dotnet-install.sh | sudo bash /dev/stdin --install-dir /usr/local/share/dotnet --channel 2.1 --runtime aspnetcore
-      EOF
+#       curl -sSL https://dot.net/v1/dotnet-install.sh | sudo bash /dev/stdin --install-dir /usr/local/share/dotnet --channel 2.1 --runtime aspnetcore
+#       EOF
 
-      chmod +x ~/install-dotnet-*
-      ~/install-dotnet-2.1.sh
+#       chmod +x ~/install-dotnet-*
+#       ~/install-dotnet-2.1.sh
 
 - shell++:
   - description: Install Unity3D versions using Unity Hub
@@ -97,8 +97,8 @@
 
       # Usage: install-unity.sh <version> <changeset>
       ~/install-unity.sh 2022.3.20f1 61c2feb0970d # ORC, DT
-      ~/install-unity.sh 2021.3.15f1 e8e88683f834 # DWW
-      ~/install-unity.sh 2021.3.11f1 0a5ca18544bf # DT2, MZ, MAM, SZ/SZ2
+      # ~/install-unity.sh 2021.3.15f1 e8e88683f834 # DWW
+      # ~/install-unity.sh 2021.3.11f1 0a5ca18544bf # DT2, MZ, MAM, SZ/SZ2
 
 - shell++:
   - description: Pre-install default version of Unity3D (Legacy)
@@ -198,52 +198,52 @@
       sudo chown -R $USER:staff ~/.rbenv/gems/2.7.0/gems
       gem pristine --all
 
-- shell++:
-  - description: Pre-install Android SDKs
-    condition: 'true'
-  - stderr: true
-    command: |
-      touch ~/.android/repositories.cfg
+# - shell++:
+#   - description: Pre-install Android SDKs
+#     condition: 'true'
+#   - stderr: true
+#     command: |
+#       touch ~/.android/repositories.cfg
 
-      echo "Accept all licenses..."
+#       echo "Accept all licenses..."
 
-      # Use Java 8 for sdkmanager
-      export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # android-sdk
-      # export JAVA_HOME=$(/usr/libexec/java_home -v 17) # android-commandlinetools
-      export PATH=${JAVA_HOME}/bin:$PATH
+#       # Use Java 8 for sdkmanager
+#       export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # android-sdk
+#       # export JAVA_HOME=$(/usr/libexec/java_home -v 17) # android-commandlinetools
+#       export PATH=${JAVA_HOME}/bin:$PATH
 
-      # yes | sdkmanager --licenses
-      # Can NOT use yes pipe that will cause deadlock
-      sdkmanager --licenses
+#       # yes | sdkmanager --licenses
+#       # Can NOT use yes pipe that will cause deadlock
+#       sdkmanager --licenses
 
-      # mkdir -p /usr/local/share/android-ndk/
+#       # mkdir -p /usr/local/share/android-ndk/
 
-      # For Unity3D 2018.1.0f2
-      # wget -qO- https://dl.google.com/android/repository/android-ndk-r13b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
+#       # For Unity3D 2018.1.0f2
+#       # wget -qO- https://dl.google.com/android/repository/android-ndk-r13b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
 
-      # For Unity3D 2018.3+
-      # wget -qO- https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
+#       # For Unity3D 2018.3+
+#       # wget -qO- https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
 
-      # macOS Catalina https://developer.android.com/studio/projects/install-ndk#specific-version
-      # echo "Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio."
-      # See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
-      # echo y | sdkmanager --install "ndk;16.1.4479499"
+#       # macOS Catalina https://developer.android.com/studio/projects/install-ndk#specific-version
+#       # echo "Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio."
+#       # See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
+#       # echo y | sdkmanager --install "ndk;16.1.4479499"
 
-      # Unity 2019.3 (use built-in dependencies)
-      # echo y | sdkmanager --install "ndk;19.2.5345600"
+#       # Unity 2019.3 (use built-in dependencies)
+#       # echo y | sdkmanager --install "ndk;19.2.5345600"
 
-      echo y | sdkmanager "tools" "platform-tools"
-      echo y | sdkmanager "extras;android;m2repository"
-      echo y | sdkmanager "cmdline-tools;9.0" # JDK 11
+#       echo y | sdkmanager "tools" "platform-tools"
+#       echo y | sdkmanager "extras;android;m2repository"
+#       echo y | sdkmanager "cmdline-tools;9.0" # JDK 11
 
-      # Android SDK build tools
-      # echo y | sdkmanager "build-tools;30.0.2" # 11/13/2020 require build tools m29
-      echo y | sdkmanager "build-tools;30.0.3" # 21/05/2024: Latest supported build-tools version is 30.0.3
-      echo y | sdkmanager "build-tools;33.0.0"
-      echo y | sdkmanager "build-tools;34.0.0"
+#       # Android SDK build tools
+#       # echo y | sdkmanager "build-tools;30.0.2" # 11/13/2020 require build tools m29
+#       echo y | sdkmanager "build-tools;30.0.3" # 21/05/2024: Latest supported build-tools version is 30.0.3
+#       echo y | sdkmanager "build-tools;33.0.0"
+#       echo y | sdkmanager "build-tools;34.0.0"
 
-      # See https://developer.android.com/tools/releases/platforms
-      echo y | sdkmanager "platforms;android-29" # Android 10.0: Required for build AndroidX by Unity
-      echo y | sdkmanager "platforms;android-30" # Android 11.0
-      echo y | sdkmanager "platforms;android-31" # 31/32 Android 12.0
-      echo y | sdkmanager "platforms;android-33" # Android 13.0: Unity3D 2022.3
+#       # See https://developer.android.com/tools/releases/platforms
+#       echo y | sdkmanager "platforms;android-29" # Android 10.0: Required for build AndroidX by Unity
+#       echo y | sdkmanager "platforms;android-30" # Android 11.0
+#       echo y | sdkmanager "platforms;android-31" # 31/32 Android 12.0
+#       echo y | sdkmanager "platforms;android-33" # Android 13.0: Unity3D 2022.3
