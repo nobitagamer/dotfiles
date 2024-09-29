@@ -28,7 +28,7 @@ typeset -U config_files
 config_files=($XDG_CONFIG_HOME/zsh/**/*.zsh)
 
 # load the path files, see https://zsh.sourceforge.io/Guide/zshguide05.html (Parameter flags and pattern substitutions)
-for file in ${(R)config_files:#*/path.zsh}; do
+for file in ${(M)config_files:#*/path.zsh}; do
   source "$file"
 done
 
@@ -78,7 +78,8 @@ source "${ZINIT_HOME}/zinit.zsh"
 # (( ${+_comps} )) && _comps[zinit]=_zinit
 
 # Upgrade outdated zsh (ERROR: A plugin named zsh-users/zsh already exists, aborting.)
-# zinit pack"5.9" for zsh
+# !BUG: stuck on macOS
+# zinit pack"5.9" for zsh # Auto download zsh-users/zsh
 
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)
@@ -160,8 +161,9 @@ zinit wait lucid for \
     " \
 	OMZP::docker-compose \
 	as"completion" \
-    OMZP::docker/_docker \
-    djui/alias-tips \
+    djui/alias-tips
+    # !BUG: curl: (56) The requested URL returned error: 404
+    # OMZP::docker/_docker \
     # hlissner/zsh-autopair \
     # chriskempson/base16-shell \
 
@@ -268,10 +270,13 @@ zinit for \
       pick"zshrc" tcnksm/docker-alias
 
 # This work
+# !BUG: Snippet not loaded (PZTM::archive)
 # zinit svn wait'!' for \
-zinit svn wait'!' lucid for \
-      PZTM::archive \
-      PZTM::utility
+# !BUG: svn: E160013: '/sorin-ionescu/prezto/trunk/modules/archive' path not found
+# See https://github.blog/news-insights/product-news/sunsetting-subversion-support/
+# zinit svn wait'!' lucid for \
+#       PZTM::archive \
+#       PZTM::utility
 
 # =================== TESTING ========================
 

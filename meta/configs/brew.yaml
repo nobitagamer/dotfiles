@@ -13,3 +13,5 @@
     - ncdu
     - htop
     - zsh
+    # Need for Zinit ice
+    - svn
