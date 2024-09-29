@@ -39,10 +39,7 @@
   - mas
   - git-extras
   # - git-flow-avh
-  - htop
-  - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
   # - fish
-  - tmux
   - tmate
   # - curl --with-openssl
   - wget
@@ -50,7 +47,6 @@
   - gawk
   # Update 12 year old rsync on macOS Mojave
   - rsync
-  - jq
   # Required by dotnet
   # - mono-libgdiplus
   # For git-restore-mtime (replace git-settimes.pl)

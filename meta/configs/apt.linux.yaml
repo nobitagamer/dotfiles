@@ -20,20 +20,10 @@
 #     fish:
 #       ppa_source: 'ppa:c/release-2'
 - aptget:
-    - zsh
     - lnav
-    - tmux
-    - source-highlight
-    - editorconfig
     - fortune-mod
     - apg
-    - jq
     - ccze
-    - ncdu
-    - mise
-    - fzf
-- aptget:
-    # - python-pip
     - python3-pip
     - ruby
 - aptget:

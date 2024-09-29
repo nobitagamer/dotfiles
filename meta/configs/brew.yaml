@@ -1,5 +1,15 @@
 - brew:
+    - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
     - fzf
     - todo-txt
     - gcc
     - fastfetch
+    - mise
+    - fzf
+    - tmux
+    - source-highlight
+    - editorconfig
+    - jq
+    - ncdu
+    - htop
+    - zsh
