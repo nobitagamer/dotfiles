@@ -325,13 +325,15 @@ zinit wait lucid for \
 #   blockf atpull'zinit creinstall -q .' \
 #       zsh-users/zsh-completions
 
+# !BUG: do NOT use `wait` here, that cause ZSH history don't load on macOS
+zinit lucid light-mode for \
+  PZTM::history
+
 # !NOTE: can use `OMZP::/urltools` that will download to ~/.local/share/zinitpwnippets/OMZP::/urltools (default to OMZP::urltools)
-# zinit for \
-zinit wait lucid for \
+zinit wait lucid light-mode for \
   PZTM::environment \
   PZTM::helper \
   PZTM::terminal \
-  PZTM::history \
   PZTM::directory \
   PZTM::command-not-found \
   OMZP::common-aliases \
