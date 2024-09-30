@@ -91,9 +91,11 @@ zinit light-mode for \
 
 ### End of Zinit's installer chunk
 
-# A feature-rich mixture of autoenv and smartcd: enter/leave events, nesting, stashing (Zsh-only).
+############
+# autoenv A feature-rich mixture of autoenv and smartcd: enter/leave events, nesting, stashing (Zsh-only).
+############
 # See https://github.com/Tarrasch/zsh-autoenv?tab=readme-ov-file
-zinit load Tarrasch/zsh-autoenv
+zinit wait lucid light-mode for Tarrasch/zsh-autoenv
 
 ############
 # starship
@@ -107,7 +109,17 @@ zinit load Tarrasch/zsh-autoenv
 # zinit ice as"command" from"gh-r" \ # `starship` binary as command, from github release
 #           atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \ # starship setup at clone(create init.zsh, completion)
 #           atpull"%atclone" src"init.zsh" # pull behavior same as clone, source init.zsh
-zinit light starship/starship
+# zinit light starship/starship
+
+############
+# zoxide (better z/fasd), see https://github.com/ajeetdsouza/zoxide/issues/175
+############
+zinit ice wait as"command" from"gh-r" lucid \
+  mv"zoxide*/zoxide -> zoxide" \
+  atclone"./zoxide init zsh > init.zsh" \
+  atpull"%atclone" src"init.zsh" nocompile'!' \
+  atload'export _ZO_ECHO=1; eval "$(_ZO_ECHO=1 zoxide init zsh)"' # See https://github.com/ajeetdsouza/zoxide?tab=readme-ov-file#environment-variables
+zinit light ajeetdsouza/zoxide
 
 ##########################
 # OMZ Libs and Plugins   #
@@ -119,6 +131,52 @@ zinit light starship/starship
 # ie. some settings help zsh-autosuggestions to clear after tab completion
 
 setopt promptsubst
+
+# !NOTE: workaround using https://github.com/zdharma-continuum/zinit/discussions/651
+setopt RE_MATCH_PCRE   # _fix-omz-plugin function uses this regex style
+
+# Workaround for zinit issue#504: remove subversion dependency. Function clones all files in plugin
+# directory (on github) that might be useful to zinit snippet directory. Should only be invoked
+# via zinit atclone"_fix-omz-plugin"
+_fix-omz-plugin() {
+  if [[ ! -f ._zinit/teleid ]] then return 0; fi
+  if [[ ! $(cat ._zinit/teleid) =~ "^OMZP::.*" ]] then return 0; fi
+  local OMZP_NAME=$(cat ._zinit/teleid | sed -n 's/OMZP:://p')
+  git clone --quiet --no-checkout --depth=1 --filter=tree:0 https://github.com/ohmyzsh/ohmyzsh
+  cd ohmyzsh
+  git sparse-checkout set --no-cone plugins/$OMZP_NAME
+  git checkout --quiet
+  cd ..
+  local OMZP_PATH="ohmyzsh/plugins/$OMZP_NAME"
+  local file
+  for file in ohmyzsh/plugins/$OMZP_NAME/*~(.gitignore|*.plugin.zsh)(D); do
+    local filename="${file:t}"
+    echo "Copying $file to $(pwd)/$filename..."
+    cp -f $file $filename
+  done
+  rm -rf ohmyzsh
+}
+
+_fix-pzt-module() {
+  echo "Current: $(pwd)"
+  if [[ ! -f ._zinit/teleid ]] then return 0; fi
+  if [[ ! $(cat ._zinit/teleid) =~ "^PZTM::.*" ]] then return 0; fi
+  local PZTM_NAME=$(cat ._zinit/teleid | sed -n 's/PZTM:://p')
+  git clone --quiet --no-checkout --depth=1 --filter=tree:0 https://github.com/sorin-ionescu/prezto
+  cd prezto
+  git sparse-checkout set --no-cone modules/$PZTM_NAME
+  git checkout --quiet
+  cd ..
+  local PZTM_PATH="prezto/modules/$PZTM_NAME"
+  local file
+  for file in prezto/modules/$PZTM_NAME/*~(.gitignore|init.zsh)(D); do
+    local filename="${file:t}"
+    echo "Copying $file to $(pwd)/$filename..."
+    cp -rf $file $filename
+  done
+  rm -rf prezto
+}
+
 
 # Loading tmux first, to prevent jumps when tmux is loaded after .zshrc
 # It will only be loaded on first start
@@ -141,31 +199,45 @@ setopt promptsubst
 
 	# OMZL::key-bindings.zsh \
 
-zinit wait lucid for \
-	OMZL::clipboard.zsh \
-	OMZL::compfix.zsh \
-	OMZL::completion.zsh \
-	OMZL::correction.zsh \
+zinit wait lucid light-mode for \
+    OMZL::clipboard.zsh \
+    OMZL::compfix.zsh \
+    OMZL::completion.zsh \
+    OMZL::correction.zsh \
+    atpull"%atclone" atclone"_fix-omz-plugin" \
+        OMZP::wd \
     atload"
         alias ..='cd ..'
         alias ...='cd ../..'
         alias ....='cd ../../..'
         alias .....='cd ../../../..'
     " \
-	OMZL::directories.zsh \
-	OMZL::grep.zsh \
-	OMZL::key-bindings.zsh \
-	OMZP::fzf \
+        OMZL::directories.zsh \
+        OMZL::grep.zsh \
+        OMZL::key-bindings.zsh \
+        OMZP::fzf \
     atload"
         alias dcupb='docker-compose up --build'
     " \
-	OMZP::docker-compose \
-	as"completion" \
-    djui/alias-tips
-    # !BUG: curl: (56) The requested URL returned error: 404
-    # OMZP::docker/_docker \
-    # hlissner/zsh-autopair \
-    # chriskempson/base16-shell \
+        OMZP::docker-compose \
+    as"completion" \
+        OMZP::docker/completions/_docker \
+        djui/alias-tips
+        # !BUG: curl: (56) The requested URL returned error: 404
+        # OMZP::docker/_docker \
+        # hlissner/zsh-autopair \
+        # chriskempson/base16-shell \
+
+# !BUG: /OMZP::macos:source:295: no such file or directory: /Users/mps/.local/share/zinit/snippets/OMZP::macos/music
+# zinit wait lucid light-mode for \
+#     \
+#     if'[[ $(uname -s) == "Darwin" ]]' \
+#         OMZP::macos \
+
+        #     # !BUG: always true on Linux, see https://github.com/zdharma-continuum/zinit/discussions/651#discussioncomment-10036029
+        #     if'if [[ -d "$(find $ZINIT_SNIPPETS_DIR -maxdepth 1 -name "*macos" -type d)/" ]]; then [[ ! -e "$(find $ZINIT_SNIPPETS_DIR -maxdepth 1 -name "*macos" -type d)/music" ]] && curl -fSL -o "$(find $ZINIT_SNIPPETS_DIR -maxdepth 1 -name "*macos" -type d)/music" "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/macos/music"; fi' \
+        #     if'if [[ -d "$(find $ZINIT_SNIPPETS_DIR -maxdepth 1 -name "*macos" -type d)/" ]]; then [[ ! -e "$(find $ZINIT_SNIPPETS_DIR -maxdepth 1 -name "*macos" -type d)/spotify" ]] && curl -fSL -o "$(find $ZINIT_SNIPPETS_DIR -maxdepth 1 -name "*macos" -type d)/spotify" "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/macos/spotify"; fi' \
+        # OMZP::pyenv \
 
 #####################
 # PLUGINS           #
@@ -178,8 +250,12 @@ zinit wait lucid for \
 zinit wait lucid for \
     light-mode atinit"ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20" atload"!_zsh_autosuggest_start" \
         zsh-users/zsh-autosuggestions \
-    light-mode atinit"typeset -gA FAST_HIGHLIGHT; FAST_HIGHLIGHT[git-cmsg-len]=100; zpcompinit; zpcdreplay" \
+    light-mode atinit"typeset -gA FAST_HIGHLIGHT; FAST_HIGHLIGHT[git-cmsg-len]=100; ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" \
         zdharma/fast-syntax-highlighting \
+    atpull"%atclone" atclone"_fix-omz-plugin" \
+        OMZP::colored-man-pages \
+    atpull"%atclone" atclone"_fix-omz-plugin" nocompile \
+        if"[[ $+commands[python3] ]]" OMZP::aliases \
     light-mode blockf atpull'zinit creinstall -q .' \
     atinit"
         zstyle ':completion:*' completer _expand _complete _ignored _approximate
@@ -194,6 +270,7 @@ zinit wait lucid for \
         zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview=$extract'ps --pid=$in[(w)1] -o cmd --no-headers -w -w' --preview-window=down:3:wrap
         zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract'exa -1 --color=always ${~ctxt[hpre]}$in'
     " \
+    atpull'zinit creinstall -q .' blockf  \
         zsh-users/zsh-completions \
     bindmap"^R -> ^H" atinit"
         zstyle :history-search-multi-word page-size 10
@@ -208,7 +285,7 @@ zinit wait lucid for \
             \${P}dircolors -b LS_COLORS > c.zsh" \
     atpull'%atclone' pick"c.zsh" nocompile'!' \
     atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”' \
-    	trapd00r/LS_COLORS
+        trapd00r/LS_COLORS
 
     # atload'bindkey "$terminfo[kcuu1]" history-substring-search-up; bindkey "$terminfo[kcud1]" history-substring-search-down' \
     #     zsh-users/zsh-history-substring-search
@@ -248,8 +325,9 @@ zinit wait lucid for \
 #   blockf atpull'zinit creinstall -q .' \
 #       zsh-users/zsh-completions
 
-# zinit wait lucid for \
-zinit for \
+# !NOTE: can use `OMZP::/urltools` that will download to ~/.local/share/zinitpwnippets/OMZP::/urltools (default to OMZP::urltools)
+# zinit for \
+zinit wait lucid for \
   PZTM::environment \
   PZTM::helper \
   PZTM::terminal \
@@ -266,48 +344,24 @@ zinit for \
   if"[[ $+commands[systemd] ]]" OMZP::systemd \
   if"[[ $+commands[go] ]]" OMZP::golang \
   if"[[ $+commands[npm] ]]" OMZP::npm \
-      OMZP::/urltools \
+      OMZP::urltools \
       pick"zshrc" tcnksm/docker-alias
 
-# This work
-# !BUG: Snippet not loaded (PZTM::archive)
-# zinit svn wait'!' for \
 # !BUG: svn: E160013: '/sorin-ionescu/prezto/trunk/modules/archive' path not found
 # See https://github.blog/news-insights/product-news/sunsetting-subversion-support/
-# zinit svn wait'!' lucid for \
-#       PZTM::archive \
-#       PZTM::utility
+# zinit svn wait'!' for \
+# Tested: WORK
+# zinit ice as"null" atpull"%atclone" atclone"_fix-pzt-module"
+# zinit snippet PZTM::utility
 
-# =================== TESTING ========================
+# !BUG: cannot load because there is no init.zsh file, use OMZP::extract instead
+# zinit snippet PZTM::archive
 
-# zinit ice svn wait'!' multisrc"{functions/*}" src"/dev/null" nocompile'!'
-# zinit for \
-#     PZT::modules/utility
-
-
-# zinit ice wait'!' pick"modules/utility/*.zsh"  atload"fpath+=( \$PWD/modules/utility/functions );"
-# zinit load sorin-ionescu/prezto
-
-# zinit ice svn multisrc"functions/*" pick"/dev/null"
-# zinit for \
-#   PZT::modules/archive
-
-# zinit ice svn pick"/dev/null" compile"{functions/*}"
-# zinit for \
-#   PZT::modules/archive
-
-# zinit ice svn multisrc"functions/*"
-# # zinit for \
-# #   PZT::modules/utility
-
-# zinit ice svn wait'!' nocompletions \
-#       compile"{functions/*}"
-# zinit ice svn compile"{functions/*}"
-# zinit for \
-#   PZT::modules/utility
-#   PZT::modules/git
-
-# zinit ice atinit'fpath+=($PWD/functions)'
+# !NOTE: MUST reload using wait'!' at last for history to work? (ENTER any command also make history work)
+# wait'!...', prompt is reset after load. Zsh can start 80% (i.e.: 5x) faster thanks to postponed loading.
+zinit wait'!' silent light-mode for \
+    atpull"%atclone" atclone"_fix-pzt-module" \
+        PZTM::utility
 
 # ###############################################################################
 # # Zplug
@@ -457,16 +511,6 @@ zinit for \
 # # For shell completion to work, this module must be loaded after the completion module.
 # debug_echo "- Loading prezto fasd, see https://github.com/sorin-ionescu/prezto/blob/master/modules/fasd..."
 # zplug "modules/fasd", from:prezto, frozen:1, defer:2
-
-############
-# zoxide (better z/fasd), see https://github.com/ajeetdsouza/zoxide/issues/175
-############
-zinit ice wait"2" as"command" from"gh-r" lucid \
-  mv"zoxide*/zoxide -> zoxide" \
-  atclone"./zoxide init zsh > init.zsh" \
-  atpull"%atclone" src"init.zsh" nocompile'!' \
-  atload'export _ZO_ECHO=1; eval "$(_ZO_ECHO=1 zoxide init zsh)"' # See https://github.com/ajeetdsouza/zoxide?tab=readme-ov-file#environment-variables
-zinit light ajeetdsouza/zoxide
 
 # # # !BUG: DOES NOT WORK (`no such directory`)
 # # debug_echo "- Loading settings, aliases and zle from ${ZDOTDIR:-$HOME/.zsh}..."
@@ -702,56 +746,56 @@ zinit light ajeetdsouza/zoxide
 #   alias bookmarks="vim ${ZDOTDIR:-$HOME/.zsh}/shell_bookmarks.zsh"
 # fi
 
-# ###############################################################################
-# # Neovim Pane Switching
-# ###############################################################################
-# # vim
-# debug_echo "Loading Neovim Pane Switching..."
-# if (( $+commands[nvim] )); then
-#   alias vim=nvim
-#   alias vi=nvim
-# else
-#   alias vi=vim
-# fi
+###############################################################################
+# Neovim Pane Switching
+###############################################################################
+# vim
+debug_echo "Loading Neovim Pane Switching..."
+if (( $+commands[nvim] )); then
+  alias vim=nvim
+  alias vi=nvim
+else
+  alias vi=vim
+fi
 
-# # only defined in neovim libvterm
-# if [[ -n $NVIM_LISTEN_ADDRESS ]]; then
+# only defined in neovim libvterm
+if [[ -n $NVIM_LISTEN_ADDRESS ]]; then
 
-#   _nvr_up()    { nvr -c 'TmuxNavigateUp' }
-#   _nvr_right() { nvr -c 'TmuxNavigateRight' }
-#   _nvr_down()  { nvr -c 'TmuxNavigateDown' }
-#   _nvr_left()  { nvr -c 'TmuxNavigateLeft' }
-#   zle -N nvr_up _nvr_up
-#   zle -N nvr_right _nvr_right
-#   zle -N nvr_down _nvr_down
-#   zle -N nvr_left _nvr_left
-#   bindkey '^K' nvr_up
-#   bindkey '^L' nvr_right
-#   bindkey '^J' nvr_down
-#   bindkey '^H' nvr_left
+  _nvr_up()    { nvr -c 'TmuxNavigateUp' }
+  _nvr_right() { nvr -c 'TmuxNavigateRight' }
+  _nvr_down()  { nvr -c 'TmuxNavigateDown' }
+  _nvr_left()  { nvr -c 'TmuxNavigateLeft' }
+  zle -N nvr_up _nvr_up
+  zle -N nvr_right _nvr_right
+  zle -N nvr_down _nvr_down
+  zle -N nvr_left _nvr_left
+  bindkey '^K' nvr_up
+  bindkey '^L' nvr_right
+  bindkey '^J' nvr_down
+  bindkey '^H' nvr_left
 
-#   sp () { nvr -o $@ }
-#   vsp () { nvr -O $@ }
-#   ds() { nvr -c "DirectionalSplit $@" }
+  sp () { nvr -o $@ }
+  vsp () { nvr -O $@ }
+  ds() { nvr -c "DirectionalSplit $@" }
 
-#   alias nvim=nvr
-#   alias vim=nvr
-#   alias vi=nvr
-#   export EDITOR=nvr
+  alias nvim=nvr
+  alias vim=nvr
+  alias vi=nvr
+  export EDITOR=nvr
 
-#   command_not_found_handler() {
-#     if [[ "$@" =~ ^: ]]; then
-#       nvr --remote-send "<C-\\><C-n>${@}<CR>"
-#     else
-#       return 127
-#     fi
-#   }
+  command_not_found_handler() {
+    if [[ "$@" =~ ^: ]]; then
+      nvr --remote-send "<C-\\><C-n>${@}<CR>"
+    else
+      return 127
+    fi
+  }
 
-#   fe() { nvr --remote-send "<esc><esc>:GitFZF $PWD<cr>" }
+  fe() { nvr --remote-send "<esc><esc>:GitFZF $PWD<cr>" }
 
-# elif [[ -n $TMUX ]]; then
-#   alias ':q'='tmux kill-pane'
-# fi
+elif [[ -n $TMUX ]]; then
+  alias ':q'='tmux kill-pane'
+fi
 
 # ###############################################################################
 # # vim fzf
@@ -768,13 +812,13 @@ zinit light ajeetdsouza/zoxide
 #   bindkey '^F' fzf-file-widget
 # fi
 
-# ###############################################################################
-# # Special Settings
-# ###############################################################################
-# debug_echo "Loading special settings..."
-# [[ -f "$HOME/.zshrc.os" ]] && source "$HOME/.zshrc.os"         # OS Specific
-# [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"   # Local
-# [[ -f "$HOME/.secret_zshrc" ]] && source "$HOME/.secret_zshrc" # Secret!
+###############################################################################
+# Special Settings
+###############################################################################
+debug_echo "Loading special settings..."
+[[ -f "$HOME/.zshrc.os" ]] && source "$HOME/.zshrc.os"         # OS Specific
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"   # Local
+[[ -f "$HOME/.secret_zshrc" ]] && source "$HOME/.secret_zshrc" # Secret!
 
 ###############################################################################
 # direnv (replace smartcd)
