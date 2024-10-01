@@ -36,6 +36,9 @@
 #   - pivotal/tap
 
 - brew:
+  # For git-restore-mtime (replace git-settimes.pl)
+  - git-tools
+  - git-credential-manager # Require for Apple Silicon, see https://github.com/git-ecosystem/git-credential-manager/issues/574
   - mas
   - git-extras
   # - git-flow-avh
@@ -49,10 +52,7 @@
   - rsync
   # Required by dotnet
   # - mono-libgdiplus
-  # For git-restore-mtime (replace git-settimes.pl)
-  - git-tools
   # - gitversion
-  - git-credential-manager # Require for Apple Silicon, see https://github.com/git-ecosystem/git-credential-manager/issues/574
 
 # Support for dedupe.sh, see https://apple.stackexchange.com/questions/69223/how-to-replace-mac-os-x-utilities-with-gnu-core-utilities
 # - brew:
@@ -73,22 +73,22 @@
   - zsh-syntax-highlighting
 
 - cask:
-  - gitkraken
-  - iterm2
-  # - kdiff3 # not available any more
-  # - visual-studio # Will install with Unity
-  - visual-studio-code
   - powershell
+  - iterm2
+  - visual-studio-code
+  - gitkraken
   # Obsoleted, use official install scripts instead
   # - dotnet
+  # - kdiff3 # not available any more
+  # - visual-studio # Will install with Unity
 
-- shell++:
-  - description: Install dotnet
-    condition: 'true'
-  - stdout: true
-    stderr: true
-    command: |
-      brew install cask dotnet
+# - shell++:
+#   - description: Install dotnet
+#     condition: 'true'
+#   - stdout: true
+#     stderr: true
+#     command: |
+#       brew install cask dotnet
 
 # - shell++:
 #   - description: Install GitVersion 5.0.1
@@ -157,14 +157,14 @@
       # rm -rf "${HOME}/Library/Caches/CocoaPods"
       gem install cocoapods
 
-      # See xcode-select --install
-      # sudo rm -rf /Library/Developer/CommandLineTools
-      xcode-select --install
-
       if ! xcodebuild -checkFirstLaunchStatus; then
         echo "Running XCode First Lauch to accept license..."
         sudo xcodebuild -runFirstLaunch
       fi
+
+      # See xcode-select --install
+      # sudo rm -rf /Library/Developer/CommandLineTools
+      xcode-select --install
 
       sudo xcodebuild -downloadPlatform iOS
       EOF

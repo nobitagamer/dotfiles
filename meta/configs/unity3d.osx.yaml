@@ -7,11 +7,10 @@
     ~/.Unity3D: apps/Unity3D
 
 - brew:
-  - imagemagick
-  - librsvg
-  - pcre
-  - rbenv
   - fastlane
+  - imagemagick  # Required for fastlane badge
+  - librsvg  # Required for fastlane badge, see https://github.com/fastlane/fastlane/issues/8598
+  - rbenv
   # See https://github.com/Homebrew/homebrew-core/issues/109379, https://github.com/orgs/Homebrew/discussions/2172
   - temurin@8 # For sdkmanager on Apple Silicon (openjdk@8: The x86_64 architecture is required for this software)
   - openjdk@11 # For Unity 2022.3+
@@ -39,20 +38,6 @@
   - android-sdk # Required by Unity3D 2022.3 (02/2024) but officially discontinued upstream, see https://stackoverflow.com/questions/64312200/android-sdk-has-been-officially-discontinued-upstream
   # - android-commandlinetools # class file version 61.0 (Java 17+)
   - unity-hub
-
-# - shell++:
-#   - description: Install .NET Core runtime 2.1 required by GitVersion
-#     condition: 'true'
-#   - stderr: true
-#     command: |
-#       cat <<- EOF > ~/install-dotnet-2.1.sh
-#       #!/bin/bash
-
-#       curl -sSL https://dot.net/v1/dotnet-install.sh | sudo bash /dev/stdin --install-dir /usr/local/share/dotnet --channel 2.1 --runtime aspnetcore
-#       EOF
-
-#       chmod +x ~/install-dotnet-*
-#       ~/install-dotnet-2.1.sh
 
 - shell++:
   - description: Install Unity3D versions using Unity Hub
