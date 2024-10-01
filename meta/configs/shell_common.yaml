@@ -6,10 +6,11 @@
 - link:
     ~/.config/common/init_functions.sh: shells/common/init_functions.sh
 
-- shell++:
-  - description: Inject init scripts for all users' Login Shell
-    condition: 'true'
-  - stdout: true
-    stderr: true
-    command: |
-      sudo cp ~/.dotfiles/shells/common/init_functions.sh /etc/profile.d/00-dotfiles-init-functions.sh
+# !NOTE: /etc/profile.d does not exist on macOS
+# - shell++:
+#   - description: Inject init scripts for all users' Login Shell
+#     condition: 'true'
+#   - stdout: true
+#     stderr: true
+#     command: |
+#       sudo cp -L ~/.config/common/init_functions.sh /etc/profile.d/00-dotfiles-init-functions.sh

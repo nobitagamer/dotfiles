@@ -6,11 +6,11 @@ node
 dev
 ssh
 shell_common
-starship.xshell
 bash
 bash.osx
 lsd
 nano
 zsh
+starship.xshell
 vscode.osx
 unity3d.osx
