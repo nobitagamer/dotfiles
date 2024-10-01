@@ -1,0 +1,10 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+
+- brew:
+  - fastlane
+  - imagemagick  # Required for fastlane badge
+  - librsvg  # Required for fastlane badge, see https://github.com/fastlane/fastlane/issues/8598
