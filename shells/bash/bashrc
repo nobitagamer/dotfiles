@@ -6,10 +6,13 @@
 # DEBUG=1 # Enable debug
 
 # !NOTE: force replace Interactive Non-Login shell (exec `bash`) with Interactive Login shell to load .bash_profile.
-shopt -q login_shell || exec $SHELL -l
+# shopt -q login_shell || exec $SHELL -l # !BUG: use this will exit `screen` on disconnect
+shopt -q login_shell || {
+  [[ -f ~/.bash_profile ]] && source ~/.bash_profile
+}
 
 # Loaded from .bash_profile, load here for Interactive Non-Login shell (run `bash`)
-source ~/.config/common/init_functions.sh
+# source ~/.config/common/init_functions.sh
 
 # In any Bourne-style shell, the `i` option indicates whether the shell is interactive
 # This does NOT work on macOS, use [[ "$-" =~ 'i' ]] instead iatest=$(expr index "$-" i)
@@ -282,6 +285,13 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# !BUG: hang input when using with screen on macOS (freeze in XShell SSH `screen -ARR -l -s -$SHELL`), use Ctrl+A \ to kill hung session (workaround: && [ "$(uname)" != "Darwin" ])
 # This line MUST at the end of .bashrc, see https://github.com/akinomyoga/ble.sh/discussions/254#discussioncomment-4284757
-[[ ${BLE_VERSION-} && $- == *i* ]] && ble-attach # !BUG: Ctrl+D don't work as normal to kill process on WSL1
+# !BUG:
+# - [macOS] hang input when using with screen on macOS (freeze in XShell SSH `screen -ARR -l -s -$SHELL`), use Ctrl+A \ to kill hung session (workaround: && [ "$(uname)" != "Darwin" ])
+# - [WSL1] Ctrl+D don't work as normal to kill process on WSL1
+# - [WSL1] duplicate prompt line when resize terminal windows
+# [[ ${BLE_VERSION-} && $- == *i* ]] && ble-attach
+# WORKAROUND: only load ble-attach on SSH session (no bug)
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+  [[ ${BLE_VERSION-} ]] && ble-attach
+fi

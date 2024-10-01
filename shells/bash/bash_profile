@@ -57,12 +57,6 @@ fi
 # Ensure that a non-login shell has a defined environment.
 [ -s "$HOME/.profile" ] && source "$HOME/.profile" && debug_echo "Loaded ~/.profile"
 
-# Ensure that a login shell is also interactive.
-# !CAUTION: when pipe command to ssh like `echo 'echo $-; shopt login_shell' | ssh localhost`,
-# it will treat as Non-interactive Login Shell as Interactive Login Shell (load ~/.bashrc).
-# See https://www.baeldung.com/linux/interactive-non-interactive-login-non-login-shells#non-interactive-login-shell
-shopt -q login_shell && [ -n "$PS1" ] && [ -s "$HOME/.bashrc" ] && source "$HOME/.bashrc"
-
 ##############################################
 # Use .localrc for SUPER SECRET CRAP that you
 # don't want in your public, versioned repo.
@@ -116,3 +110,9 @@ fi
 # want in your public, versioned repo.
 debug_echo "Loading ~/.localrc ..."
 [[ -f "$HOME/.localrc" ]] && source "$HOME/.localrc"
+
+# Ensure that a login shell is also interactive.
+# !CAUTION: when pipe command to ssh like `echo 'echo $-; shopt login_shell' | ssh localhost`,
+# it will treat as Non-interactive Login Shell as Interactive Login Shell (load ~/.bashrc).
+# See https://www.baeldung.com/linux/interactive-non-interactive-login-non-login-shells#non-interactive-login-shell
+shopt -q login_shell && [ -n "$PS1" ] && [ -s "$HOME/.bashrc" ] && source "$HOME/.bashrc"
