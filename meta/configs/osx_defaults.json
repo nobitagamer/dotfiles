@@ -1,7 +1,0 @@
-[
-    {
-        "shell": [
-            ["~/.dotfiles/macos", "Setting OSX defaults"]
-        ]
-    }
-]
