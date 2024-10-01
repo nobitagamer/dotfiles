@@ -1,46 +1,35 @@
 #!/usr/bin/env bash
 # ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
-
-source ~/.config/common/init_functions.sh
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc) for examples
 
 # unset DEBUG # Disable debug
 # DEBUG=1 # Enable debug
 
-# This does NOT work on macOS, use [[ "$-" =~ 'i' ]] instead
-# iatest=$(expr index "$-" i)
+# !NOTE: force replace Interactive Non-Login shell (exec `bash`) with Interactive Login shell to load .bash_profile.
+shopt -q login_shell || exec $SHELL -l
 
-# if [ -z "$PS1" ]; then
-#   echo This Bash Shell is NOT an Interactive Shell
-# else
-#   echo This Bash Shell is an Interactive Shell
-# fi
+# Loaded from .bash_profile, load here for Interactive Non-Login shell (run `bash`)
+source ~/.config/common/init_functions.sh
 
 # In any Bourne-style shell, the `i` option indicates whether the shell is interactive
+# This does NOT work on macOS, use [[ "$-" =~ 'i' ]] instead iatest=$(expr index "$-" i)
 case $- in
-*i*) echo "$(debug_timestamp)This Bash Shell is an Interactive Shell" ;;
-# Do NOT output anything in non-interative shelll that cause rsync error: protocol incompatibility (code 2),
-# see https://serverfault.com/questions/304125/rsync-seems-incompatible-with-bashrc-causes-is-your-shell-clean/308604
-*) ;; # echo This Bash Shell is NOT an Interactive Shell ;;
+  *i*)
+    echo "$(debug_timestamp)This Bash Shell is an Interactive Shell"
+    bind "set bell-style visible"
+    ;;
+  # Do NOT output anything in non-interative shelll that cause rsync error: protocol incompatibility (code 2),
+  # see https://serverfault.com/questions/304125/rsync-seems-incompatible-with-bashrc-causes-is-your-shell-clean/308604
+  *)
+    debug_echo This Bash Shell is NOT an Interactive Shell
+    # exit 0 # Do NOT exit that cause XShell exit immediatly after connect.
+    ;;
 esac
-
-if [[ "$-" =~ 'i' ]]; then bind "set bell-style visible"; fi
 
 # Source global definitions
 # BUG: CentOS this will cause `bash: PROMPT_COMMAND: readonly variable`
 # if [ -f /etc/bashrc ]; then
 #   . /etc/bashrc
-# fi
-
-# Having your locale not set to a UTF-8 locale will cause issues with building and uploading your build.
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
-# BUG: Do NOT load login shell script that output to console will cause SFTP - VSCode error `Unexpected packet before version`
-# Ensure that a non-login shell has a defined environment.
-# if [[ -s "$HOME/.bash_profile" ]]; then
-#   shopt -q login_shell || source "$HOME/.bash_profile"
 # fi
 
 # REMOVED: Already set in sensible.bash
@@ -71,37 +60,213 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
   debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-  alias ls='ls --color=auto'
-  #alias dir='dir --color=auto'
-  #alias vdir='vdir --color=auto'
-
-  alias grep='grep --color=auto'
-  alias fgrep='fgrep --color=auto'
-  alias egrep='egrep --color=auto'
+############
+# ble.sh
+############
+# !BUG: freeze in XShell SSH `screen -ARR -l -s -$SHELL`, see end of this file.
+# MUST load before bash-it or bash-it's theme won't work
+if [[ -f ~/.local/share/blesh/ble.sh ]] && [[ $- == *i* ]]; then
+  debug_echo "Loading ble.sh..."
+  # This lines at the top of .bashrc:
+  [[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh --noattach
 fi
 
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+# *********************************
+#   Load Bash-it (+5s)            *
+# *********************************
+# See https://cleberg.net/blog/bash-it.html
 
-alias ls='lsd' # Set ls to homebrew `lsd`, used by zinit's PZTM::utility module
+# Path to the bash it configuration
+export BASH_IT="$HOME/.bash_it"
 
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
+# Lock and Load a custom theme file.
+# Leave empty to disable theming.
+# location /.bash_it/themes/
+# You can easily preview the themes in your own shell using BASH_PREVIEW=true bash-it reload
+#export BASH_IT_THEME='bobby'
+export BASH_IT_THEME='sexy'
 
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+# (Advanced): Change this to the name of your remote repo if you
+# cloned bash-it with a remote other than origin such as `bash-it`.
+# export BASH_IT_REMOTE='bash-it'
+
+# Your place for hosting Git repos. I use this for private repos.
+export GIT_HOSTING='git@git.domain.com'
+
+# Don't check mail when opening terminal.
+unset MAILCHECK
+
+# Change this to your console based IRC client of choice.
+export IRC_CLIENT='irssi'
+
+# Set this to the command you use for todo.txt-cli
+export TODO="t"
+
+# Set this to false to turn off version control status checking within the prompt for all themes
+export SCM_CHECK=false
+
+# Set SCM_GIT_SHOW_DETAILS to 'true' (the default value) to show the working copy details in your prompt.
+export SCM_GIT_SHOW_DETAILS=false
+
+# To speed up the prompt while still getting minimal git status information displayed such as the value of HEAD and whether there are any dirty objects
+export SCM_GIT_SHOW_MINIMAL_INFO=true
+
+# Bash-it uses git status to gather the repo information it shows in the prompt, so in some circumstances, it can be useful to instruct Bash-it to ignore these files
+export SCM_GIT_IGNORE_UNTRACKED=true
+
+# Set Xterm/screen/Tmux title with only a short hostname.
+# Uncomment this (or set SHORT_HOSTNAME to something else),
+# Will otherwise fall back on $HOSTNAME.
+#export SHORT_HOSTNAME=$(hostname -s)
+
+# Set Xterm/screen/Tmux title with only a short username.
+# Uncomment this (or set SHORT_USER to something else),
+# Will otherwise fall back on $USER.
+#export SHORT_USER=${USER:0:8}
+
+# Set Xterm/screen/Tmux title with shortened command and directory.
+# Uncomment this to set.
+#export SHORT_TERM_LINE=true
+
+# Set vcprompt executable path for scm advance info in prompt (demula theme)
+# https://github.com/djl/vcprompt
+#export VCPROMPT_EXECUTABLE=~/.vcprompt/bin/vcprompt
+
+# (Advanced): Uncomment this to make Bash-it reload itself automatically
+# after enabling or disabling aliases, plugins, and completions.
+# export BASH_IT_AUTOMATIC_RELOAD_AFTER_CONFIG_CHANGE=1
+
+# Uncomment this to make Bash-it create alias reload.
+# export BASH_IT_RELOAD_LEGACY=1
+
+# Load Bash It in Interactive shell only
+if [[ "$-" =~ 'i' ]] && [ -f "$BASH_IT"/bash_it.sh ]; then
+  debug_echo "Loading bash_it..."
+  source "$BASH_IT"/bash_it.sh
+fi
+
+# *********************************
+#   End Bash-it                  *
+# *********************************
+
+BASHDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/bash"
+
+# standard output is a tty
+# do interactive initialization
+# if [ -t 1 ]; then
+#   # Use sensible bash
+#   if [ -f $BASHDOTDIR/sensible.bash ]; then
+#     source $BASHDOTDIR/sensible.bash
+#   fi
+# fi
+if [[ "$-" =~ 'i' ]]; then
+  # Use sensible bash
+  if [ -f "$BASHDOTDIR/sensible.bash" ]; then
+    debug_echo "Loading sensible bash..."
+    source "$BASHDOTDIR/sensible.bash"
+  fi
+fi
+
+# Load the shell dotfiles, and then some:
+# * ~/.path can be used to extend `$PATH`.
+# * ~/.extra can be used for other settings you don’t want to commit.
+debug_echo "Loading dotfiles..."
+for file in $BASHDOTDIR/.{path,bash_prompt,exports,functions,extra}; do
+  [ -r "$file" ] && [ -f "$file" ] && source "$file";
+done;
+unset file;
+
+# Add tab completion for many Bash commands
+# if which brew > /dev/null && [ -f "$(brew --prefix)/share/bash-completion/bash_completion" ]; then
+#     source "$(brew --prefix)/share/bash-completion/bash_completion";
+# elif [ -f /etc/bash_completion ]; then
+#     source /etc/bash_completion;
+# fi;
+
+# Enable tab completion for `g` by marking it as an alias for `git`
+# if type _git &> /dev/null && [ -f /usr/local/etc/bash_completion.d/git-completion.bash ]; then
+#     complete -o default -o nospace -F _git g;
+# fi;
+
+# Add `killall` tab completion for common apps
+complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
+
+# Symfony console commands auto completion
+if [ -f ~/.composer/vendor/bin/symfony-autocomplete ]; then
+  debug_echo "Loading completiom: symfony..."
+  eval "$(symfony-autocomplete --aliases=c --aliases=surf --aliases=php-cs-fixer --aliases=typo3cms --aliases=typo3console)"
+fi;
+
+# set PATH so it includes user's private bin directories
+PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+
+# !OBSOLETED: use direnv instead
+# [ -r "$HOME/.smartcd_config" ] && ( [ -n $BASH_VERSION ] ) && source ~/.smartcd_config
+# See https://github.com/direnv/direnv/issues/68#issuecomment-1517041422
+# export DIRENV_LOG_FORMAT=""
+debug_echo "Loading direnv..."
+# See https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-from-a-bash-script
+if command -v direnv 2>&1 >/dev/null; then
+  # See https://askubuntu.com/a/1022440 (readlink /proc/$$/exe`: does NOT work on macOS)
+  _shell_type=$(sh -c 'ps -p $$ -o ppid=' | xargs ps -o comm= -p)
+  eval "$(direnv hook ${_shell_type#-})"
+fi
+
+############
+# fzf
+############
+# Ubuntu 16.04 only
+# [ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
+debug_echo "Loading fzf..."
+eval "$(fzf --bash)"
+
+# !NOTE: mise inside of direnv (use mise in .envrc), see https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
+# ############
+# # Mise (https://mise.jdx.dev/configuration.html)
+# ############
+# debug_echo "Loading mise..."
+# eval "$(mise activate bash)"
+
+# ############
+# # Pyenv
+# ############
+# if [ -d "$HOME/.pyenv/plugins/pyenv-virtualenv" ]; then
+#   debug_echo "Loading pyenv..."
+#   export PATH="$HOME/.pyenv/bin:$PATH"
+#   eval "$(pyenv init -)"
+#   eval "$(pyenv virtualenv-init -)"
+# fi
+
+# ############
+# # rbenv
+# ############
+# if [ -d "$HOME/.rbenv" ]; then
+#   debug_echo "Loading rbenv..."
+#   export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
+#   eval "$(rbenv init -)"
+# fi
+
+# ############
+# # Node.js
+# ############
+# if [[ -d $HOME/.nodenv ]]; then
+#   debug_echo "Loading nodenv..."
+#   export NODENV_SHIMS=$HOME/.nodenv/shims
+#   export PATH="$HOME/.nodenv/bin:$NODENV_SHIMS:$PATH"
+
+#   eval "$(nodenv init -)"
+# fi
+
+############
+# starship
+############
+# Load after .localrc so KUBE_CONTEXT will available
+hash starship 2>/dev/null && (debug_echo "Loading starship..." && eval "$(starship init bash)")
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 if [ -f ~/.bash_aliases ]; then
   . ~/.bash_aliases
 fi
@@ -116,3 +281,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# !BUG: hang input when using with screen on macOS (freeze in XShell SSH `screen -ARR -l -s -$SHELL`), use Ctrl+A \ to kill hung session (workaround: && [ "$(uname)" != "Darwin" ])
+# This line MUST at the end of .bashrc, see https://github.com/akinomyoga/ble.sh/discussions/254#discussioncomment-4284757
+[[ ${BLE_VERSION-} && $- == *i* ]] && ble-attach # !BUG: Ctrl+D don't work as normal to kill process on WSL1

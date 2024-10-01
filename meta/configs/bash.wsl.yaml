@@ -4,4 +4,4 @@
       relink: true
       force: true
 - link:
-    ~/.profile: shells/bash/profile.wsl
+    ~/.profile: shells/profile.wsl

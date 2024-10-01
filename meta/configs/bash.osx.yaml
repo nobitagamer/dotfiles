@@ -4,6 +4,5 @@
       relink: true
       force: true
 - link:
-    ~/.profile: shells/bash/profile.osx
-    ~/.bash_aliases: shells/bash/bash_aliases.osx
+    ~/.profile: shells/profile.osx
 - brew: [bash]

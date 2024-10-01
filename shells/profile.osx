@@ -1,70 +1,41 @@
-#!/bin/bash
+#!/bin/sh
 
-export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
-#export PATH="$PATH:/opt/subversion/bin"
-export PATH="/Users/az/.gem/ruby/1.8/bin:$PATH"
-export PATH="/Users/az/.cargo/bin:$PATH"
-export PATH="/Users/az/.local/bin:$PATH"
-export PATH="/Users/az/Programmierung/system-tools/bin:$PATH"
-export PATH="/usr/local/kde4/bin:$PATH"
-export PATH="$PATH:/Users/az/Library/Python/2.7/bin"
+############
+# Homebrew
+############
+if [ -f /opt/homebrew/bin/brew ]; then
+  debug_echo "Loading Homebrew..."
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
-alias m="/Applications/MPlayer\ OSX\ Extended.app/Contents/Resources/Binaries/mpextended.mpBinaries/Contents/mpextended.mpBinaries/Contents/MacOS/mplayer"
-#alias m="/Applications/MPlayer\ OSX\ Extended.app/Contents/Resources/External_Binaries/mplayer.app/Contents/MacOS/mplayer"
-#alias m="/Applications/MPlayer\ OSX.app/Contents/Resources/External_Binaries/mplayer.app/Contents/MacOS/mplayer"
-#alias sshfs="/Applications/sshfs.app/Contents/Resources/sshfs-static-10.5"
+export PATH="$HOME/.fastlane/bin:$PATH"
 
-#test -r /sw/bin/init.sh && . /sw/bin/init.sh
+# Use Java 8 for sdkmanager
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # temurin@8 for android-sdk
+# export JAVA_HOME=$(/usr/libexec/java_home -v 11) # For Unity 2022.3+
+# export JAVA_HOME=$(/usr/libexec/java_home -v 17) # For android-commandlinetools
+export PATH=${JAVA_HOME}/bin:$PATH
 
-export LANG=en_US.UTF-8
+# export ANDROID_HOME=/usr/local/share/android-sdk # Intel
+export ANDROID_HOME=/opt/homebrew/share/android-sdk # Apple Silicon
+# export ANDROID_HOME=$HOMEBREW_PREFIX/share/android-commandlinetools # Apple Silicon
 
+# MUST use android-ndk r16b for Unity 2018.3.7f1
+# Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio.
+# See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
+# export ANDROID_NDK_ROOT=${ANDROID_HOME}/ndk # Obsoleted by Unity3D 2021.3+
+#export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/16.1.4479499
 
-#export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/Current/lib/python2.5/site-packages/PIL
-#export PYTHONPATH="/usr/local/lib/python2.7/site-packages/:/Library/Python/2.7/site-packages/"
+# export OPENSSL_ROOT="$(brew --prefix openssl@1.1)"
+# See https://github.com/pyenv/pyenv/issues/1067#issuecomment-472798576
+# export PATH=$OPENSSL_ROOT/bin:/opt/local/bin:/opt/local/sbin:$PATH
+export PATH=/usr/local/bin:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:$PATH
+export MANPATH=/opt/local/share/man:$MANPATH
 
-alias dosbox=/Applications/Spiele/DOSBox.app/Contents/MacOS/DOSBox
+# Rehash already done by nodenv-package-rehash
+if which rbenv > /dev/null; then eval "$(rbenv init - --no-rehash)"; fi
 
-# Note that Sage fails to build with this:
-#export ARCHFLAGS="-arch x86_64"
+# export PATH="$(brew --prefix icu4c)/bin:$PATH"
+# export PATH="$(brew --prefix icu4c)/sbin:$PATH"
 
-export CC=cc
-export CXX=c++
-
-#export CFLAGS="-isysroot /Developer/SDKs/MacOSX10.6.sdk -DMAC_OS_X_VERSION_MIN_REQUIRED=1060"
-
-export PYTHONPATH=/usr/local/lib/python:$PYTHONPATH
-
-# TODO: this more general
-#export PYTHONPATH=~/Programmierung/mechanize:$PYTHONPATH
-#export PYTHONPATH=~/Programmierung/pybrain:$PYTHONPATH
-#export PYTHONPATH=~/Programmierung/scikit-learn:$PYTHONPATH
-#export PYTHONPATH=~/Programmierung/requests:$PYTHONPATH
-#export PYTHONPATH=~/Programmierung/py_better_exchook:$PYTHONPATH
-#export PYTHONPATH=~/Programmierung:$PYTHONPATH
-
-export NODE_PATH=/usr/local:/usr/local/lib/node:/usr/local/lib/node_modules
-
-# for installing camliststore, it needs `pkg-config --cflags sqlite3` to work.
-export PKG_CONFIG_PATH=/usr/local/opt/sqlite/lib/pkgconfig/
-
-
-# For Octave.
-# http://stackoverflow.com/questions/13786754/octave-gnuplot-aquaterm-error-set-terminal-aqua-enhanced-title-figure-1-unk
-# http://www.mac-forums.com/forums/os-x-apps-games/242997-plots-octave-dont-work.html
-# https://github.com/mxcl/homebrew/issues/14647
-export GNUTERM=x11
-
-
-export NUPIC=~/Programmierung/nupic
-export NTA=$NUPIC/build
-
-
-export PATH="$HOME/.cargo/bin:$PATH"
-
-
-# https://github.com/mobile-shell/mosh/issues/98
-# might need locale-gen?
-export LC_CTYPE="en_US.UTF-8"
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
+echo '.profile loaded successfully.'
