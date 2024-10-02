@@ -3,10 +3,16 @@
 ############
 # Homebrew
 ############
-if [ -f /opt/homebrew/bin/brew ]; then
+HOMEBREW_PREFIX=/usr/local/bin/brew
+
+# Apple Silicon
+[ "$(uname -m)" = "arm64" ] && HOMEBREW_PREFIX=/opt/homebrew/bin/brew
+if [ -f $HOMEBREW_PREFIX ]; then
   debug_echo "Loading Homebrew..."
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  eval "$($HOMEBREW_PREFIX shellenv)"
 fi
+
+unset HOMEBREW_PREFIX
 
 # Use Java 8 for sdkmanager
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # temurin@8 for android-sdk
@@ -37,7 +43,7 @@ export MANPATH=/opt/local/share/man:$MANPATH
 # else
 #   eval "$(~/.rbenv/bin/rbenv init -)";
 # fi
-
+export PATH="$HOME/.local/share/mise/shims:$PATH"
 
 # export PATH="$(brew --prefix icu4c)/bin:$PATH"
 # export PATH="$(brew --prefix icu4c)/sbin:$PATH"

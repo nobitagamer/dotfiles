@@ -837,6 +837,13 @@ if command -v direnv 2>&1 >/dev/null; then
   eval "$(direnv hook ${_shell_type#-})"
 fi
 
+# !NOTE: mise inside of direnv (use mise in .envrc), see https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
+############
+# Mise (https://mise.jdx.dev/configuration.html)
+############
+debug_echo "Loading Mise for ZSH..."
+eval "$(mise activate zsh)"
+
 # Display message of the day
 # run-parts /etc/update-motd.d 2>/dev/null
 
