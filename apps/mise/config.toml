@@ -1,0 +1,7 @@
+[settings]
+# plugins can read the versions files used by other version managers (if enabled by the plugin)
+# for example, .nvmrc in the case of node's nvm
+legacy_version_file = true                     # enabled by default (unlike asdf)
+#legacy_version_file_disable_tools = ['python'] # disable for specific tools
+
+asdf_compat = true # set to true to ensure .tool-versions will be compatible with asdf, see `MISE_ASDF_COMPAT`

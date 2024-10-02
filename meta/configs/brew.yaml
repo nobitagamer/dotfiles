@@ -1,10 +1,15 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+
 - brew:
     - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
     - fzf
     - todo-txt
     - gcc
     - fastfetch
-    - mise
     - fzf
     - tmux
     - source-highlight
@@ -15,3 +20,20 @@
     - zsh
     # Need for Zinit ice
     - svn
+    # See https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
+    - mise
+    - direnv
+
+- link:
+    ~/.config/mise/config.toml: apps/mise/config.toml
+    ~/.config/direnv/direnvrc: apps/mise/direnvrc
+
+- shell++:
+  - description: Install default tool versions
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+
+      mise current
+      mise install

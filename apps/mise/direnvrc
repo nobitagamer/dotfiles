@@ -1,0 +1,2 @@
+# mise inside of direnv (use mise in .envrc), see https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
+use mise
