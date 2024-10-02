@@ -8,3 +8,10 @@
   - fastlane
   - imagemagick  # Required for fastlane badge
   - librsvg  # Required for fastlane badge, see https://github.com/fastlane/fastlane/issues/8598
+
+- shell++:
+  - description: Uninstall fastlane gem to force use brew's fastlane
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: 'rbenv exec gem uninstall fastlane --all --executables || true'

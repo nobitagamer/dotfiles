@@ -7,9 +7,6 @@
     ~/.Unity3D: apps/Unity3D
 
 - brew:
-  - fastlane
-  - imagemagick  # Required for fastlane badge
-  - librsvg  # Required for fastlane badge, see https://github.com/fastlane/fastlane/issues/8598
   - rbenv
   # See https://github.com/Homebrew/homebrew-core/issues/109379, https://github.com/orgs/Homebrew/discussions/2172
   - temurin@8 # For sdkmanager on Apple Silicon (openjdk@8: The x86_64 architecture is required for this software)
@@ -139,6 +136,8 @@
     condition: 'true'
   - stderr: true
     command: |
+      #!/usr/bin/env bash
+
       RUBY_VERSION=2.7.2
       if [ -f ~/.ruby-version ];then
         RUBY_VERSION=$(cat ~/.ruby-version)
@@ -155,6 +154,7 @@
       # brew reinstall openssl
       brew upgrade ruby-build rbenv
 
+      rbenv update
       rbenv install --skip-existing $RUBY_VERSION
 
       # Install bundle package manager
@@ -168,10 +168,9 @@
       gem install bundler -v 2.4.22
 
       gem install bundle cocoapods fastlane
+      # !NOTE: must remove all shims before rehash
+      rm -f ~/.rbenv/shims/*
       rbenv rehash
-
-      # pod --version
-      # fastlane
 
       # Fix VSTS execute bash with --no-profile that will force rbenv use system Ruby.
       rbenv global $RUBY_VERSION
@@ -182,6 +181,35 @@
       # Rebuild native extensions
       sudo chown -R $USER:staff ~/.rbenv/gems/2.7.0/gems
       gem pristine --all
+
+- shell++:
+  - description: Prepare XCode and Create update-xcode.sh
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+
+      cat <<- EOF > ~/update-xcode.sh
+      #!/bin/bash
+
+      echo "Updating cocoapods..."
+      # Cleanup corrupted pods
+      # rm -rf "${HOME}/Library/Caches/CocoaPods"
+      gem install cocoapods
+
+      if ! xcodebuild -checkFirstLaunchStatus; then
+        echo "Running XCode First Lauch to accept license..."
+        sudo xcodebuild -runFirstLaunch
+      fi
+
+      # See xcode-select --install
+      # sudo rm -rf /Library/Developer/CommandLineTools
+      xcode-select --install
+
+      sudo xcodebuild -downloadPlatform iOS
+      EOF
+
+      chmod +x ~/update-xcode.sh && ~/update-xcode.sh
 
 # - shell++:
 #   - description: Pre-install Android SDKs

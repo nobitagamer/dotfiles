@@ -8,8 +8,6 @@ if [ -f /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-export PATH="$HOME/.fastlane/bin:$PATH"
-
 # Use Java 8 for sdkmanager
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # temurin@8 for android-sdk
 # export JAVA_HOME=$(/usr/libexec/java_home -v 11) # For Unity 2022.3+

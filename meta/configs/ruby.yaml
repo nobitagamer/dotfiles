@@ -18,9 +18,16 @@
       export PATH="$HOME/.rbenv/bin:$PATH"
       if [ ! -d ~/.rbenv  ]; then
         git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+
+        ## Compile and install Ruby
         git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+
+        ## Update rbenv and installed plugins
+        git clone https://github.com/rkh/rbenv-update.git ~/.rbenv/plugins/rbenv-update
+
         # curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash
-        # git clone https://github.com/rkh/rbenv-update.git ~/.rbenv/plugins/rbenv-update
+
+        ## Share gems across multiple Ruby installs
         # git clone https://github.com/tpope/rbenv-communal-gems.git ~/.rbenv/plugins/rbenv-communal-gems
         # git clone https://github.com/ianheggie/rbenv-binstubs.git ~/.rbenv/plugins/rbenv-binstubs
         # git clone https://github.com/garnieretienne/rvm-download.git ~/.rbenv/plugins/rvm-download
@@ -28,7 +35,6 @@
         rbenv update
 
         # Cleanup obsoleted plugins (included in rbenv)
-        rm -rf ~/.rbenv/plugins/rbenv-update
         rm -rf ~/.rbenv/plugins/rbenv-communal-gems
         rm -rf ~/.rbenv/plugins/rbenv-binstubs
         rm -rf ~/.rbenv/plugins/rvm-download
@@ -41,5 +47,5 @@
         rbenv global $(cat ~/.ruby-version)
       fi
 
-      rbenv communize --all
+      # rbenv communize --all
       curl -fsSL https://raw.githubusercontent.com/rbenv/rbenv-installer/main/bin/rbenv-doctor | bash
