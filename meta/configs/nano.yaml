@@ -3,26 +3,10 @@
       create: true
       relink: true
       force: true
-- link:
-    ~/.config/nano/nanorc: editors/nano/nanorc
 
 - brew:
     # Latest nano for .nanorc
     - nano
-
-- shell++:
-    - description: Include nanorc paths
-      condition: 'true'
-    - stdout: true
-      stderr: true
-      command: >
-        NANO_CONFIG=${XDG_CONFIG_HOME:=$HOME/.config}/nano/nanorc
-
-        rm -f $NANO_CONFIG
-        echo "include ~/.nano/*.nanorc" > $NANO_CONFIG
-        echo "include $(brew --prefix)/share/nano/*.nanorc" >> $NANO_CONFIG
-
-        unset NANO_CONFIG
 
 - shell++:
     - description: Install galenguyer/nano-syntax-highlighting
@@ -36,3 +20,17 @@
         else
           git clone https://github.com/galenguyer/nano-syntax-highlighting.git ~/.nano
         fi
+
+- shell++:
+    - description: Include nanorc paths
+      condition: 'true'
+    - stdout: true
+      stderr: true
+      command: |
+        NANO_CONFIG=${XDG_CONFIG_HOME:=$HOME/.config}/nano/nanorc
+
+        rm -f $NANO_CONFIG
+        echo "include ~/.nano/*.nanorc" > $NANO_CONFIG
+        echo "include $(brew --prefix)/share/nano/*.nanorc" >> $NANO_CONFIG
+
+        unset NANO_CONFIG
