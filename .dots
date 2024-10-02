@@ -400,7 +400,7 @@ if ! (($testmode)); then
 fi
 
 echoerr green "Reloading current shell, see you soon..."
-exec "$SHELL"
+exec sudo -u $USER -i
 
 function runDots() {
 	git clone --recursive https://github.com/nobitagamer/dotfiles .dotfiles
