@@ -136,8 +136,6 @@
     condition: 'true'
   - stderr: true
     command: |
-      #!/usr/bin/env bash
-
       RUBY_VERSION=2.7.2
       if [ -f ~/.ruby-version ];then
         RUBY_VERSION=$(cat ~/.ruby-version)

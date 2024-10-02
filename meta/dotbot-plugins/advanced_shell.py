@@ -95,7 +95,8 @@ class AdvancedShell(dotbot.Plugin):
         try:
             # See https://www.cyberciti.biz/faq/python-run-external-command-and-get-output/
             process = subprocess.Popen(cmd,
-                                    shell=True, bufsize=-1, executable=os.environ.get('SHELL'),
+                                    shell=True, bufsize=-1, executable='/bin/bash',
+                                    # shell=True, bufsize=-1, executable=os.environ.get('SHELL'),
                                     stdin=stdin,
                                     # stdout=stdout,
                                     # stdout=None,
@@ -140,7 +141,8 @@ class AdvancedShell(dotbot.Plugin):
                 self._log_cmd(cmd, msg)
                 try:
                     process = subprocess.Popen(cmd,
-                                            shell=True, bufsize=-1, executable=os.environ.get('SHELL'),
+                                            shell=True, bufsize=-1, executable='/bin/bash',
+                                            # shell=True, bufsize=-1, executable=os.environ.get('SHELL'),
                                             stdin=stdin,
                                             # stdout=None,
                                             stderr=subprocess.PIPE,
