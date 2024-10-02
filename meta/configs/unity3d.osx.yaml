@@ -7,11 +7,11 @@
     ~/.Unity3D: apps/Unity3D
 
 - brew:
-  - rbenv
   # See https://github.com/Homebrew/homebrew-core/issues/109379, https://github.com/orgs/Homebrew/discussions/2172
   - temurin@8 # For sdkmanager on Apple Silicon (openjdk@8: The x86_64 architecture is required for this software)
   - openjdk@11 # For Unity 2022.3+
   - openjdk@17 # For android-commandlinetools cask
+  # - rbenv
 
 - shell++:
   - description: Create symlink to allow system Java wrappers to find JDK 11
@@ -130,84 +130,6 @@
     # EOF
 
     # chmod +x ~/update-unity-*
-
-- shell++:
-  - description: Install cocoapods for build iOS
-    condition: 'true'
-  - stderr: true
-    command: |
-      RUBY_VERSION=2.7.2
-      if [ -f ~/.ruby-version ];then
-        RUBY_VERSION=$(cat ~/.ruby-version)
-
-        rm ~/.rbenv/version
-        ln -s ~/.ruby-version ~/.rbenv/version
-      fi
-
-      # Install Ruby for fastlane
-      eval "$(rbenv init -)"
-
-      brew update
-      # !NOTE: enable this if openssl error
-      # brew reinstall openssl
-      brew upgrade ruby-build rbenv
-
-      rbenv update
-      rbenv install --skip-existing $RUBY_VERSION
-
-      # Install bundle package manager
-      rbenv rehash
-      rbenv shell $RUBY_VERSION
-
-      gem install activesupport -v 4.2.6
-
-      # The last version of bundler (>= 0) to support your Ruby & RubyGems was 2.4.22
-      # Latest bundler requires Ruby version >= 3.0.0.
-      gem install bundler -v 2.4.22
-
-      gem install bundle cocoapods fastlane
-      # !NOTE: must remove all shims before rehash
-      rm -f ~/.rbenv/shims/*
-      rbenv rehash
-
-      # Fix VSTS execute bash with --no-profile that will force rbenv use system Ruby.
-      rbenv global $RUBY_VERSION
-
-      pod env
-      pod repo update
-
-      # Rebuild native extensions
-      sudo chown -R $USER:staff ~/.rbenv/gems/2.7.0/gems
-      gem pristine --all
-
-- shell++:
-  - description: Prepare XCode and Create update-xcode.sh
-    condition: 'true'
-  - stdout: true
-    stderr: true
-    command: |
-
-      cat <<- EOF > ~/update-xcode.sh
-      #!/bin/bash
-
-      echo "Updating cocoapods..."
-      # Cleanup corrupted pods
-      # rm -rf "${HOME}/Library/Caches/CocoaPods"
-      gem install cocoapods
-
-      if ! xcodebuild -checkFirstLaunchStatus; then
-        echo "Running XCode First Lauch to accept license..."
-        sudo xcodebuild -runFirstLaunch
-      fi
-
-      # See xcode-select --install
-      # sudo rm -rf /Library/Developer/CommandLineTools
-      xcode-select --install
-
-      sudo xcodebuild -downloadPlatform iOS
-      EOF
-
-      chmod +x ~/update-xcode.sh && ~/update-xcode.sh
 
 # - shell++:
 #   - description: Pre-install Android SDKs

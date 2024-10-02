@@ -31,7 +31,11 @@ export PATH=/usr/local/bin:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:$PATH
 export MANPATH=/opt/local/share/man:$MANPATH
 
 # Rehash already done by nodenv-package-rehash
-if which rbenv > /dev/null; then eval "$(rbenv init - --no-rehash)"; fi
+if which rbenv > /dev/null; then
+  eval "$(rbenv init - --no-rehash)";
+else
+  eval "$(~/.rbenv/bin/rbenv init -)";
+fi
 
 # export PATH="$(brew --prefix icu4c)/bin:$PATH"
 # export PATH="$(brew --prefix icu4c)/sbin:$PATH"

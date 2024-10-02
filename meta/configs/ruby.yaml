@@ -6,8 +6,8 @@
 - link:
     ~/.gemrc: development/ruby/gemrc
     ~/.ruby-version: development/ruby/ruby-version
+    ~/.config/zsh/settings/rbenv.zsh: development/ruby/zsh/settings/rbenv.zsh
     # ~/.config/zsh/settings/rvm.zsh: development/ruby/zsh/settings/rvm.zsh
-    # ~/.config/zsh/settings/rbenv.zsh: development/ruby/zsh/settings/rbenv.zsh
 # Obsoleted by mise
 - shell++:
   - description: Install rbenv
