@@ -11,11 +11,47 @@
 #       options: '-q -y --disablerepo=* --enablerepo=mainline --enablerepo=mainline-extra'
 #       group: True
 
+- yum:
+  - epel-release
+  - wget
+  - ca-certificates
+
+# See https://stackoverflow.com/questions/47676980/curl-60-peers-certificate-issuer-is-not-recognized
+- shell++:
+  - description: Update CA trust for old CentOS 7
+    condition: '[ ! -f /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem.bak ]'
+  - stderr: true
+    command: |
+
+      cd /etc/pki/ca-trust/extracted/pem
+      sudo mv tls-ca-bundle.pem tls-ca-bundle.pem.bak
+      sudo wget --no-check-certificate https://curl.se/ca/cacert.pem
+      sudo mv cacert.pem tls-ca-bundle.pem
+
+      # See https://serverfault.com/questions/791205/centos7-dont-trust-certificate-issued-by-lets-encrypt
+
+      cd /etc/pki/ca-trust/source/anchors
+
+      # Let’s Encrypt Root CAs self-signed
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/isrgrootx1.pem
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/isrg-root-x2.pem
+
+      # Subordinate (Intermediate) CAs signed by ISRG Root X1
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/2024/r10.pem
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/2024/r11.pem
+
+      # Subordinate (Intermediate) CAs signed by ISRG Root X2
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/2024/e5.pem
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/2024/e6.pem
+
+      sudo update-ca-trust force-enable
+
 - shell++:
   - description: Remove old default git version on CentOS 7
     condition: '[[ $(git --version) == "git version 1.8.3.1" ]] || false'
   - stderr: true
     command: |
+
       sudo yum -y remove git
       sudo yum -y remove git-*.
       sudo yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
@@ -45,7 +81,7 @@
 
 - yum:
     - >-
-      epel-release git gcc
+      git gcc
       zlib-devel bzip2 bzip2-devel readline-devel sqlite
       sqlite-devel openssl11-devel xz xz-devel libffi-devel findutils
 
