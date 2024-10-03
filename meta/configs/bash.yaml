@@ -26,7 +26,7 @@
         source ~/.bash_it/bash_it.sh
       else
         source ~/.bash_it/bash_it.sh
-        bash-it update stable --silent
+        echo q | bash-it update stable --silent
       fi
 
       bash-it enable completion docker

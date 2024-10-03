@@ -1,11 +1,11 @@
 yum.linux
-shell_common
-starship.xshell
-bash
-ruby
+git
 brew
 brew.linux
-git
+shell_common
+bash
+starship.xshell
+ruby
 dev
 node
 python
