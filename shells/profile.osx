@@ -29,10 +29,6 @@ export ANDROID_HOME=/opt/homebrew/share/android-sdk # Apple Silicon
 # See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
 # export ANDROID_NDK_ROOT=${ANDROID_HOME}/ndk # Obsoleted by Unity3D 2021.3+
 #export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/16.1.4479499
-
-# export OPENSSL_ROOT="$(brew --prefix openssl@1.1)"
-# See https://github.com/pyenv/pyenv/issues/1067#issuecomment-472798576
-# export PATH=$OPENSSL_ROOT/bin:/opt/local/bin:/opt/local/sbin:$PATH
 export PATH=/usr/local/bin:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:$PATH
 export MANPATH=/opt/local/share/man:$MANPATH
 
@@ -43,8 +39,16 @@ export MANPATH=/opt/local/share/man:$MANPATH
 # else
 #   eval "$(~/.rbenv/bin/rbenv init -)";
 # fi
+
+# !NOTE: use Ruby 3.0.x for OpenSSL >= 1.1, < 3.0, see https://www.rubyonmac.dev/openssl-versions-supported-by-ruby
+# See https://stackoverflow.com/questions/77874851/trouble-installing-specific-version-of-ruby-openssl-issue
 export PATH="$HOME/.local/share/mise/shims:$PATH"
 
+# export OPENSSL_PREFIX="$(brew --prefix openssl@1.1)"
+# See https://github.com/pyenv/pyenv/issues/1067#issuecomment-472798576
+# export PATH=$OPENSSL_PREFIX/bin:$PATH
+
+# Used by source-highlight
 # export PATH="$(brew --prefix icu4c)/bin:$PATH"
 # export PATH="$(brew --prefix icu4c)/sbin:$PATH"
 

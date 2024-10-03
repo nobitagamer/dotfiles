@@ -5,6 +5,7 @@ node
 ruby
 brew
 brew.linux
+mise
 python
 binaries.linux
 shell_common
@@ -12,7 +13,7 @@ starship
 bash
 zsh
 vim.linux
-tmux.linux
+tmux
 smartcd.linux
 lsd
 nano

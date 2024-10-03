@@ -55,3 +55,18 @@
     ~/.config/zsh/zle/zleiab.zsh: shells/zsh/config/zsh/zle/zleiab.zsh
     ~/.config/plugins/dircolors.extra: shells/plugins/dircolors.extra
     ~/.config/plugins/dircolors-solarized/dircolors.256dark: shells/plugins/dircolors-solarized/dircolors.256dark
+
+- brew:
+    - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
+    - fzf
+    - todo-txt
+    - gcc
+    - fastfetch
+    - source-highlight
+    - editorconfig
+    - jq
+    - ncdu
+    - htop
+    - zsh
+    # !NOTE: need for Zinit ice, require openssl@3
+    - svn

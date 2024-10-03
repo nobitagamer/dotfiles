@@ -174,7 +174,8 @@ if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
   export MANPATH="$BREW_PREFIX/share/man:$MANPATH"
   export INFOPATH="$BREW_PREFIX/share/info:$INFOPATH"
 
-  ## Obsoleted
+  ## Obsoleted, see https://www.rubyonmac.dev/openssl-1-1-deprecated-how-this-affects-your-ruby-projects
+  # See https://stackoverflow.com/questions/77874851/trouble-installing-specific-version-of-ruby-openssl-issue
   # OPENSSL_PREFIX=$(brew --prefix openssl@1.1)
   # export CFLAGS="-I$OPENSSL_PREFIX/include"
   # export CPPFLAGS="-I$OPENSSL_PREFIX/include"

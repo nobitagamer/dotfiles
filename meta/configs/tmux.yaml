@@ -3,6 +3,18 @@
       create: true
       relink: true
       force: true
+
+- link:
+    ~/.local/bin/battery.sh: apps/tmux/bin/battery.sh
+    ~/.local/bin/tmux-mem-cpu-load: apps/tmux/bin/tmux-mem-cpu-load
+    ~/.tmux.conf: apps/tmux/tmux.conf
+    ~/.tmux/solarized: apps/tmux/tmux/solarized
+    ~/.config/zsh/settings/tmuxifier.zsh: apps/tmux/tmuxifier/zsh/settings/tmuxifier.zsh
+
+# !NOTE: require openssl@3
+- brew:
+    - tmux
+
 - shell++:
     - description: Install tmuxinator
       stdout: true
@@ -20,9 +32,3 @@
         else
           git clone https://github.com/jimeh/tmuxifier.git ~/.tmuxifier
         fi
-- link:
-    ~/.local/bin/battery.sh: apps/tmux/bin/battery.sh
-    ~/.local/bin/tmux-mem-cpu-load: apps/tmux/bin/tmux-mem-cpu-load
-    ~/.tmux.conf: apps/tmux/tmux.conf
-    ~/.tmux/solarized: apps/tmux/tmux/solarized
-    ~/.config/zsh/settings/tmuxifier.zsh: apps/tmux/tmuxifier/zsh/settings/tmuxifier.zsh

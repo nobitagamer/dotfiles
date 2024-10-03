@@ -5,6 +5,7 @@ node
 ruby
 brew
 brew.linux
+mise
 python
 binaries.linux
 shell_common
@@ -13,6 +14,6 @@ bash
 bash.wsl
 zsh
 vim.linux
-tmux.linux
+tmux
 lsd
 nano

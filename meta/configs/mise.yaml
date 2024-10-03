@@ -1,0 +1,25 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+
+- brew:
+    # See https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
+    # !NOTE: require openssl@3, break old softwares using brew openssl@1.1
+    - mise
+
+- link:
+    ~/.config/mise/config.toml: apps/mise/config.toml
+    ~/.config/direnv/direnvrc: apps/mise/direnvrc
+
+# !NOTE: use Ruby 3.0.x for OpenSSL >= 1.1, < 3.0, see https://www.rubyonmac.dev/openssl-versions-supported-by-ruby
+- shell++:
+  - description: Install default tool versions
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+
+      mise current
+      mise install

@@ -1,5 +1,6 @@
 brew
 homebrew
+mise
 git
 ruby
 node
@@ -12,6 +13,7 @@ lsd
 nano
 zsh
 starship.xshell
+tmux
 vscode.osx
 fastlane
 cocoapods
