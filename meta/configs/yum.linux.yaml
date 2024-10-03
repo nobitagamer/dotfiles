@@ -25,6 +25,7 @@
     condition: 'true'
   - stderr: true
     command: |
+
       sudo yum install git
       git --version
 
@@ -49,6 +50,10 @@
       sqlite-devel openssl11-devel xz xz-devel libffi-devel findutils
 
 - yum: [bash-completion, bash-completion-extras, hstr, jq, ccze, ncdu, screen]
+
+# Require for alias_tips
+- yum:
+  - python3-pip
 
 - shell++:
   - description: Add the Microsoft package signing key and the Microsoft package repository

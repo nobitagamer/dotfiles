@@ -57,16 +57,7 @@
     ~/.config/plugins/dircolors-solarized/dircolors.256dark: shells/plugins/dircolors-solarized/dircolors.256dark
 
 - brew:
-    - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
-    - fzf
-    - todo-txt
-    - gcc
-    - fastfetch
     - source-highlight
-    - editorconfig
-    - jq
-    - ncdu
-    - htop
     - zsh
-    # !NOTE: need for Zinit ice, require openssl@3
-    - svn
+    # # !NOTE: need for Zinit ice, require openssl@3
+    # - svn

@@ -300,7 +300,7 @@ fi
 # [[ ${BLE_VERSION-} && $- == *i* ]] && ble-attach
 # WORKAROUND: only load ble-attach on SSH session (no bug)
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-  [[ ${BLE_VERSION-} ]] && ble-attach
+  # [[ ${BLE_VERSION-} ]] && ble-attach
 
   # See https://gist.github.com/linuswillner/f8c15385e8a88017a70bdc3f18a688a2
   hash fastfetch >/dev/null 2>&1 && fastfetch

@@ -2,6 +2,7 @@ yum.linux
 git
 brew
 brew.linux
+mise
 shell_common
 bash
 starship.xshell
@@ -12,3 +13,4 @@ python
 binaries.linux
 lsd
 nano
+zsh
