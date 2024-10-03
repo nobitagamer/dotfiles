@@ -12,7 +12,7 @@
 source ~/.config/common/init_functions.sh
 
 # Display message of the day
-run-parts /etc/update-motd.d 2>/dev/null
+[ -d /etc/update-motd.d ] && run-parts /etc/update-motd.d 2>/dev/null
 
 # This does NOT work on macOS, use [[ "$-" =~ 'i' ]] instead
 # iatest=$(expr index "$-" i)

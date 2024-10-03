@@ -33,10 +33,13 @@
     condition: 'true'
   - stderr: true
     command: |
-      sudo rpm -Uvh http://www.city-fan.org/ftp/contrib/yum-repo/rhel7/x86_64/city-fan.org-release-3-10.rhel7.noarch.rpm
+
+      # !BUG: GPG Keys failed, see https://community.centminmod.com/threads/city-fan-repo-gpg-repo-keys-error-when-updating.23337/
+      sudo rpm --import https://mirror.city-fan.org/ftp/contrib/GPG-KEYS/RPM-GPG-KEY-city-fan.org-rhel-7
+      sudo rpm -Uvh http://www.city-fan.org/ftp/contrib/yum-repo/rhel7/x86_64/city-fan.org-release-3-14.rhel7.noarch.rpm
       sudo yum install -y yum-utils
       sudo yum-config-manager --disable city-fan.org
-      sudo yum --enablerepo=city-fan.org -y install libcurl libcurl-devel
+      sudo yum --enablerepo=city-fan.org -y install curl libcurl libcurl-devel
       curl --version
 
 - yum:

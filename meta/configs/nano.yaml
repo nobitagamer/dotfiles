@@ -28,8 +28,9 @@
       stderr: true
       command: |
         NANO_CONFIG=${XDG_CONFIG_HOME:=$HOME/.config}/nano/nanorc
+        mkdir -p "$(dirname "${NANO_CONFIG}")"
 
-        rm -f $NANO_CONFIG
+        [ -f $NANO_CONFIG ] && rm -f $NANO_CONFIG
         echo "include ~/.nano/*.nanorc" > $NANO_CONFIG
         echo "include $(brew --prefix)/share/nano/*.nanorc" >> $NANO_CONFIG
 

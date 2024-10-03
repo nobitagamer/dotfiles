@@ -209,7 +209,7 @@ PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 # export DIRENV_LOG_FORMAT=""
 debug_echo "Loading direnv..."
 # See https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-from-a-bash-script
-if command -v direnv 2>&1 >/dev/null; then
+if command -v direnv >/dev/null 2>&1; then
   # See https://askubuntu.com/a/1022440 (readlink /proc/$$/exe`: does NOT work on macOS)
   _shell_type=$(sh -c 'ps -p $$ -o ppid=' | xargs ps -o comm= -p)
   eval "$(direnv hook ${_shell_type#-})"
@@ -220,15 +220,19 @@ fi
 ############
 # Ubuntu 16.04 only
 # [ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
-debug_echo "Loading fzf..."
-eval "$(fzf --bash)"
+hash fzf >/dev/null 2>&1 && {
+  debug_echo "Loading fzf..."
+  eval "$(fzf --bash)"
+}
 
 # !NOTE: mise inside of direnv (use mise in .envrc), see https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
 ############
 # Mise (https://mise.jdx.dev/configuration.html)
 ############
-debug_echo "Loading Mise for Bash..."
-eval "$(mise activate bash)"
+hash mise >/dev/null 2>&1 && {
+  debug_echo "Loading Mise for Bash..."
+  eval "$(mise activate bash)"
+}
 
 # ############
 # # Pyenv
@@ -264,7 +268,10 @@ eval "$(mise activate bash)"
 # starship
 ############
 # Load after .localrc so KUBE_CONTEXT will available
-hash starship 2>/dev/null && (debug_echo "Loading starship..." && eval "$(starship init bash)")
+hash starship >/dev/null 2>&1 && {
+  debug_echo "Loading starship..."
+  eval "$(starship init bash)"
+}
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -296,5 +303,5 @@ if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
   [[ ${BLE_VERSION-} ]] && ble-attach
 
   # See https://gist.github.com/linuswillner/f8c15385e8a88017a70bdc3f18a688a2
-  fastfetch
+  hash fastfetch >/dev/null 2>&1 && fastfetch
 fi

@@ -399,8 +399,12 @@ if ! (($testmode)); then
 	eval $setupshell
 fi
 
-echoerr green "Reloading current shell, see you soon..."
-exec sudo -u $USER -i
+echoerr green 'Install completed, Use the following command to reloading your current shell:'
+# shellcheck disable=SC2016
+echoerr blue '    exec sudo -u $USER -i'
+
+# shellcheck disable=SC2093
+exec sudo -u "$USER" -i
 
 function runDots() {
 	git clone --recursive https://github.com/nobitagamer/dotfiles .dotfiles
