@@ -22,4 +22,7 @@
     command: |
 
       mise current
+
+      # See https://github.com/rbenv/rbenv/issues/943#issuecomment-256869654
+      export RUBY_BUILD_CURL_OPTS=--insecure
       mise install
