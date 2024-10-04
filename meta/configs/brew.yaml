@@ -4,6 +4,7 @@
       relink: true
       force: true
 
+# See https://nixos-and-flakes.thiscute.world/nixos-with-flakes/start-using-home-manager
 - brew:
     - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
     - fzf
@@ -14,4 +15,10 @@
     - jq
     - ncdu
     - htop
+    - btop # In case htop don't work
     - direnv
+    - screen # 5.0 to support True Color
+    - byobu # screen + tmux
+
+- link:
+    ~/.screenrc: apps/screen/screenrc
