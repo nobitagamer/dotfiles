@@ -1,0 +1,11 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+- link:
+    # See https://docs.atuin.sh/configuration/config/
+    ~/.config/atuin/config.toml: shells/plugins/atuin/config.toml
+
+- brew:
+    - atuin # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)

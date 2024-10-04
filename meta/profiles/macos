@@ -6,13 +6,14 @@ ruby
 node
 dev
 ssh
+atuin
+starship.xshell
 shell_common
 bash
 bash.osx
 lsd
 nano
 zsh
-starship.xshell
 tmux
 vscode.osx
 fastlane

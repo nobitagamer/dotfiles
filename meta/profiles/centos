@@ -3,9 +3,10 @@ git
 brew
 brew.linux
 mise
+atuin
+starship.xshell
 shell_common
 bash
-starship.xshell
 ruby
 dev
 node

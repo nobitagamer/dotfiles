@@ -199,6 +199,9 @@ _fix-pzt-module() {
 
 	# OMZL::key-bindings.zsh \
 
+############
+# Atuin (better history search), see https://docs.atuin.sh/guide/installation/
+############
 zinit wait lucid light-mode for \
     OMZL::clipboard.zsh \
     OMZL::compfix.zsh \
@@ -215,6 +218,7 @@ zinit wait lucid light-mode for \
         OMZL::directories.zsh \
         OMZL::grep.zsh \
         OMZL::key-bindings.zsh \
+        atuinsh/atuin \
         OMZP::fzf \
     atload"
         alias dcupb='docker-compose up --build'
@@ -348,7 +352,6 @@ zinit wait lucid light-mode for \
   if"[[ $+commands[npm] ]]" OMZP::npm \
       OMZP::urltools \
       pick"zshrc" tcnksm/docker-alias
-
 # !BUG: svn: E160013: '/sorin-ionescu/prezto/trunk/modules/archive' path not found
 # See https://github.blog/news-insights/product-news/sunsetting-subversion-support/
 # zinit svn wait'!' for \

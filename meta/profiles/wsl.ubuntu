@@ -8,8 +8,9 @@ brew.linux
 mise
 python
 binaries.linux
-shell_common
+atuin
 starship
+shell_common
 bash
 bash.wsl
 zsh
