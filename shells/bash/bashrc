@@ -63,17 +63,6 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
   debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-############
-# ble.sh
-############
-# !BUG: freeze in XShell SSH `screen -ARR -l -s -$SHELL`, see end of this file.
-# MUST load before bash-it or bash-it's theme won't work
-if [[ -f ~/.local/share/blesh/ble.sh ]] && [[ $- == *i* ]]; then
-  debug_echo "Loading ble.sh..."
-  # This lines at the top of .bashrc:
-  [[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh --noattach
-fi
-
 # *********************************
 #   Load Bash-it (+5s)            *
 # *********************************
@@ -82,12 +71,16 @@ fi
 # Path to the bash it configuration
 export BASH_IT="$HOME/.bash_it"
 
+# Custom Content: auto load any *.bash file under every directory.
+export BASH_IT_CUSTOM=${XDG_CONFIG_HOME:=$HOME/.config}/bash_it
+
 # Lock and Load a custom theme file.
 # Leave empty to disable theming.
 # location /.bash_it/themes/
 # You can easily preview the themes in your own shell using BASH_PREVIEW=true bash-it reload
 #export BASH_IT_THEME='bobby'
-export BASH_IT_THEME='sexy'
+# export BASH_IT_THEME='sexy'
+export BASH_IT_THEME= # Disabled, use Starship instead
 
 # (Advanced): Change this to the name of your remote repo if you
 # cloned bash-it with a remote other than origin such as `bash-it`.
@@ -143,32 +136,16 @@ export SCM_GIT_IGNORE_UNTRACKED=true
 # export BASH_IT_RELOAD_LEGACY=1
 
 # Load Bash It in Interactive shell only
-if [[ "$-" =~ 'i' ]] && [ -f "$BASH_IT"/bash_it.sh ]; then
-  debug_echo "Loading bash_it..."
-  source "$BASH_IT"/bash_it.sh
-fi
+# if [[ "$-" =~ 'i' ]] && [ -f "$BASH_IT"/bash_it.sh ]; then
+#   debug_echo "Loading bash_it..."
+#   source "$BASH_IT"/bash_it.sh
+# fi
 
 # *********************************
 #   End Bash-it                  *
 # *********************************
 
 BASHDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/bash"
-
-# standard output is a tty
-# do interactive initialization
-# if [ -t 1 ]; then
-#   # Use sensible bash
-#   if [ -f $BASHDOTDIR/sensible.bash ]; then
-#     source $BASHDOTDIR/sensible.bash
-#   fi
-# fi
-if [[ "$-" =~ 'i' ]]; then
-  # Use sensible bash
-  if [ -f "$BASHDOTDIR/sensible.bash" ]; then
-    debug_echo "Loading sensible bash..."
-    source "$BASHDOTDIR/sensible.bash"
-  fi
-fi
 
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
@@ -218,12 +195,15 @@ fi
 ############
 # fzf
 ############
+# Prefer over hstr, see https://news.ycombinator.com/item?id=25549342
+# !NOTE: disable if loaded by ble.sh, see https://github.com/akinomyoga/blesh-contrib/blob/master/integration/fzf.md
+# hash fzf >/dev/null 2>&1 && {
+#   debug_echo "Loading fzf..."
+#   eval "$(fzf --bash)"
+# }
+
 # Ubuntu 16.04 only
 # [ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
-hash fzf >/dev/null 2>&1 && {
-  debug_echo "Loading fzf..."
-  eval "$(fzf --bash)"
-}
 
 # !NOTE: mise inside of direnv (use mise in .envrc), see https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
 ############
@@ -264,15 +244,6 @@ hash mise >/dev/null 2>&1 && {
 #   eval "$(nodenv init -)"
 # fi
 
-############
-# starship
-############
-# Load after .localrc so KUBE_CONTEXT will available
-hash starship >/dev/null 2>&1 && {
-  debug_echo "Loading starship..."
-  eval "$(starship init bash)"
-}
-
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -292,15 +263,56 @@ if ! shopt -oq posix; then
   fi
 fi
 
+############
+# ble.sh
+############
+# !BUG: freeze in XShell SSH `screen -ARR -l -s -$SHELL`, see end of this file.
+# MUST load before bash-it or bash-it's theme won't work
+# !NOTE: load after bash-completion to use fzf-completion, see https://github.com/akinomyoga/blesh-contrib/blob/master/integration/fzf.md
+if [[ -f ~/.local/share/blesh/ble.sh ]] && [[ $- == *i* ]]; then
+  debug_echo "Loading ble.sh..."
+  # This lines at the top of .bashrc:
+  [[ $- == *i* ]] && source ~/.local/share/blesh/ble.sh --noattach
+fi
+
+# !NOTE: Search history by up, down arrow, consider `atuin`, fallback if disable Atuin
+if [[ "$-" =~ 'i' ]]; then
+  # Use sensible bash
+  if [ -f "$BASHDOTDIR/sensible.bash" ]; then
+    debug_echo "Loading sensible bash..."
+    source "$BASHDOTDIR/sensible.bash"
+  fi
+fi
+
+# !NOTE: MUST initialize Atuin after sourcing ble.sh (atuin doctor)
+hash atuin >/dev/null 2>&1 && {
+  debug_echo "Loading Atuin..."
+  # export ATUIN_NOBIND="true"
+  # eval "$(atuin init bash)"
+
+  # Bind ctrl-r but not up arrow (replace fzf Ctrl+r)
+  eval "$(atuin init bash --disable-up-arrow)"
+  # eval "$(atuin init bash --disable-ctrl-r)" # See https://docs.atuin.sh/configuration/key-binding/
+}
+
+############
+# starship
+############
+# Load after .localrc so KUBE_CONTEXT will available, also after other theme engines
+hash starship >/dev/null 2>&1 && {
+  debug_echo "Loading Starship..."
+  eval "$(starship init bash)"
+}
+
 # This line MUST at the end of .bashrc, see https://github.com/akinomyoga/ble.sh/discussions/254#discussioncomment-4284757
-# !BUG:
+# !BUG: too slow and lagging
 # - [macOS] hang input when using with screen on macOS (freeze in XShell SSH `screen -ARR -l -s -$SHELL`), use Ctrl+A \ to kill hung session (workaround: && [ "$(uname)" != "Darwin" ])
 # - [WSL1] Ctrl+D don't work as normal to kill process on WSL1
 # - [WSL1] duplicate prompt line when resize terminal windows
-# [[ ${BLE_VERSION-} && $- == *i* ]] && ble-attach
+[[ ${BLE_VERSION-} && $- == *i* ]] && ble-attach
 # WORKAROUND: only load ble-attach on SSH session (no bug)
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-  # [[ ${BLE_VERSION-} ]] && ble-attach
+  #[[ ${BLE_VERSION-} ]] && ble-attach # Too slow when type
 
   # See https://gist.github.com/linuswillner/f8c15385e8a88017a70bdc3f18a688a2
   hash fastfetch >/dev/null 2>&1 && fastfetch

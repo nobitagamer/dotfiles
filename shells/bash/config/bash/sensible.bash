@@ -92,7 +92,10 @@ shopt -s autocd 2> /dev/null
 # Correct spelling errors during tab-completion
 shopt -s dirspell 2> /dev/null
 # Correct spelling errors in arguments supplied to cd
-shopt -s cdspell 2> /dev/null
+# shopt -s cdspell 2> /dev/null
+
+# Disable command autocorrection on a bash, see https://refine.dev/blog/zsh-vs-bash/#resource-management
+shopt -u cdspell
 
 # This defines where cd looks for targets
 # Add the directories you want to have fast access to, separated by colon
