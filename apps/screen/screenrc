@@ -352,43 +352,6 @@ defnonblock on
 # screen 5
 # screen 6
 
-# Set the environment variable var to value string. If only var is specified,
-# you'll be prompted to enter a value. If no parameters are specified,
-# you'll be prompted for both variable and value. The environment is
-# inherited by all subsequently forked shells.
-# setenv PROMPT_COMMAND 'echo -n -e "\033k\033\134"'
-
-# Don't you want to start programs which need a DISPLAY ?
-# setenv DISPLAY ''
-
-#
-# http://www.gnu.org/software/screen/manual/html_node/String-Escapes.html
-#
-# %{= wK} : set colors to bright white (W) on bright black (K) and keep current text styles (=)
-# %H : hostname
-# [ : opening bracket character
-# %` : print output of 'backtick' command (defined elsewhere in .screenrc)
-# ] : closing bracket character
-# %{= wW} : set colors to white (w) on bright black (K) and keep current text styles (=)
-# | : bar character
-# ${-} : restore colors to previous colors / undo last color change
-# %-Lw : list windows before current window (L [optional] = "include flags")
-# %{= bW} : set colors to bright white (W) on blue (b) and keep current text styles (=)
-# %f : window flags # %t : window title
-# %{-} : restore colors to previous colors / undo last color change
-# %+Lw : list windows after current window (L [optional] = "include flags")
-# %= : expand to fill all space (used here to make remaining content flush right)
-# %C : current time (12-hr; 24-hr is %c) # %a : am/pm (lowercase; uppercase is %A)
-# %Y : current year
-# - : hyphen character
-# %m : current month (0-padded; %M for "Jan" etc.)
-# - : hyphen character
-# %d : current date (0-padded)
-# See https://www.kilobitspersecond.com/2014/02/10/understanding-gnu-screens-hardstatus-strings/
-hardstatus alwayslastline
-hardstatus string "%{= KW} %H [%`] %{= Kw}|%{-} %-Lw%{= bW}%n%f %t%{-}%+Lw %=%C%a %Y-%M-%d"
-backtick 0 30 30 sh -c 'screen -ls | grep --color=no -o "$PPID[^[:space:]]*"'
-
 truecolor on
 
 # # 256 colors
@@ -495,3 +458,64 @@ nonblock on
 # rather than leaving existing text in place
 # See https://stackoverflow.com/questions/17868652/screen-how-to-turn-on-alternate-screen
 altscreen on
+
+hardstatus alwayslastline
+
+# backtick id lifespan autorefresh
+backtick 0 30 30 sh -c 'screen -ls | grep --color=no -o "$PPID[^[:space:]]*"'
+backtick 1 30 30 sh -c 'git -C ~/.dotfiles/.git rev-parse --short HEAD'
+
+# Set the environment variable var to value string. If only var is specified,
+# you'll be prompted to enter a value. If no parameters are specified,
+# you'll be prompted for both variable and value. The environment is
+# inherited by all subsequently forked shells.
+# setenv PROMPT_COMMAND 'echo -n -e "\033k\033\134"'
+
+# Don't you want to start programs which need a DISPLAY ?
+# setenv DISPLAY ''
+
+#
+# Hardware Status Line : https://www.gnu.org/software/screen/manual/html_node/Hardware-Status-Line.html
+# Understanding GNU Screen’s hardstatus Strings :
+# 	https://www.kilobitspersecond.com/2014/02/10/understanding-gnu-screens-hardstatus-strings/
+#
+# %{= wK} : set colors to bright white (W) on bright black (K) and keep current text styles (=)
+# %H : hostname
+# [ : opening bracket character
+# %` : print output of 'backtick' command (defined elsewhere in .screenrc)
+# ] : closing bracket character
+# %{= wW} : set colors to white (w) on bright black (K) and keep current text styles (=)
+# | : bar character
+# ${-} : restore colors to previous colors / undo last color change
+# %-Lw : list windows before current window (L [optional] = "include flags")
+# %{= bW} : set colors to bright white (W) on blue (b) and keep current text styles (=)
+# %f : window flags # %t : window title
+# %{-} : restore colors to previous colors / undo last color change
+# %+Lw : list windows after current window (L [optional] = "include flags")
+# %= : expand to fill all space (used here to make remaining content flush right)
+# %C : current time (12-hr; 24-hr is %c) # %a : am/pm (lowercase; uppercase is %A)
+# %Y : current year
+# - : hyphen character
+# %m : current month (0-padded; %M for "Jan" etc.)
+# - : hyphen character
+# %d : current date (0-padded)
+# See https://www.kilobitspersecond.com/2014/02/10/understanding-gnu-screens-hardstatus-strings/
+
+# !NOTE: The old format of specifying colors by letters (k,r,g,y,b,m,c,w) is now deprecated.
+#   Colors are coded as 0-7 for basic ANSI, 0-255 for 256 color mode, or for truecolor,
+#   either a hexadecimal code starting with x, or HTML notation as either 3 or 6 hexadecimal digits.
+#   Foreground and background are specified by putting a semicolon between them. Ex: #FFF;#000 or i7;0
+#   is white on a black background.
+# String Escapes : https://www.gnu.org/software/screen/manual/html_node/String-Escapes.html
+# HTML Color Codes : https://www.computerhope.com/htmcolor.htm
+# Cyan		#00FFFF
+# White		#FFFFFF
+# Light Blue	#1d99f3
+# Red		#FF0000
+
+# hardstatus string "%{= KW} %H [%0`] %{= Kw}|%{-} %-Lw%{= bW}%n%f %t%@%1`{-}%+Lw %=%C%a %Y-%M-%d"
+# hardstatus string "[%0`] %-Lw%{#ffffff;#ff0000}%n%f %t@%1`%{#ffffff;#1d99f3}%+Lw %=%Y-%M-%d %c%{-}"
+# hardstatus string "%{#ffffff;#1d99f3}[%0`] %-Lw%{#ffffff;#ff0000}%n%f %t@%1`%{-}%+Lw %=%Y-%M-%d %c"
+
+# `%H`: hostname already included in screen's session name (%0`)
+hardstatus string '%{#00ff00}[%{#1d99f3}%0`%{-}][%{#ffffff}%= %{7}%?%-Lw%?%{1;0}%{1}(%{15}%n%f%t%?(%u)%?%{1;0}%{1})%{7}%?%+Lw%?%? %=%{#00ff00}]%{#ffffff} %Y-%M-%d %c %{-}[%{#1d99f3}%1`%{-}]'
