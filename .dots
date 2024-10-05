@@ -52,7 +52,7 @@ echoerr() {
 		echoerrcolor $color
 	fi
 	echo "$@" >&2
-	if [ $color ]; then
+	if [ -z "$color" ]; then
 		echoerrnocolor
 	fi
 }
