@@ -306,7 +306,7 @@ export ZPLUG_CACHE_DIR=$XDG_CACHE_HOME/zplug
 ############
 # Ubuntu 16.04 only
 # [ -f $XDG_CONFIG_HOME/fzf/fzf.bash ] && source $XDG_CONFIG_HOME/fzf/fzf.bash
-source <(fzf --zsh)
+# source <(fzf --zsh) # Loaded by zinit
 
 ###############################################################################
 # Miscellaneous
@@ -324,16 +324,17 @@ MANWIDTH=80 # make sure man pages doesn't overflow
 
 export GREP_COLOR MANWIDTH
 
-# ===== Dircolors
+# ===== Dircolors (does not work on macOS, see https://github.com/seebi/dircolors-solarized/issues/10#issuecomment-2641754)
 # https://github.com/seebi/dircolors-solarized
-if [[ "$(tput colors)" == "256" ]]; then
+if [[ "$(tput colors)" == "256" ]] &&  [[ "$OSTYPE" != darwin* ]]; then
   [[ -d $XDG_CONFIG_HOME/plugins/dircolors-solarized ]] \
     && eval $(dircolors =(cat $XDG_CONFIG_HOME/plugins/dircolors-solarized/dircolors.256dark $XDG_CONFIG_HOME/plugins/dircolors.extra))
 fi
 
+# See https://superuser.com/questions/700637/terminator-and-zsh-ctrld-not-closing-session
 # Disable Ctrl-d to logout
 # bindkey -r '^D'
-setopt IGNORE_EOF
+# setopt IGNORE_EOF
 
 # export BSPWM_STATE=$TMPDIR/bspwm-state.json
 
