@@ -5,4 +5,3 @@
       force: true
 - link:
     ~/.profile: shells/profile.osx
-- brew: [bash]

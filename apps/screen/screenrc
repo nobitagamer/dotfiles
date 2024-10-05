@@ -361,8 +361,33 @@ defnonblock on
 # Don't you want to start programs which need a DISPLAY ?
 # setenv DISPLAY ''
 
-#hardstatus alwayslastline
-#hardstatus string '%{WB}%H %{W}| %{Y}%l %{W}| %?%{w}%-w%?%{+b g}[%{W}%{r}%n%{W} %t%?{%u}%?%{-b g}]%{W}%?%+w%?%=%{G}| %{Y}%d-%m-%Y %c:%s '
+#
+# http://www.gnu.org/software/screen/manual/html_node/String-Escapes.html
+#
+# %{= wK} : set colors to bright white (W) on bright black (K) and keep current text styles (=)
+# %H : hostname
+# [ : opening bracket character
+# %` : print output of 'backtick' command (defined elsewhere in .screenrc)
+# ] : closing bracket character
+# %{= wW} : set colors to white (w) on bright black (K) and keep current text styles (=)
+# | : bar character
+# ${-} : restore colors to previous colors / undo last color change
+# %-Lw : list windows before current window (L [optional] = "include flags")
+# %{= bW} : set colors to bright white (W) on blue (b) and keep current text styles (=)
+# %f : window flags # %t : window title
+# %{-} : restore colors to previous colors / undo last color change
+# %+Lw : list windows after current window (L [optional] = "include flags")
+# %= : expand to fill all space (used here to make remaining content flush right)
+# %C : current time (12-hr; 24-hr is %c) # %a : am/pm (lowercase; uppercase is %A)
+# %Y : current year
+# - : hyphen character
+# %m : current month (0-padded; %M for "Jan" etc.)
+# - : hyphen character
+# %d : current date (0-padded)
+# See https://www.kilobitspersecond.com/2014/02/10/understanding-gnu-screens-hardstatus-strings/
+hardstatus alwayslastline
+hardstatus string "%{= KW} %H [%`] %{= Kw}|%{-} %-Lw%{= bW}%n%f %t%{-}%+Lw %=%C%a %Y-%M-%d"
+backtick 0 30 30 sh -c 'screen -ls | grep --color=no -o "$PPID[^[:space:]]*"'
 
 truecolor on
 
@@ -421,31 +446,52 @@ defscrollback 5000
 # layout select one
 
 # navigating regions with Ctrl-arrows
-bindkey "^[[1;5D" focus left
-bindkey "^[[1;5C" focus right
-bindkey "^[[1;5A" focus up
-bindkey "^[[1;5B" focus down
+# bindkey "^[[1;5D" focus left
+# bindkey "^[[1;5C" focus right
+# bindkey "^[[1;5A" focus up
+# bindkey "^[[1;5B" focus down
 
 # switch windows with F3 (prev) and F4 (next)
 bindkey "^[OR" prev
 bindkey "^[OS" next
 
-# switch layouts with Ctrl+F3 (prev layout) and Ctrl+F4 (next)
-bindkey "^[O1;5R" layout prev
-bindkey "^[O1;5S" layout next
+# # switch layouts with Ctrl+F3 (prev layout) and Ctrl+F4 (next)
+# bindkey "^[O1;5R" layout prev
+# bindkey "^[O1;5S" layout next
 
-# F2 puts Screen into resize mode. Resize regions using hjkl keys.
-bindkey "^[OQ" eval "command -c rsz" # enter resize mode
+# # F2 puts Screen into resize mode. Resize regions using hjkl keys.
+# bindkey "^[OQ" eval "command -c rsz" # enter resize mode
 
-# use hjkl keys to resize regions
-bind -c rsz h eval "resize -h -5" "command -c rsz"
-bind -c rsz j eval "resize -v -5" "command -c rsz"
-bind -c rsz k eval "resize -v +5" "command -c rsz"
-bind -c rsz l eval "resize -h +5" "command -c rsz"
+# # use hjkl keys to resize regions
+# bind -c rsz h eval "resize -h -5" "command -c rsz"
+# bind -c rsz j eval "resize -v -5" "command -c rsz"
+# bind -c rsz k eval "resize -v +5" "command -c rsz"
+# bind -c rsz l eval "resize -h +5" "command -c rsz"
 
-# quickly switch between regions using tab and arrows
-bind -c rsz \t    eval "focus"       "command -c rsz" # Tab
-bind -c rsz -k kl eval "focus left"  "command -c rsz" # Left
-bind -c rsz -k kr eval "focus right" "command -c rsz" # Right
-bind -c rsz -k ku eval "focus up"    "command -c rsz" # Up
-bind -c rsz -k kd eval "focus down"  "command -c rsz" # Down
+# # quickly switch between regions using tab and arrows
+# bind -c rsz \t    eval "focus"       "command -c rsz" # Tab
+# bind -c rsz -k kl eval "focus left"  "command -c rsz" # Left
+# bind -c rsz -k kr eval "focus right" "command -c rsz" # Right
+# bind -c rsz -k ku eval "focus up"    "command -c rsz" # Up
+# bind -c rsz -k kd eval "focus down"  "command -c rsz" # Down
+
+## See https://www.pixelbeat.org/settings/.screenrc
+# Bind F11 and F12 (NOT F1 and F2) to previous and next screen window
+#bindkey -k F1 prev
+#bindkey -k F2 next
+
+# Also for ctrl-alt right and left arrows
+# Note disable in window manager to allow through
+# bindkey ^[[1;7D prev
+# bindkey ^[[1;7C next
+
+# From Stephen Shirley
+# Don't block command output if the terminal stops responding
+# (like if the ssh connection times out for example).
+# See https://www.gnu.org/software/screen/manual/html_node/Nonblock.html
+nonblock on
+
+# Allow editors etc. to restore display on exit
+# rather than leaving existing text in place
+# See https://stackoverflow.com/questions/17868652/screen-how-to-turn-on-alternate-screen
+altscreen on

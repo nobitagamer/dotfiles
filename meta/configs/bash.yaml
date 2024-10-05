@@ -7,11 +7,15 @@
     - ~/.config/bash
 - link:
     ~/.bashrc: shells/bash/bashrc
+    ~/.inputrc: shells/bash/inputrc
     ~/.bash_profile: shells/bash/bash_profile
     ~/.bash_aliases: shells/bash/bash_aliases
     ~/.config/bash/.bash_prompt: shells/bash/config/bash/bash_prompt
     ~/.config/bash/sensible.bash: shells/bash/config/bash/sensible.bash
     ~/.config/bash/bashmarks.sh: shells/bash/config/bash/bashmarks.sh
+
+- brew:
+  - bash
 
 - shell++:
   - description: Installing bash addons

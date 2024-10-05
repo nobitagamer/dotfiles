@@ -53,6 +53,8 @@
   # Required by dotnet
   # - mono-libgdiplus
   # - gitversion
+  # A simple keystroke visualizer
+  - showkey
 
 # Support for dedupe.sh, see https://apple.stackexchange.com/questions/69223/how-to-replace-mac-os-x-utilities-with-gnu-core-utilities
 # - brew:

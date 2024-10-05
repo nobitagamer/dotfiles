@@ -40,7 +40,7 @@
     ~/.config/zsh/functions/spectrum: shells/zsh/config/zsh/functions/spectrum
     ~/.config/zsh/functions/take: shells/zsh/config/zsh/functions/take
     ~/.config/zsh/settings/abbreviations.zsh: shells/zsh/config/zsh/settings/abbreviations.zsh
-    # ~/.config/zsh/settings/bindkeys.zsh: shells/zsh/config/zsh/settings/bindkeys.zsh
+    ~/.config/zsh/settings/bindkeys.zsh: shells/zsh/config/zsh/settings/bindkeys.zsh
     ~/.config/zsh/settings/externals: shells/zsh/config/zsh/settings/externals
     # ~/.config/zsh/settings/fasd.zsh: shells/zsh/config/zsh/settings/fasd.zsh
     ~/.config/zsh/settings/zshsetopts.zsh: shells/zsh/config/zsh/settings/zshsetopts.zsh

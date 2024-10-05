@@ -54,3 +54,7 @@
 #   bindkey -M vicmd 'k' history-substring-search-up
 #   bindkey -M vicmd 'j' history-substring-search-down
 # fi
+
+## macOS: XShell enable ALT Key as Meta key (same with Bash's .inputrc)
+bindkey "^[^[[C" forward-word
+bindkey "^[^[[D" backward-word
