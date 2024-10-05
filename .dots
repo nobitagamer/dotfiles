@@ -35,7 +35,7 @@ echoerrcolor() {
 			;;
 
 		esac
-		echo -ne $str >&2
+		echo -ne "$str" >&2
 	fi
 }
 
@@ -402,9 +402,10 @@ fi
 echoerr green 'Install completed, Use the following command to reloading your current shell:'
 # shellcheck disable=SC2016
 echoerr blue '    exec sudo -u $USER -i'
+exit 0
 
 # shellcheck disable=SC2093
-exec sudo -u "$USER" -i
+# exec sudo -u "$USER" -i
 
 function runDots() {
 	git clone --recursive https://github.com/nobitagamer/dotfiles .dotfiles
