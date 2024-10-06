@@ -38,5 +38,6 @@ set output-meta on
 set convert-meta off
 
 ## macOS: XShell enable ALT Key as Meta key (Bash only)
-bindkey "^[^[[C" forward-word
-bindkey "^[^[[D" backward-word
+# !BUG: cause `b` become `^[^[[D`
+# bindkey "^[^[[C" forward-word
+# bindkey "^[^[[D" backward-word

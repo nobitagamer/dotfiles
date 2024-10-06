@@ -52,8 +52,9 @@ bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
 bindkey "$terminfo[cuu1]" history-substring-search-up
 bindkey "$terminfo[cud1]" history-substring-search-down
-bindkey '^[^[[D' backward-word
-bindkey '^[^[[C' forward-word
+# Defined in bindkeys.zsh
+# bindkey '^[^[[D' backward-word
+# bindkey '^[^[[C' forward-word
 bindkey '^[[5D' beginning-of-line
 bindkey '^[[5C' end-of-line
 bindkey '^[[3~' delete-char

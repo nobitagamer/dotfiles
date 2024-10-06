@@ -56,5 +56,9 @@
 # fi
 
 ## macOS: XShell enable ALT Key as Meta key (same with Bash's .inputrc)
+# Alt+Left/Right arrow
 bindkey "^[^[[C" forward-word
 bindkey "^[^[[D" backward-word
+
+# Alt+Delete
+bindkey '^[^[[3~' delete-word
