@@ -44,6 +44,13 @@ if ! which brew; then
   fi
 
   ############
+  # Homebrew (Intel x86_64)
+  ############
+  if [ -f /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+
+  ############
   # Homebrew (Apple Silicon)
   ############
   if [ -f /opt/homebrew/bin/brew ]; then

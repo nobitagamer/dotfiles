@@ -3,9 +3,10 @@
 ############
 # Homebrew
 ############
+# Default Intel x86_64
 HOMEBREW_PREFIX=/usr/local/bin/brew
 
-# Apple Silicon
+# Apple Silicon arm64
 [ "$(uname -m)" = "arm64" ] && HOMEBREW_PREFIX=/opt/homebrew/bin/brew
 if [ -f $HOMEBREW_PREFIX ]; then
   debug_echo "Loading Homebrew..."
@@ -14,23 +15,32 @@ fi
 
 unset HOMEBREW_PREFIX
 
-# Use Java 8 for sdkmanager
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # temurin@8 for android-sdk
-# export JAVA_HOME=$(/usr/libexec/java_home -v 11) # For Unity 2022.3+
-# export JAVA_HOME=$(/usr/libexec/java_home -v 17) # For android-commandlinetools
-export PATH=${JAVA_HOME}/bin:$PATH
+############
+# Set PATH
+############
+# !NOTE: don't use `export` for portability, see https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path
 
-# export ANDROID_HOME=/usr/local/share/android-sdk # Intel
-export ANDROID_HOME=/opt/homebrew/share/android-sdk # Apple Silicon
-# export ANDROID_HOME=$HOMEBREW_PREFIX/share/android-commandlinetools # Apple Silicon
+# /usr/local/bin: Binaries for programs local to the site (default included).
+# /usr/local/sbin: Locally installed programs for system administration.
+PATH=/usr/local/sbin:$PATH
+
+# List all Java versions using `/usr/libexec/java_home -verbose`, see https://stackoverflow.com/questions/47457105/class-has-been-compiled-by-a-more-recent-version-of-the-java-environment
+# Use Java 8 for sdkmanager in android-sdk/tools/bin path
+JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # temurin@8 for android-sdk
+# JAVA_HOME=$(/usr/libexec/java_home -v 11) # For Unity 2022.3+
+# JAVA_HOME=$(/usr/libexec/java_home -v 17) # For android-commandlinetools
+PATH=$JAVA_HOME/bin:$PATH
+
+# !Obsoleted by android-commandlinetools
+ANDROID_HOME=$(brew --prefix)/share/android-sdk # Require temurin@8
+# ANDROID_HOME=$(brew --prefix)/share/android-commandlinetools # Require Java 17
+PATH=$ANDROID_HOME/tools/bin:$PATH
 
 # MUST use android-ndk r16b for Unity 2018.3.7f1
 # Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio.
 # See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
-# export ANDROID_NDK_ROOT=${ANDROID_HOME}/ndk # Obsoleted by Unity3D 2021.3+
-#export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/16.1.4479499
-export PATH=/usr/local/bin:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:$PATH
-export MANPATH=/opt/local/share/man:$MANPATH
+# ANDROID_NDK_ROOT=$ANDROID_HOME/ndk # Obsoleted by Unity3D 2021.3+
+#ANDROID_NDK_HOME=$ANDROID_HOME/ndk/16.1.4479499
 
 # Obsoleted, use Mise instead
 # Rehash already done by nodenv-package-rehash
@@ -42,14 +52,16 @@ export MANPATH=/opt/local/share/man:$MANPATH
 
 # !NOTE: use Ruby 3.0.x for OpenSSL >= 1.1, < 3.0, see https://www.rubyonmac.dev/openssl-versions-supported-by-ruby
 # See https://stackoverflow.com/questions/77874851/trouble-installing-specific-version-of-ruby-openssl-issue
-export PATH="$HOME/.local/share/mise/shims:$PATH"
+PATH=$HOME/.local/share/mise/shims:$PATH
 
-# export OPENSSL_PREFIX="$(brew --prefix openssl@1.1)"
 # See https://github.com/pyenv/pyenv/issues/1067#issuecomment-472798576
-# export PATH=$OPENSSL_PREFIX/bin:$PATH
+# OPENSSL_PREFIX=$(brew --prefix openssl@1.1)
+# PATH=$OPENSSL_PREFIX/bin:$PATH
 
 # Used by source-highlight
-# export PATH="$(brew --prefix icu4c)/bin:$PATH"
-# export PATH="$(brew --prefix icu4c)/sbin:$PATH"
+# PATH=$(brew --prefix icu4c)/bin:$PATH
+# PATH=$(brew --prefix icu4c)/sbin:$PATH
+
+export PATH JAVA_HOME ANDROID_HOME
 
 echo '.profile loaded successfully.'
