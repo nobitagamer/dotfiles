@@ -464,6 +464,7 @@ hardstatus alwayslastline
 # backtick id lifespan autorefresh
 backtick 0 0 0 sh -c 'screen -ls | grep --color=no -o "$PPID[^[:space:]]*"'
 backtick 1 60 60 sh -c 'git -C ~/.dotfiles/.git rev-parse --short HEAD'
+backtick 2 60 60 sh -c 'bash ~/.dotfiles/check-update.sh'
 
 # Set the environment variable var to value string. If only var is specified,
 # you'll be prompted to enter a value. If no parameters are specified,
@@ -519,4 +520,4 @@ backtick 1 60 60 sh -c 'git -C ~/.dotfiles/.git rev-parse --short HEAD'
 
 # `%H`: hostname already included in screen's session name (%0`)
 # !NOTE: use `%c` will cause terminal screen refresh and reset display at bottom even you scrolling up (can disable XShell `Auto scroll to bottom for terminal input/output events`)
-hardstatus string '%{#00ff00}[%{#1d99f3}%0`%{-}][%{#ffffff}%= %{7}%?%-Lw%?%{1;0}%{1}(%{15}%n%f%t%?(%u)%?%{1;0}%{1})%{7}%?%+Lw%?%? %=%{#00ff00}]%{#ffffff} %Y-%M-%d %c %{-}[%{#1d99f3}%1`%{-}]'
+hardstatus string '%{#00ff00}[%{#1d99f3}%0`%{-}][%{#ffffff}%= %{7}%?%-Lw%?%{1;0}%{1}(%{15}%n%f%t%?(%u)%?%{1;0}%{1})%{7}%?%+Lw%?%? %=%{#00ff00}]%{#ffffff} %Y-%M-%d %c %{-}[%{#1d99f3}%1`%{-}%{#ff0000}%2`%{-}]'
