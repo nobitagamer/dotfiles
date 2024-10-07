@@ -87,6 +87,9 @@ done < "${META_DIR}/${PROFILES_DIR}/$1"
 
 shift
 
+# Require to use alias in script, see https://askubuntu.com/questions/98782/how-to-run-an-alias-in-a-shell-script
+shopt -s expand_aliases
+
 # Force use Python2 to avoid `SyntaxWarning for 'is' with literals` on Python 3.8.5 from MacOS Catalina
 # See https://adamj.eu/tech/2020/01/21/why-does-python-3-8-syntaxwarning-for-is-literal/
 which python3 >/dev/null 2>&1 && alias python=python3
