@@ -44,9 +44,9 @@ if [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
   debug_echo "Loading linuxbrew..."
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-  BREW_PREFIX=$(brew --prefix)
-  export MANPATH="$BREW_PREFIX/share/man:$MANPATH"
-  export INFOPATH="$BREW_PREFIX/share/info:$INFOPATH"
+  # BREW_PREFIX=$(brew --prefix)
+  # export MANPATH="$BREW_PREFIX/share/man:$MANPATH"
+  # export INFOPATH="$BREW_PREFIX/share/info:$INFOPATH"
 
   # OPENSSL_PREFIX=$(brew --prefix openssl@1.1)
   # export CFLAGS="-I$OPENSSL_PREFIX/include"

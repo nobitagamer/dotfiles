@@ -114,8 +114,8 @@ zinit wait lucid light-mode for Tarrasch/zsh-autoenv
 ############
 # zoxide (better z/fasd), see https://github.com/ajeetdsouza/zoxide/issues/175
 ############
+  # mv"zoxide*/zoxide -> zoxide" \
 zinit ice wait as"command" from"gh-r" lucid \
-  mv"zoxide*/zoxide -> zoxide" \
   atclone"./zoxide init zsh > init.zsh" \
   atpull"%atclone" src"init.zsh" nocompile'!' \
   atload'export _ZO_ECHO=1; eval "$(_ZO_ECHO=1 zoxide init zsh)"' # See https://github.com/ajeetdsouza/zoxide?tab=readme-ov-file#environment-variables
