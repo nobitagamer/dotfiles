@@ -21,10 +21,10 @@
 # timezone = "local"
 
 ## enable or disable automatic sync
-# auto_sync = true
+auto_sync = false
 
 ## enable or disable automatic update checks
-# update_check = true
+update_check = false
 
 ## address of the sync server
 # sync_address = "https://api.atuin.sh"
@@ -75,6 +75,7 @@ inline_height = 21
 ## what to do when the escape key is pressed when searching
 ## possible values: return-original, return-query
 # exit_mode = "return-original"
+exit_mode = "return-query"
 
 ## possible values: emacs, subl
 # word_jump_mode = "emacs"
@@ -158,6 +159,7 @@ enter_accept = true
 ## Set this to true and Atuin will minimize motion in the UI - timers will not update live, etc.
 ## Alternatively, set env NO_MOTION=true
 # prefers_reduced_motion = false
+prefers_reduced_motion = true
 
 [stats]
 ## Set commands where we should consider the subcommand for statistics. Eg, kubectl get vs just kubectl
