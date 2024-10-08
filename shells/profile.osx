@@ -9,7 +9,8 @@ HOMEBREW_PREFIX=/usr/local/bin/brew
 # Apple Silicon arm64
 [ "$(uname -m)" = "arm64" ] && HOMEBREW_PREFIX=/opt/homebrew/bin/brew
 if [ -f $HOMEBREW_PREFIX ]; then
-  debug_echo "Loading Homebrew..."
+  # Avoid error when direct source this file (reload)
+  which debug_echo && debug_echo "Loading Homebrew..."
   eval "$($HOMEBREW_PREFIX shellenv)"
 fi
 
@@ -26,15 +27,16 @@ PATH=/usr/local/sbin:$PATH
 
 # List all Java versions using `/usr/libexec/java_home -verbose`, see https://stackoverflow.com/questions/47457105/class-has-been-compiled-by-a-more-recent-version-of-the-java-environment
 # Use Java 8 for sdkmanager in android-sdk/tools/bin path
-JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # temurin@8 for android-sdk
-# JAVA_HOME=$(/usr/libexec/java_home -v 11) # For Unity 2022.3+
-# JAVA_HOME=$(/usr/libexec/java_home -v 17) # For android-commandlinetools
+# JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # temurin@8 for android-sdk
+# JAVA_HOME=$(/usr/libexec/java_home -v 11) # For Unity 2022.3+ (commandlinetools:9.0)
+JAVA_HOME=$(/usr/libexec/java_home -v 17) # For android-commandlinetools latest (only need to install commandlinetools:9.0)
 PATH=$JAVA_HOME/bin:$PATH
 
 # !Obsoleted by android-commandlinetools
-ANDROID_HOME=$(brew --prefix)/share/android-sdk # Require temurin@8
-# ANDROID_HOME=$(brew --prefix)/share/android-commandlinetools # Require Java 17
-PATH=$ANDROID_HOME/tools/bin:$PATH
+# ANDROID_HOME=$(brew --prefix)/share/android-sdk # Require temurin@8
+
+ANDROID_HOME=$(brew --prefix)/share/android-commandlinetools
+PATH=$ANDROID_HOME/cmdline-tools/9.0/bin:$PATH # (9.0 max support Java 11 used by Unity 2022.3)
 
 # MUST use android-ndk r16b for Unity 2018.3.7f1
 # Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio.
@@ -62,6 +64,6 @@ PATH=$HOME/.local/share/mise/shims:$PATH
 # PATH=$(brew --prefix icu4c)/bin:$PATH
 # PATH=$(brew --prefix icu4c)/sbin:$PATH
 
-export PATH JAVA_HOME ANDROID_HOME
+export PATH JAVA_HOME ANDROID_HOME UNITY_JAVA_HOME
 
 echo '.profile loaded successfully.'

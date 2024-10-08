@@ -6,11 +6,13 @@
 - link:
     ~/.Unity3D: apps/Unity3D
 
+# Which JDK to use, see https://whichjdk.com/
 - brew:
   # See https://github.com/Homebrew/homebrew-core/issues/109379, https://github.com/orgs/Homebrew/discussions/2172
-  - temurin@8 # For sdkmanager on Apple Silicon (openjdk@8: The x86_64 architecture is required for this software)
-  - openjdk@11 # For Unity 2022.3+
-  - openjdk@17 # For android-commandlinetools cask
+  # - temurin@8 # For sdkmanager on Apple Silicon (openjdk@8: The x86_64 architecture is required for this software)
+  # - openjdk@11 # For Unity 2022.3+
+  # - openjdk@17 # For android-commandlinetools cask
+  - temurin@17 # For android-commandlinetools cask
   # - rbenv
 
 - shell++:
@@ -25,16 +27,93 @@
       sudo ln -sfn $(brew --prefix)/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
 
       /usr/libexec/java_home -V
-      export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+      export JAVA_HOME=$(/usr/libexec/java_home -v 17)
       export PATH=${JAVA_HOME}/bin:$PATH
       java -version
+
+- shell++:
+  - description: Remove android-sdk before install android-commandlinetools to avoid conflict
+    condition: 'true'
+  - stderr: true
+    command: |
+
+      brew uninstall --force android-sdk || true
+      brew uninstall --force temurin@8 || true
+
+      # Use Unity's embedded
+      brew uninstall --force openjdk@11 || true
+
+      # Replaced with temurin@17
+      brew uninstall --force openjdk@17 || true
 
 - cask:
   # See https://www.yippeecode.com/topics/upgrade-to-openjdk-temurin-using-homebrew/
   # - homebrew/cask-versions/temurin8 # java8: it's gone from Homebrew, use OpenJDK instead (temurin8)
-  - android-sdk # Required by Unity3D 2022.3 (02/2024) but officially discontinued upstream, see https://stackoverflow.com/questions/64312200/android-sdk-has-been-officially-discontinued-upstream
-  # - android-commandlinetools # class file version 61.0 (Java 17+)
+  # - android-sdk # Required by Unity3D 2022.3 (02/2024) but officially discontinued upstream, see https://stackoverflow.com/questions/64312200/android-sdk-has-been-officially-discontinued-upstream
+  - android-commandlinetools # class file version 61.0 (Java 17+)
   - unity-hub
+
+- shell++:
+  - description: Pre-install Android SDKs commandlinetools:9.0 (max support Java 11 used by Unity 2022.3)
+    condition: 'true'
+  - stderr: true
+    command: |
+      touch ~/.android/repositories.cfg
+
+      # Use Java 8 for sdkmanager
+      # export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # android-sdk
+      # export PATH=${JAVA_HOME}/bin:$PATH
+
+      ANDROID_SDK_LATEST=$(brew --prefix)/share/android-commandlinetools/cmdline-tools/latest
+      if [ -d $ANDROID_SDK_LATEST ]; then
+        # Use Java 17 for sdkmanager (brew's android-commandlinetools)
+        export JAVA_HOME=$(/usr/libexec/java_home -v 17) # android-commandlinetools
+        export PATH=$JAVA_HOME/bin:$ANDROID_SDK_LATEST/bin:$PATH
+        export PATH=:$PATH
+
+        echo "Accept all licenses for first time..."
+        yes | sdkmanager --licenses | grep -v = || true
+
+        echo y | sdkmanager "cmdline-tools;9.0" | grep -v = || true # JDK 11 (embedded by Unity 2022.3)
+      fi
+
+      # !HACK: remove latest commandlinetools to force Unity 2022.3 use cmdline-tools:9.0 that support Java 11 embedded
+      if [ -d $(brew --prefix)/share/android-commandlinetools/cmdline-tools/9.0 ]; then
+        rm -rf $ANDROID_SDK_LATEST # MUST delete, cannot rename
+        brew cleanup # Remove broken symlinks to cmdline-tools/latest folder
+      fi
+
+#       # mkdir -p /usr/local/share/android-ndk/
+
+#       # For Unity3D 2018.1.0f2
+#       # wget -qO- https://dl.google.com/android/repository/android-ndk-r13b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
+
+#       # For Unity3D 2018.3+
+#       # wget -qO- https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
+
+#       # macOS Catalina https://developer.android.com/studio/projects/install-ndk#specific-version
+#       # echo "Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio."
+#       # See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
+#       # echo y | sdkmanager --install "ndk;16.1.4479499"
+
+#       # Unity 2019.3 (use built-in dependencies)
+#       # echo y | sdkmanager --install "ndk;19.2.5345600"
+
+#       echo y | sdkmanager "tools" "platform-tools"
+#       echo y | sdkmanager "extras;android;m2repository"
+#       echo y | sdkmanager "cmdline-tools;9.0" # JDK 11
+
+#       # Android SDK build tools
+#       # echo y | sdkmanager "build-tools;30.0.2" # 11/13/2020 require build tools m29
+#       echo y | sdkmanager "build-tools;30.0.3" # 21/05/2024: Latest supported build-tools version is 30.0.3
+#       echo y | sdkmanager "build-tools;33.0.0"
+#       echo y | sdkmanager "build-tools;34.0.0"
+
+#       # See https://developer.android.com/tools/releases/platforms
+#       echo y | sdkmanager "platforms;android-29" # Android 10.0: Required for build AndroidX by Unity
+#       echo y | sdkmanager "platforms;android-30" # Android 11.0
+#       echo y | sdkmanager "platforms;android-31" # 31/32 Android 12.0
+#       echo y | sdkmanager "platforms;android-33" # Android 13.0: Unity3D 2022.3
 
 - shell++:
   - description: Install Unity3D versions using Unity Hub
@@ -130,53 +209,3 @@
     # EOF
 
     # chmod +x ~/update-unity-*
-
-# - shell++:
-#   - description: Pre-install Android SDKs
-#     condition: 'true'
-#   - stderr: true
-#     command: |
-#       touch ~/.android/repositories.cfg
-
-#       echo "Accept all licenses..."
-
-#       # Use Java 8 for sdkmanager
-#       export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) # android-sdk
-#       # export JAVA_HOME=$(/usr/libexec/java_home -v 17) # android-commandlinetools
-#       export PATH=${JAVA_HOME}/bin:$PATH
-
-#       # yes | sdkmanager --licenses
-#       # Can NOT use yes pipe that will cause deadlock
-#       sdkmanager --licenses
-
-#       # mkdir -p /usr/local/share/android-ndk/
-
-#       # For Unity3D 2018.1.0f2
-#       # wget -qO- https://dl.google.com/android/repository/android-ndk-r13b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
-
-#       # For Unity3D 2018.3+
-#       # wget -qO- https://dl.google.com/android/repository/android-ndk-r16b-darwin-x86_64.zip | tar xz - -C /usr/local/share/android-ndk/
-
-#       # macOS Catalina https://developer.android.com/studio/projects/install-ndk#specific-version
-#       # echo "Because the Catalina stronger verification, IL2CPP build will fail if NDK version is NOT install via the SDK Installer in Android Studio."
-#       # See https://forum.unity.com/threads/il2cppcore-dll-did-not-run-properly.738350/#post-5392932
-#       # echo y | sdkmanager --install "ndk;16.1.4479499"
-
-#       # Unity 2019.3 (use built-in dependencies)
-#       # echo y | sdkmanager --install "ndk;19.2.5345600"
-
-#       echo y | sdkmanager "tools" "platform-tools"
-#       echo y | sdkmanager "extras;android;m2repository"
-#       echo y | sdkmanager "cmdline-tools;9.0" # JDK 11
-
-#       # Android SDK build tools
-#       # echo y | sdkmanager "build-tools;30.0.2" # 11/13/2020 require build tools m29
-#       echo y | sdkmanager "build-tools;30.0.3" # 21/05/2024: Latest supported build-tools version is 30.0.3
-#       echo y | sdkmanager "build-tools;33.0.0"
-#       echo y | sdkmanager "build-tools;34.0.0"
-
-#       # See https://developer.android.com/tools/releases/platforms
-#       echo y | sdkmanager "platforms;android-29" # Android 10.0: Required for build AndroidX by Unity
-#       echo y | sdkmanager "platforms;android-30" # Android 11.0
-#       echo y | sdkmanager "platforms;android-31" # 31/32 Android 12.0
-#       echo y | sdkmanager "platforms;android-33" # Android 13.0: Unity3D 2022.3
