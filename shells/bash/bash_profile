@@ -35,6 +35,14 @@ export LC_CTYPE="en_US.UTF-8"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+# !NOTE: move to shared profile later
+############
+# micro
+############
+# Enable True Color, see https://github.com/zyedidia/micro#features
+export COLORTERM=truecolor
+export MICRO_TRUECOLOR=1
+
 # Init Linuxbrew, now is Homebrew
 # test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
 # test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)

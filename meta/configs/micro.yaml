@@ -1,0 +1,11 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+
+- link:
+    ~/.config/micro/settings.json: editors/micro/settings.json
+
+- brew:
+  - micro

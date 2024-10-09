@@ -18,3 +18,4 @@ vim.linux
 tmux
 lsd
 nano
+micro

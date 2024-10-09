@@ -13,5 +13,6 @@ node
 python
 binaries.linux
 lsd
+micro
 nano
 zsh
