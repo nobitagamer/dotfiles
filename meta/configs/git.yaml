@@ -7,6 +7,10 @@
     ~/.gitconfig: development/git/gitconfig
     ~/.gitignore_global: development/git/gitignore_global
 
+# Install latest Git from Homebrew to use `git spare-checkout` (like SVN)
+- brew:
+  - git
+
 - shell++:
   - description: Create Git local config file if does not exists
     condition: 'true'

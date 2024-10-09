@@ -1,11 +1,11 @@
 apt.linux
+brew
+brew.linux
+mise
 git
 dev
 node
 ruby
-brew
-brew.linux
-mise
 python
 binaries.linux
 atuin

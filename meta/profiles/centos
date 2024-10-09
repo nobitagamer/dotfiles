@@ -1,8 +1,8 @@
 yum.linux
-git
 brew
 brew.linux
 mise
+git
 atuin
 starship.xshell
 shell_common
