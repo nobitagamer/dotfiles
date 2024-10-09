@@ -59,12 +59,6 @@ echoerr() {
 
 printferr() { printf "$@" >&2; }
 
-$(which git >&/dev/null)
-
-if [ $? -eq 1 ]; then
-	echoerr red "Git not found! Confirm it is indeed installed and reachable."
-	exit
-fi
 
 author='nobitagamer'
 
@@ -138,6 +132,51 @@ appendshell() {
   else
 	  setupshell=$setupshell'   '$add
   fi
+}
+
+# See https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
+vercomp () {
+    if [[ $1 == $2 ]]
+    then
+        return 0
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+    do
+        ver1[i]=0
+    done
+    for ((i=0; i<${#ver1[@]}; i++))
+    do
+        if ((10#${ver1[i]:=0} > 10#${ver2[i]:=0}))
+        then
+            return 1
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]}))
+        then
+            return 2
+        fi
+    done
+    return 0
+}
+
+request_sudo()
+{
+  # Ask for the administrator password upfront
+  echoerr blue "To easy accepting licenses and setup system software, you MUST enter sudo password to continue!"
+  sudo -v
+
+  # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
+  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+}
+
+centos_update_git()
+{
+    updatecmd='sudo yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm; sudo yum check-update; sudo yum -y --enablerepo="endpoint" install git'
+    echoerr darkcyan  "Auto run Git package update command (see https://serverfault.com/questions/709433/install-a-newer-version-of-git-on-centos-7):"
+    echoerr blue      "  $updatecmd"
+    eval $updatecmd
 }
 
 testmode=0
@@ -261,6 +300,42 @@ CYGWIN*)
 esac
 
 echoerr green "Detected platform: $platform"
+
+request_sudo
+
+$(which git >&/dev/null)
+
+if [ $? -eq 1 ]; then
+  if [ $platform = "centos" ]; then
+    echoerr red       "Detected $(cat /etc/centos-release)but Git (required by Homebrew) was not found!"
+    centos_update_git
+  else
+    # Not support yet!
+    echoerr red "Git not found! Confirm it is indeed installed and reachable."
+    exit
+  fi
+fi
+
+if [ $platform = "centos" ]; then
+  # Require Git's version >=2.7.0
+  gitver=$(git --version | sed -ne 's/[^0-9]*\(\([0-9]\.\)\{0,4\}[0-9][^.]*\)/\1/p')
+  vercomp $gitver 2.7.0
+  if [ $? -eq 2 ]; then
+    echoerr red       "Detected $(cat /etc/centos-release)but Git version is $gitver < 2.7.0 required by Homebrew!"
+    centos_update_git
+  fi
+
+  # Require cURL's version >=7.41.0
+  curlver=$(curl --version | head -n 1 | awk '{ print $2 }')
+  vercomp $curlver 7.41.0
+  if [ $? -eq 2 ]; then
+    updatecmd='sudo yum -y install http://www.city-fan.org/ftp/contrib/yum-repo/city-fan.org-release-3-14.rhel7.noarch.rpm; sudo yum check-update; sudo yum -y --enablerepo="epel,city-fan.org" install curl'
+    echoerr red       "Detected $(cat /etc/centos-release)but CURL version is $curlver < 7.41.0 required by Homebrew!"
+    echoerr darkcyan  "Auto run cURL package update command (see https://serverfault.com/questions/321321/upgrade-curl-to-latest-on-centos):"
+    echoerr blue      "  $updatecmd"
+    eval $updatecmd
+  fi
+fi
 
 appendshell start
 if [ $platform = "macos" ]; then
@@ -388,13 +463,7 @@ echoerrcolor darkred
 read -p "${warningmessage}This is your last chance to press ^C before actions are taken that should not be interrupted. "
 echoerrnocolor
 
-# Ask for the administrator password upfront
-echoerr blue "To easy accepting licenses and setup system software, you MUST enter sudo password to continue!"
-sudo -v
-
-# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
+request_sudo
 if ! (($testmode)); then
 	eval $setupshell
 fi

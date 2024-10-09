@@ -33,8 +33,9 @@ git submodule update --init --checkout --recursive --force
 
 # HACK to make dotbot-brew work since Linuxbrew does not add PATH automatically.
 if ! which brew; then
+  # See https://docs.brew.sh/Installation#unattended-installation
   echo "Installing Homebrew..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
   ############
   # Linuxbrew
