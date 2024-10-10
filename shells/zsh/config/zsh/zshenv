@@ -24,7 +24,7 @@ source ~/.config/common/init_functions.sh
 # unset DEBUG # Disable debug
 # DEBUG=1 # Enable debug
 
-# Reduce 5s load time
+# Reduce 5s load time, see https://github.com/zdharma-continuum/zinit?tab=readme-ov-file#disabling-system-wide-compinit-call-ubuntu
 skip_global_compinit=1
 
 ###############################################################################

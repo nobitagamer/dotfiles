@@ -37,9 +37,22 @@ for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}; do
   source "$file"
 done
 
+# See https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
 # !NOTE: use Calling compinit With Turbo Mode instead, see https://github.com/zdharma-continuum/zinit?tab=readme-ov-file#calling-compinit-with-turbo-mode
 # autoload -Uz compinit
 # typeset -i updated_at=$(date +'%j' -r ${ZDOTDIR:-$HOME}/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ${ZDOTDIR:-$HOME}/.zcompdump 2>/dev/null)
+
+# The -C flag bypasses both the check for rebuilding the dump file and the
+# usual call to compaudit; the -i flag causes insecure directories found by
+# compaudit to be ignored, and the -u flag causes all directories found by
+# compaudit to be used (without security checking).  Otherwise the user is
+# queried for whether to use or ignore the insecure directories (which
+# means compinit should not be called from non-interactive shells).
 # if [ $(date +'%j') != $updated_at ]; then
 #   compinit -i # Super slow +14s
 # else
@@ -63,18 +76,18 @@ debug_echo "Loading Zinit..."
 ### Added by Zinit's installer
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 if [[ ! -f $ZINIT_HOME/zinit.zsh ]]; then
-    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    print -P "%F{33}▓▒░ %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
     [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
     # command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
     # command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" \
     [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME" \
-        && print -P "%F{33} %F{34}Installation successful to ${ZINIT_HOME}.%f%b" \
-        || print -P "%F{160} The clone has failed.%f%b"
+        && print -P "%F{33}▓▒░ %F{34}Installation successful to ${ZINIT_HOME}.%f%b" \
+        || print -P "%F{160}▓▒░ The clone has failed.%f%b"
 fi
 
 source "${ZINIT_HOME}/zinit.zsh"
 
-# # If you source zinit.zsh after compinit, add the following snippet after sourcing zinit.zsh:
+# If you source zinit.zsh after compinit, add the following snippet after sourcing zinit.zsh:
 # autoload -Uz _zinit
 # (( ${+_comps} )) && _comps[zinit]=_zinit
 
@@ -82,13 +95,14 @@ source "${ZINIT_HOME}/zinit.zsh"
 # !BUG: stuck on macOS
 # zinit pack"5.9" for zsh # Auto download zsh-users/zsh
 
-# Load a few important annexes, without Turbo
-# (this is currently required for annexes)
+# Load a few important annexes, without Turbo (this is currently required for annexes)
+# See  https://github.com/zdharma-continuum/zinit/wiki/Migrating-from-zinit-to-zdharma-continuum
 zinit light-mode for \
-    zdharma-continuum/zinit-annex-as-monitor \
-    zdharma-continuum/zinit-annex-bin-gem-node \
-    zdharma-continuum/zinit-annex-patch-dl \
-    zdharma-continuum/zinit-annex-rust
+    zdharma-continuum/zinit-annex-{'readurl','bin-gem-node','patch-dl','rust'}
+
+# !BUG: does NOT work anymore (2024-10-10). Load Annexes, see https://zdharma-mirror.github.io/wiki/Annexes/
+# See https://github.com/zdharma-continuum/zinit-annex-meta-plugins?tab=readme-ov-file#the-list-of-the-meta-plugins
+# zinit for annexes zsh-users+fast
 
 ### End of Zinit's installer chunk
 
@@ -122,6 +136,25 @@ zinit ice wait as"command" from"gh-r" lucid \
   atload'export _ZO_ECHO=1; eval "$(_ZO_ECHO=1 zoxide init zsh)"' # See https://github.com/ajeetdsouza/zoxide?tab=readme-ov-file#environment-variables
 zinit light ajeetdsouza/zoxide
 
+# # ZOXIDE binary
+# zinit ice wait="0" as="program" from="gh-r" lucid \
+#   pick="zoxide-*/zoxide -> zoxide" \
+#   cp="zoxide-*/completions/_zoxide -> _zoxide" \
+#   atclone="./zoxide init zsh > init.zsh" \
+#   atpull="%atclone" src="init.zsh"
+
+############
+# fzf
+############
+cd_with_fzf() {
+    # Don't include hidden (-H)
+    cd $HOME && cd "$(fd -t d | fzf --preview="tree -L 1 {}" --bind="space:toggle-preview" --preview-window=:hidden)"
+}
+zle -N cd_with_fzf{,}
+
+# !NOTE: if bind here MUST disable OMZL::key-bindings.zsh to work
+# bindkey '^N' cd_with_fzf
+
 ##########################
 # OMZ Libs and Plugins   #
 ##########################
@@ -153,7 +186,7 @@ _fix-omz-plugin() {
   for file in ohmyzsh/plugins/$OMZP_NAME/*~(.gitignore|*.plugin.zsh)(D); do
     local filename="${file:t}"
     echo "Copying $file to $(pwd)/$filename..."
-    cp -f $file $filename
+    yes | cp -f $file $filename
   done
   rm -rf ohmyzsh
 }
@@ -173,11 +206,14 @@ _fix-pzt-module() {
   for file in prezto/modules/$PZTM_NAME/*~(.gitignore|init.zsh)(D); do
     local filename="${file:t}"
     echo "Copying $file to $(pwd)/$filename..."
-    cp -rf $file $filename
+    yes | cp -rf $file $filename
   done
   rm -rf prezto
 }
 
+# !Obsoleted: `mise` installed by brew, use completions from brew above instead.
+# Create completions cache path if does not exist, requires for Mise completions to work.
+# [ -d "$ZSH_CACHE_DIR/completions" ] || mkdir -p "$ZSH_CACHE_DIR/completions"
 
 # Loading tmux first, to prevent jumps when tmux is loaded after .zshrc
 # It will only be loaded on first start
@@ -198,12 +234,11 @@ _fix-pzt-module() {
 
 	# OMZL::termsupport.zsh \
 
-	# OMZL::key-bindings.zsh \
+  # Take over keys: "^N"
+  # OMZL::key-bindings.zsh \
 
-############
-# Atuin (better history search), see https://docs.atuin.sh/guide/installation/
-############
 zinit wait lucid light-mode for \
+    OMZP::common-aliases \
     OMZL::clipboard.zsh \
     OMZL::compfix.zsh \
     OMZL::completion.zsh \
@@ -212,17 +247,20 @@ zinit wait lucid light-mode for \
         OMZP::wd \
     atload"
         alias ..='cd ..'
-        alias ...='cd ../..'
-        alias ....='cd ../../..'
-        alias .....='cd ../../../..'
     " \
         OMZL::directories.zsh \
-        OMZL::grep.zsh \
-        OMZL::key-bindings.zsh \
+    OMZL::grep.zsh \
+    OMZP::dirpersist \
+    OMZP::dircycle \
+    OMZP::direnv \
+    `# !NOTE: OMZP::dirhistory MUST load after OMZP::direnv or Alt+Up/Down/Left/Right will not work` \
+    OMZP::dirhistory \
+    `# See https://github.com/ohmyzsh/ohmyzsh/blob/d2d5155d41cbe183ef172fef1e83a29d116a5af6/lib/key-bindings.zsh#L29` \
+    OMZL::key-bindings.zsh \
+    OMZP::mise \
+    atload"bindkey '^N' cd_with_fzf" \
         OMZP::fzf \
-    atload"
-        alias dcupb='docker-compose up --build'
-    " \
+    atload"alias dcupb='docker-compose up --build'" \
         OMZP::docker-compose \
     as"completion" \
         OMZP::docker/completions/_docker \
@@ -248,12 +286,12 @@ zinit wait lucid light-mode for \
 #####################
 # @source: https://github.com/crivotz/dot_files/blob/master/linux/zplugin/zshrc
 
-# IMPORTANT:
+# !IMPORTANT:
 # These plugins should be loaded after ohmyzsh plugins
-
-# !NOTE: zdharma/fast-syntax-highlighting MUST load before zsh-users/zsh-autosuggestions or auto-complate will not work
-# See https://github.com/zdharma-continuum/fast-syntax-highlighting#zinit
+# Use zinit ice wait'0' or just: zinit ice wait
 zinit wait lucid for \
+    `# !NOTE: zdharma/fast-syntax-highlighting MUST load before zsh-users/zsh-autosuggestions or auto-complate will not work` \
+    `# See https://github.com/zdharma-continuum/fast-syntax-highlighting#zinit` \
     light-mode atinit"typeset -gA FAST_HIGHLIGHT; FAST_HIGHLIGHT[git-cmsg-len]=100; ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" \
         zdharma/fast-syntax-highlighting \
     light-mode atinit"ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20" atload"!_zsh_autosuggest_start" \
@@ -262,22 +300,6 @@ zinit wait lucid for \
         OMZP::colored-man-pages \
     atpull"%atclone" atclone"_fix-omz-plugin" nocompile \
         if"[[ $+commands[python3] ]]" OMZP::aliases \
-    light-mode blockf atpull'zinit creinstall -q .' \
-    atinit"
-        zstyle ':completion:*' completer _expand _complete _ignored _approximate
-        zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-        zstyle ':completion:*' menu select=2
-        zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
-        zstyle ':completion:*:descriptions' format '-- %d --'
-        zstyle ':completion:*:processes' command 'ps -au$USER'
-        zstyle ':completion:complete:*:options' sort false
-        zstyle ':fzf-tab:complete:_zlua:*' query-string input
-        zstyle ':completion:*:*:*:*:processes' command 'ps -u $USER -o pid,user,comm,cmd -w -w'
-        zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview=$extract'ps --pid=$in[(w)1] -o cmd --no-headers -w -w' --preview-window=down:3:wrap
-        zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract'exa -1 --color=always ${~ctxt[hpre]}$in'
-    " \
-    atpull'zinit creinstall -q .' blockf  \
-        zsh-users/zsh-completions \
     bindmap"^R -> ^H" atinit"
         zstyle :history-search-multi-word page-size 10
         zstyle :history-search-multi-word highlight-color fg=red,bold
@@ -290,11 +312,45 @@ zinit wait lucid for \
             '/DIR/c\DIR 38;5;63;1' LS_COLORS; \
             \${P}dircolors -b LS_COLORS > c.zsh" \
     atpull'%atclone' pick"c.zsh" nocompile'!' \
-    atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”' \
+    atload'zstyle ":completion:*" list-colors ${(s.:.)LS_COLORS}' \
         trapd00r/LS_COLORS
-
+    # !Obsoleted: use fzf instead
     # atload'bindkey "$terminfo[kcuu1]" history-substring-search-up; bindkey "$terminfo[kcud1]" history-substring-search-down' \
     #     zsh-users/zsh-history-substring-search
+
+    # Original zsh-users/zsh-completions
+    # `# See https://mikebian.co/git-completions-tooling-on-the-command-line/` \
+    # light-mode blockf \
+    #   atpull'zinit creinstall -q .' \
+    #   atinit"
+    #     zstyle ':completion:*' completer _expand _complete _ignored _approximate
+    #     zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+    #     zstyle ':completion:*' menu select=2
+    #     zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+    #     zstyle ':completion:*:descriptions' format '-- %d --'
+    #     zstyle ':completion:*:processes' command 'ps -au$USER'
+    #     zstyle ':completion:complete:*:options' sort false
+    #     zstyle ':fzf-tab:complete:_zlua:*' query-string input
+    #     zstyle ':completion:*:*:*:*:processes' command 'ps -u $USER -o pid,user,comm,cmd -w -w'
+    #     zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview=$extract'ps --pid=$in[(w)1] -o cmd --no-headers -w -w' --preview-window=down:3:wrap
+    #     zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract'exa -1 --color=always ${~ctxt[hpre]}$in'
+    #     zstyle ':completion:*:git-checkout:*' sort false
+    #   " \
+    #   atload"zicompinit; zicdreplay" \
+    #     zsh-users/zsh-completions \
+
+# Collection of zsh completion definitions, currently includes:
+# - zsh-users/zsh-completions
+# - zchee/zsh-completions
+# - gradle/gradle-completion
+# - conda-incubator/conda-zsh-completion
+# - spwhitt/nix-zsh-completions
+# - Some custom completion definitions.
+# See https://github.com/sainnhe/zsh-completions?tab=readme-ov-file
+zinit ice wait lucid depth=1 \
+    atload"autoload -Uz compinit && compinit -u" \
+    atpull"zinit cclear && zinit creinstall sainnhe/zsh-completions"
+zinit light sainnhe/zsh-completions
 
 # ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 # zinit ice wait"0a" lucid atload"_zsh_autosuggest_start"
@@ -335,26 +391,38 @@ zinit wait lucid for \
 zinit lucid light-mode for \
   PZTM::history
 
+## Lazy load optional plugins
+  # PZTM::directory \
 # !NOTE: can use `OMZP::/urltools` that will download to ~/.local/share/zinitpwnippets/OMZP::/urltools (default to OMZP::urltools)
-zinit wait lucid light-mode for \
+zinit wait'1' lucid light-mode for \
   PZTM::environment \
   PZTM::helper \
   PZTM::terminal \
-  PZTM::directory \
   PZTM::command-not-found \
-  OMZP::common-aliases \
   OMZP::copypath \
   OMZP::cp \
   OMZP::encode64 \
   OMZP::extract \
   OMZP::git \
-  if"[[ $+commands[sudo] ]]" OMZP::sudo \
+  OMZP::urltools \
+  `# Edit Zsh history, see https://github.com/marlonrichert/zsh-hist` \
+  marlonrichert/zsh-hist \
+  wfxr/forgit \
+  if"[[ $+commands[sudo] ]]"    OMZP::sudo \
   if"[[ $+commands[systemd] ]]" OMZP::systemd \
-  if"[[ $+commands[go] ]]" OMZP::golang \
-  if"[[ $+commands[npm] ]]" OMZP::npm \
-      OMZP::urltools \
-      pick"zshrc" tcnksm/docker-alias \
-  if"[[ $+commands[atuin] ]] && [[ ! $(uname -r) =~ ^.*Microsoft$ ]]" atuinsh/atuin # !BUG: Do NOT load on WSL1 because of https://github.com/microsoft/WSL/issues/2395
+  if"[[ $+commands[go] ]]"      OMZP::golang \
+  if"[[ $+commands[npm] ]]"     OMZP::npm \
+  pick"zshrc" \
+    tcnksm/docker-alias \
+  `############` \
+  `# Atuin (better history search), see https://docs.atuin.sh/guide/installation/` \
+  `############` \
+  `# !BUG: Do NOT load on WSL1 because of https://github.com/microsoft/WSL/issues/2395` \
+  `# atuinsh/atuin` \
+  if"[[ $+commands[atuin] ]] && [[ ! $(uname -r) =~ ^.*Microsoft$ ]]" atuinsh/atuin
+
+  # `# !BUG: MUST run as root, require lsof to work` \
+  # caarlos0/ports \
 
 # !BUG: svn: E160013: '/sorin-ionescu/prezto/trunk/modules/archive' path not found
 # See https://github.blog/news-insights/product-news/sunsetting-subversion-support/
@@ -369,8 +437,13 @@ zinit wait lucid light-mode for \
 # !NOTE: MUST reload using wait'!' at last for history to work? (ENTER any command also make history work)
 # wait'!...', prompt is reset after load. Zsh can start 80% (i.e.: 5x) faster thanks to postponed loading.
 zinit wait'!' silent light-mode for \
-    atpull"%atclone" atclone"_fix-pzt-module" atload"unalias duf; unalias fd;" \
+    atpull"%atclone" atclone"_fix-pzt-module" atload"unalias duf>/dev/null 2>&1; unalias fd >/dev/null 2>&1;" \
         PZTM::utility
+
+# autoload -Uz compinit
+# compinit
+# zi cdreplay -q # <- execute compdefs provided by rest of plugins
+# zi cdlist # look at gathered compdefs
 
 # ###############################################################################
 # # Zplug
@@ -829,69 +902,29 @@ debug_echo "Loading special settings..."
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"   # Local
 [[ -f "$HOME/.secret_zshrc" ]] && source "$HOME/.secret_zshrc" # Secret!
 
-###############################################################################
-# direnv (replace smartcd)
-###############################################################################
-# TODO(aleks, 08/13/17): too slow
-# 240929: tested, very fast (use with mise).
-# See https://github.com/direnv/direnv/issues/68#issuecomment-1517041422
-# export DIRENV_LOG_FORMAT=""
-debug_echo "Loading direnv..."
-# See https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-from-a-bash-script
-if command -v direnv 2>&1 >/dev/null; then
-  # See https://askubuntu.com/a/1022440 (readlink /proc/$$/exe`: does NOT work on macOS)
-  _shell_type=$(sh -c 'ps -p $$ -o ppid=' | xargs ps -o comm= -p)
-  eval "$(direnv hook ${_shell_type#-})"
-fi
+# !Obsoleted: use OMZP::direnv instead
+# ###############################################################################
+# # direnv (replace smartcd)
+# ###############################################################################
+# # TODO(aleks, 08/13/17): too slow
+# # 240929: tested, very fast (use with mise).
+# # See https://github.com/direnv/direnv/issues/68#issuecomment-1517041422
+# # export DIRENV_LOG_FORMAT=""
+# debug_echo "Loading direnv..."
+# # See https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-from-a-bash-script
+# if command -v direnv >/dev/null 2>&1; then
+#   # See https://askubuntu.com/a/1022440 (readlink /proc/$$/exe`: does NOT work on macOS)
+#   _shell_type=$(sh -c 'ps -p $$ -o ppid=' | xargs ps -o comm= -p)
+#   eval "$(direnv hook ${_shell_type#-})"
+# fi
 
-# !NOTE: mise inside of direnv (use mise in .envrc), see https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
-############
-# Mise (https://mise.jdx.dev/configuration.html)
-############
-debug_echo "Loading Mise for ZSH..."
-eval "$(mise activate zsh)"
-
-# See https://news.ycombinator.com/item?id=35249933
-CUR_SHELL=zsh
-atuin-setup() {
-    if ! which atuin &> /dev/null; then return 1; fi
-    bindkey '^E' _atuin_search_widget
-
-    export ATUIN_NOBIND="true"
-    eval "$(atuin init "$CUR_SHELL")"
-    fzf-atuin-history-widget() {
-        local selected num
-        setopt localoptions noglobsubst noposixbuiltins pipefail no_aliases 2>/dev/null
-
-        # local atuin_opts="--cmd-only --limit ${ATUIN_LIMIT:-5000}"
-        local atuin_opts="--cmd-only"
-        local fzf_opts=(
-            --height=${FZF_TMUX_HEIGHT:-80%}
-            --tac
-            "-n2..,.."
-            --tiebreak=index
-            "--query=${LBUFFER}"
-            "+m"
-            "--bind=ctrl-d:reload(atuin search $atuin_opts -c $PWD),ctrl-r:reload(atuin search $atuin_opts)"
-        )
-
-        selected=$(
-            eval "atuin search ${atuin_opts}" |
-                fzf "${fzf_opts[@]}"
-        )
-        local ret=$?
-        if [ -n "$selected" ]; then
-            # the += lets it insert at current pos instead of replacing
-            LBUFFER+="${selected}"
-        fi
-        zle reset-prompt
-        return $ret
-    }
-    zle -N fzf-atuin-history-widget
-    bindkey '^R' fzf-atuin-history-widget
-}
-# !BUG: atuin still throw `Error: error returned from database: (code: 4618) disk I/O error` on WSL1 because of https://github.com/microsoft/WSL/issues/2395
-# atuin-setup
+# !Obsoleted: use OMZP::mise instead
+# # !NOTE: mise inside of direnv (use mise in .envrc), see https://mise.jdx.dev/direnv.html#mise-inside-of-direnv-use-mise-in-envrc
+# ############
+# # Mise (https://mise.jdx.dev/configuration.html)
+# ############
+# debug_echo "Loading Mise for ZSH..."
+# eval "$(mise activate zsh)"
 
 # Display message of the day
 # run-parts /etc/update-motd.d 2>/dev/null
@@ -899,12 +932,49 @@ atuin-setup() {
 # See https://gist.github.com/linuswillner/f8c15385e8a88017a70bdc3f18a688a2
 fastfetch
 
+#####################
+# Functions         #
+#####################
+# echo "Ethernet :: IP => $( ip -4 -o a show wlan1 | awk '{ print $4 }' )"
+ip-internal() echo "Wireless :: IP => $( ip -4 -o a show wifi0 | awk '{ print $4 }' )"
+ip-external() echo "External :: IP => $( curl --silent https://ifconfig.me )"
+ipinfo() { ip-internal && ip-external }
+
+#####################
+# Misc Stuff        #
+#####################
+
+# typeset -U config_files
+# config_files=($HOME/.zsh/*.zsh)
+
+# 1. Load anything which ends with e.zsh
+# 2. Load anything except file ending with e.zsh
+# zinit is-snippet for \
+#     ${(M)config_files:#*/*e.zsh} \
+#     ${config_files:#*/*e.zsh}  \
+
+# zinit is-snippet for \
+#     if"[[ -f $HOME/.localrc  ]]" $HOME/.localrc
+
 # Use .localrc for SUPER SECRET CRAP that you don't
 # want in your public, versioned repo.
 # shellcheck disable=SC1090
 debug_echo "Loading local profile..."
 [ -f $HOME/.localrc ] && . $HOME/.localrc
 
+# https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
+typeset -aU path
+
+# Fix kill word (werase) with ctrl-w considers - as separator instead of space
+# https://github.com/ohmyzsh/ohmyzsh/issues/8743
+# https://unix.stackexchange.com/questions/250690/how-to-configure-ctrlw-as-delete-word-in-zsh
+autoload -U select-word-style
+select-word-style bash
+WORDCHARS='.-'
+
+#####################
+# FINISHED          #
+#####################
 if [[ -o INTERACTIVE && ! -o LOGIN ]]; then
   _startup_time_prompt '\x1b[35m'  # purple
 fi

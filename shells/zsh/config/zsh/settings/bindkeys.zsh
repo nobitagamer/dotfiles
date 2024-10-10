@@ -57,8 +57,13 @@
 
 ## macOS: XShell enable ALT Key as Meta key (same with Bash's .inputrc)
 # Alt+Left/Right arrow
-bindkey "^[^[[C" forward-word
-bindkey "^[^[[D" backward-word
+bindkey '^[^[[C' forward-word
+bindkey '^[^[[D' backward-word
 
 # Alt+Delete
 bindkey '^[^[[3~' delete-word
+
+# See https://mikebian.co/migrating-from-bash-to-zsh/
+# save current command in buffer & restore after next command is run
+# https://unix.stackexchange.com/a/74381
+bindkey "^e" push-input
