@@ -6,7 +6,7 @@
 
 # See https://nixos-and-flakes.thiscute.world/nixos-with-flakes/start-using-home-manager
 - brew:
-    - lsd # Replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
+    - lsd       # `ls` tool replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
     - fzf
     - todo-txt
     - gcc
@@ -15,12 +15,20 @@
     - jq
     - ncdu
     - htop
-    - btop # In case htop don't work
+    - btop      # In case htop don't work
     - direnv
-    - screen # 5.0 to support True Color
-    - byobu # screen + tmux
-    - duf # a better 'df' alternative, see https://freedium.cfd/https://blog.devops.dev/6-linux-utilities-you-should-install-right-now-75470963a021
-    - sponge # like `tee` but soak up standard input before write to a file
+    - screen    # 5.0 to support True Color
+    - byobu     # screen + tmux
+    - duf       # a better 'df' alternative, see https://freedium.cfd/https://blog.devops.dev/6-linux-utilities-you-should-install-right-now-75470963a021
+    - sponge    # like `tee` but soak up standard input before write to a file
+    - fd        # Simple, fast and user-friendly alternative to find
+    # Favorite tools, see https://blog.dalanmiller.com/my-favorite-command-line-tools/
+    - bat       # Clone of `cat` with syntax highlighting and Git integration
+    - dua-cli   # View disk space usage and delete unwanted data, fast
+    - hwatch    # Modern alternative to the watch command
+    - hyperfine # Command-line benchmarking tool
+    - mtr       # 'traceroute' and 'ping' in a single tool
+    - xsv       # Fast CSV toolkit written in Rust
 
 - link:
     ~/.screenrc: apps/screen/screenrc

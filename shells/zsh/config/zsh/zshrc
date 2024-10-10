@@ -25,7 +25,7 @@ export PROJECTS="$HOME/Projects"
 
 # all of our zsh files
 typeset -U config_files
-config_files=($XDG_CONFIG_HOME/zsh/**/*.zsh)
+config_files=(${XDG_CONFIG_HOME:=$HOME/.config}/zsh/**/*.zsh)
 
 # load the path files, see https://zsh.sourceforge.io/Guide/zshguide05.html (Parameter flags and pattern substitutions)
 for file in ${(M)config_files:#*/path.zsh}; do
@@ -369,7 +369,7 @@ zinit wait lucid light-mode for \
 # !NOTE: MUST reload using wait'!' at last for history to work? (ENTER any command also make history work)
 # wait'!...', prompt is reset after load. Zsh can start 80% (i.e.: 5x) faster thanks to postponed loading.
 zinit wait'!' silent light-mode for \
-    atpull"%atclone" atclone"_fix-pzt-module" atload"unalias duf" \
+    atpull"%atclone" atclone"_fix-pzt-module" atload"unalias duf; unalias fd;" \
         PZTM::utility
 
 # ###############################################################################
