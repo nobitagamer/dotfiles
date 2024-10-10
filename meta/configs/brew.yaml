@@ -20,6 +20,7 @@
     - screen # 5.0 to support True Color
     - byobu # screen + tmux
     - duf # a better 'df' alternative, see https://freedium.cfd/https://blog.devops.dev/6-linux-utilities-you-should-install-right-now-75470963a021
+    - sponge # like `tee` but soak up standard input before write to a file
 
 - link:
     ~/.screenrc: apps/screen/screenrc

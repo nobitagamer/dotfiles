@@ -55,6 +55,7 @@
     ~/.config/zsh/zle/zleiab.zsh: shells/zsh/config/zsh/zle/zleiab.zsh
     ~/.config/plugins/dircolors.extra: shells/plugins/dircolors.extra
     ~/.config/plugins/dircolors-solarized/dircolors.256dark: shells/plugins/dircolors-solarized/dircolors.256dark
+    ~/zsh-import-bash-history.sh: shells/plugins/zsh-import-bash-history.sh
 
 - brew:
     - source-highlight
