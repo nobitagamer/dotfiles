@@ -163,7 +163,8 @@ class AptGet(dotbot.Plugin):
             ## But do not wait till netstat finish, start displaying output immediately ##
             out = ''
             while True:
-                buff = process.stdout.read(1).decode(sys.stdout.encoding)
+                # See https://stackoverflow.com/questions/53062552/unicodedecodeerror-utf-8-codec-cant-decode-byte-0xe2-in-position-1023-unexp
+                buff = process.stdout.read(1).decode('utf-8', 'ignore')
                 if buff == '' and process.poll() is not None:
                     break
                 if buff != '':
