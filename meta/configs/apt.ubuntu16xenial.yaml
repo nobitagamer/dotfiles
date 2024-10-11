@@ -31,8 +31,10 @@
     - python-pip
     - python3-pip
     - ruby
+# Python and Ruby build requirements, see https://github.com/pyenv/pyenv/wiki/Common-build-problems
 - aptget:
-    - wget curl make llvm build-essential xz-utils libffi-dev liblzma-dev python-openssl # Python and Ruby build requirements, see https://github.com/pyenv/pyenv/wiki/Common-build-problems
+    - wget curl make llvm build-essential xz-utils libffi-dev liblzma-dev
+    - python-openssl # Not found on Ubuntu 18.04+
 - aptget:
     - >-
       libssl-dev zlib1g-dev libbz2-dev libreadline-dev

@@ -6,6 +6,7 @@ from enum import Enum
 
 class PkgStatus(Enum):
     UP_TO_DATE = 'Already up to date'
+    ALREADY_NEWEST = 'is already the newest version' # Ubuntu 18.04+
     INSTALLED = 'Newly installed'
     NOT_FOUND = 'Not found'
     NOT_SURE = 'Could not determine'
@@ -33,7 +34,7 @@ class AptGet(dotbot.Plugin):
     def _process_packages(self, packages):
         defaults = self._context.defaults().get('aptget', {})
         results = {}
-        successful = [PkgStatus.UP_TO_DATE, PkgStatus.INSTALLED]
+        successful = [PkgStatus.UP_TO_DATE, PkgStatus.INSTALLED, PkgStatus.ALREADY_NEWEST]
         command_prefix = ""
 
         if os.geteuid() != 0:

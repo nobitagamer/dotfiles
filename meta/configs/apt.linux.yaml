@@ -1,6 +1,8 @@
 - shell++:
     - - sudo dpkg --configure -a
       - Fix for dpkg was interrupted on Ubuntu 18.04
+    - - sudo locale-gen "en_US.UTF-8"
+      - Fix locale issues on Ubuntu 22.04, see https://askubuntu.com/questions/162391/how-do-i-fix-my-locale-issue
 
 # - aptget:
     # Obsoleted by Homebrew
@@ -27,7 +29,8 @@
     - python3-pip
     - ruby
     # Python and Ruby build requirements, see https://github.com/pyenv/pyenv/wiki/Common-build-problems
-    - wget curl make llvm build-essential xz-utils libffi-dev liblzma-dev python-openssl
+    - wget curl make llvm build-essential xz-utils libffi-dev liblzma-dev
+    - python3-openssl
 - aptget:
     - >-
       libssl-dev zlib1g-dev libbz2-dev libreadline-dev
