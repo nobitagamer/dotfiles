@@ -14,7 +14,6 @@ shell_common
 bash
 bash.wsl
 zsh
-vim.linux
 tmux
 lsd
 nano
