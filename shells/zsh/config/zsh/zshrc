@@ -211,9 +211,8 @@ _fix-pzt-module() {
   rm -rf prezto
 }
 
-# !Obsoleted: `mise` installed by brew, use completions from brew above instead.
 # Create completions cache path if does not exist, requires for Mise completions to work.
-# [ -d "$ZSH_CACHE_DIR/completions" ] || mkdir -p "$ZSH_CACHE_DIR/completions"
+[ -d "$ZSH_CACHE_DIR/completions" ] || mkdir -p "$ZSH_CACHE_DIR/completions"
 
 # Loading tmux first, to prevent jumps when tmux is loaded after .zshrc
 # It will only be loaded on first start
@@ -233,40 +232,35 @@ _fix-pzt-module() {
     # " \
 
 	# OMZL::termsupport.zsh \
-
-  # Take over keys: "^N"
-  # OMZL::key-bindings.zsh \
+  # !BUG: conflict with direnv because of use `chpwd_functions`
+  # OMZP::dirpersist OMZP::dircycle \
 
 zinit wait lucid light-mode for \
     OMZP::common-aliases \
-    OMZL::clipboard.zsh \
     OMZL::compfix.zsh \
     OMZL::completion.zsh \
     OMZL::correction.zsh \
-    atpull"%atclone" atclone"_fix-omz-plugin" \
-        OMZP::wd \
     atload"
         alias ..='cd ..'
     " \
         OMZL::directories.zsh \
     OMZL::grep.zsh \
-    OMZP::dirpersist \
-    OMZP::dircycle \
     OMZP::direnv \
     `# !NOTE: OMZP::dirhistory MUST load after OMZP::direnv or Alt+Up/Down/Left/Right will not work` \
     OMZP::dirhistory \
-    `# See https://github.com/ohmyzsh/ohmyzsh/blob/d2d5155d41cbe183ef172fef1e83a29d116a5af6/lib/key-bindings.zsh#L29` \
+    `# Take over keys: "^N", see https://github.com/ohmyzsh/ohmyzsh/blob/d2d5155d41cbe183ef172fef1e83a29d116a5af6/lib/key-bindings.zsh#L29` \
     OMZL::key-bindings.zsh \
-    OMZP::mise \
+    `# Completions included in brew when install` \
+    nocompletions OMZP::mise \
     atload"bindkey '^N' cd_with_fzf" \
         OMZP::fzf \
     atload"alias dcupb='docker-compose up --build'" \
         OMZP::docker-compose \
     as"completion" \
+        `# !BUG: curl: (56) The requested URL returned error: 404` \
+        `# OMZP::docker/_docker` \
         OMZP::docker/completions/_docker \
         djui/alias-tips
-        # !BUG: curl: (56) The requested URL returned error: 404
-        # OMZP::docker/_docker \
         # hlissner/zsh-autopair \
         # chriskempson/base16-shell \
 
@@ -286,6 +280,10 @@ zinit wait lucid light-mode for \
 #####################
 # @source: https://github.com/crivotz/dot_files/blob/master/linux/zplugin/zshrc
 
+# !BUG: do NOT use `wait` here, that cause ZSH history don't load on macOS
+zinit lucid light-mode for \
+  PZTM::history
+
 # !IMPORTANT:
 # These plugins should be loaded after ohmyzsh plugins
 # Use zinit ice wait'0' or just: zinit ice wait
@@ -300,7 +298,7 @@ zinit wait lucid for \
         OMZP::colored-man-pages \
     atpull"%atclone" atclone"_fix-omz-plugin" nocompile \
         if"[[ $+commands[python3] ]]" OMZP::aliases \
-    bindmap"^R -> ^H" atinit"
+    light-mode trackbinds bindmap"^R -> ^H" atinit"
         zstyle :history-search-multi-word page-size 10
         zstyle :history-search-multi-word highlight-color fg=red,bold
         zstyle :plugin:history-search-multi-word reset-prompt-protect 1
@@ -387,18 +385,15 @@ zinit light sainnhe/zsh-completions
 #   blockf atpull'zinit creinstall -q .' \
 #       zsh-users/zsh-completions
 
-# !BUG: do NOT use `wait` here, that cause ZSH history don't load on macOS
-zinit lucid light-mode for \
-  PZTM::history
 
 ## Lazy load optional plugins
-  # PZTM::directory \
 # !NOTE: can use `OMZP::/urltools` that will download to ~/.local/share/zinitpwnippets/OMZP::/urltools (default to OMZP::urltools)
 zinit wait'1' lucid light-mode for \
   PZTM::environment \
   PZTM::helper \
   PZTM::terminal \
   PZTM::command-not-found \
+  OMZL::clipboard.zsh \
   OMZP::copypath \
   OMZP::cp \
   OMZP::encode64 \
@@ -412,6 +407,8 @@ zinit wait'1' lucid light-mode for \
   if"[[ $+commands[systemd] ]]" OMZP::systemd \
   if"[[ $+commands[go] ]]"      OMZP::golang \
   if"[[ $+commands[npm] ]]"     OMZP::npm \
+  atpull"%atclone" atclone"_fix-omz-plugin" \
+      OMZP::wd \
   pick"zshrc" \
     tcnksm/docker-alias \
   `############` \
@@ -424,6 +421,13 @@ zinit wait'1' lucid light-mode for \
   # `# !BUG: MUST run as root, require lsof to work` \
   # caarlos0/ports \
 
+# !NOTE: MUST reload using wait'!' at last for history to work? (ENTER any command also make history work)
+# wait'!...', prompt is reset after load. Zsh can start 80% (i.e.: 5x) faster thanks to postponed loading.
+# See https://github.com/sorin-ionescu/prezto/blob/master/modules/utility/init.zsh
+zinit silent light-mode for \
+    atpull"%atclone" atclone"_fix-pzt-module" atload"unalias duf>/dev/null 2>&1; unalias fd >/dev/null 2>&1;" \
+        PZTM::utility
+
 # !BUG: svn: E160013: '/sorin-ionescu/prezto/trunk/modules/archive' path not found
 # See https://github.blog/news-insights/product-news/sunsetting-subversion-support/
 # zinit svn wait'!' for \
@@ -433,12 +437,6 @@ zinit wait'1' lucid light-mode for \
 
 # !BUG: cannot load because there is no init.zsh file, use OMZP::extract instead
 # zinit snippet PZTM::archive
-
-# !NOTE: MUST reload using wait'!' at last for history to work? (ENTER any command also make history work)
-# wait'!...', prompt is reset after load. Zsh can start 80% (i.e.: 5x) faster thanks to postponed loading.
-zinit wait'!' silent light-mode for \
-    atpull"%atclone" atclone"_fix-pzt-module" atload"unalias duf>/dev/null 2>&1; unalias fd >/dev/null 2>&1;" \
-        PZTM::utility
 
 # autoload -Uz compinit
 # compinit

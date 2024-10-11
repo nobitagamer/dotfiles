@@ -319,7 +319,8 @@ export MICRO_TRUECOLOR=1
 # Miscellaneous
 ###############################################################################
 # ===== Good ol' GREP
-GREP_COLOR='0;35'
+# warning: GREP_COLOR='0;35' is deprecated; use GREP_COLORS='mt=0;35'
+GREP_COLOR='mt=0;35'
 
 # ===== History
 # See https://github.com/sorin-ionescu/prezto/blob/master/modules/history/init.zsh
