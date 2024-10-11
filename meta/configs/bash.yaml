@@ -26,11 +26,11 @@
       # curl https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
       if [ ! -d ~/.bash_it ]; then
         git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it
-        ~/.bash_it/install.sh --no-modify-config
+        ~/.bash_it/install.sh --no-modify-config --silent
         source ~/.bash_it/bash_it.sh
       else
         source ~/.bash_it/bash_it.sh
-        echo q | bash-it update stable --silent
+        bash-it update stable --silent
       fi
 
       bash-it enable completion docker
