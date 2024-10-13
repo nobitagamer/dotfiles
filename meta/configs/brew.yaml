@@ -7,6 +7,7 @@
 # See https://nixos-and-flakes.thiscute.world/nixos-with-flakes/start-using-home-manager
 - brew:
     - lsd       # `ls` tool replace `exa` (Error: exa has been disabled because it is not maintained upstream!)
+    - lsof      # list open files, requires for Zinit's plugin caarlos0/ports
     - fzf
     - todo-txt
     - gcc
@@ -29,6 +30,10 @@
     - hyperfine # Command-line benchmarking tool
     - mtr       # 'traceroute' and 'ping' in a single tool
     - xsv       # Fast CSV toolkit written in Rust
+    # Cloud Developer tools (removed from apt-get for easy update)
+    - azure-cli
+    - helm
+    - sops
 
 - link:
     ~/.screenrc: apps/screen/screenrc
