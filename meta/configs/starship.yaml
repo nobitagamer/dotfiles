@@ -9,6 +9,32 @@
 - brew:
     - starship
 
+# !NOTE: brew path does not init in root session so starship command will not available
+# - shell++:
+#   - description: Installing starship for all users
+#     condition: '[ "$(. /etc/os-release; echo $NAME)" = "Ubuntu" ]'
+#   - stdout: true
+#     stderr: true
+#     command: |
+#       grep "starship init bash" /etc/bash.bashrc || echo 'eval "$(starship init bash)"' | sudo tee -a /etc/bash.bashrc
+
+# - shell++:
+#   - description: Installing starship for all users
+#     condition: '[ "$(. /etc/os-release; echo $NAME)" = "CentOS Linux" ]'
+#   - stdout: true
+#     stderr: true
+#     command: |
+#       grep "starship init bash" /etc/bash.bashrc || echo 'eval "$(starship init bash)"' | sudo tee -a /etc/bashrc
+
+- shell++:
+  - description: Disable global starship in /etc/bash.bashrc
+    condition: 'true'
+  - stdout: true
+    stderr: true
+    command: |
+
+      sudo sed -i '/eval .*starship/ s/^#*/#/' /etc/bash.bashrc
+
 # - shell++:
 #   - description: Installing Starship
 #     condition: 'true'
