@@ -1,2 +1,19 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+
+- brew:
+    - gcc
+    - todo-txt
+    - editorconfig
+    - jq
+    - direnv
+    # Cloud Developer tools (removed from apt-get for easy update)
+    - azure-cli
+    - helm
+    - sops
+
 - link:
     ~/.editorconfig: development/editorconfig
