@@ -6,7 +6,6 @@ from enum import Enum
 
 class PkgStatus(Enum):
     UP_TO_DATE = 'Already up to date'
-    ALREADY_NEWEST = 'is already the newest version' # Ubuntu 18.04+
     INSTALLED = 'Newly installed'
     NOT_FOUND = 'Not found'
     NOT_SURE = 'Could not determine'
@@ -18,8 +17,8 @@ class AptGet(dotbot.Plugin):
         super(AptGet, self).__init__(self)
         self._context = context
         self._strings = {}
-        self._strings[PkgStatus.UP_TO_DATE] = ["is already the newest", "ist bereits die neueste"]
-        self._strings[PkgStatus.INSTALLED] = ["NEUEN Pakete werden installiert"]
+        self._strings[PkgStatus.UP_TO_DATE] = ["is already the newest version", "ist bereits die neueste"]  # Ubuntu 18.04+
+        self._strings[PkgStatus.INSTALLED] = ["newly installed", "NEUEN Pakete werden installiert"]         # Ubuntu 18.04+
         self._strings[PkgStatus.NOT_FOUND] = ["Unable to locate package", "kann nicht gefunden werden"]
 
     def can_handle(self, directive):
@@ -34,7 +33,7 @@ class AptGet(dotbot.Plugin):
     def _process_packages(self, packages):
         defaults = self._context.defaults().get('aptget', {})
         results = {}
-        successful = [PkgStatus.UP_TO_DATE, PkgStatus.INSTALLED, PkgStatus.ALREADY_NEWEST]
+        successful = [PkgStatus.UP_TO_DATE, PkgStatus.INSTALLED]
         command_prefix = ""
 
         if os.geteuid() != 0:
@@ -164,7 +163,7 @@ class AptGet(dotbot.Plugin):
             out = ''
             while True:
                 # See https://stackoverflow.com/questions/53062552/unicodedecodeerror-utf-8-codec-cant-decode-byte-0xe2-in-position-1023-unexp
-                buff = process.stdout.read(1).decode('utf-8', 'ignore')
+                buff = process.stdout.read(1).decode(sys.stdout.encoding, 'ignore')
                 if buff == '' and process.poll() is not None:
                     break
                 if buff != '':
@@ -175,7 +174,7 @@ class AptGet(dotbot.Plugin):
             ret = process.poll()
 
             for key, value in self._strings.items():
-                for text in self._strings[key]:
+                for text in value:
                     try:
                         index = out.find(text)
                     except:
@@ -189,4 +188,3 @@ class AptGet(dotbot.Plugin):
 
         self._log.error("Could not determine what happened with package {}".format(pkg))
         return PkgStatus.NOT_SURE
-
