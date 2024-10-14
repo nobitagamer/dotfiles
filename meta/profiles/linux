@@ -1,12 +1,12 @@
 apt.linux
 brew
 brew.linux
-mise
 git
 dev
 node
 ruby
 python
+mise
 binaries.linux
 atuin
 starship

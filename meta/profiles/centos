@@ -1,7 +1,6 @@
 yum.linux
 brew
 brew.linux
-mise
 git
 atuin
 starship.xshell
@@ -11,6 +10,7 @@ ruby
 dev
 node
 python
+mise
 binaries.linux
 lsd
 micro

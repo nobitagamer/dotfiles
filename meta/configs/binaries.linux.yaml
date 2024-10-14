@@ -7,5 +7,5 @@
 - link:
     ~/bin/: bin/*
 - link:
-    ~/.local/bin/exa: apps/misc/linux/exa-linux-x86_64-0.8.0
+    # ~/.local/bin/exa: apps/misc/linux/exa-linux-x86_64-0.8.0
     ~/.local/bin/peco: apps/misc/linux/peco-0.5.1
