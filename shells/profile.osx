@@ -10,7 +10,7 @@ HOMEBREW_PREFIX=/usr/local/bin/brew
 [ "$(uname -m)" = "arm64" ] && HOMEBREW_PREFIX=/opt/homebrew/bin/brew
 if [ -f $HOMEBREW_PREFIX ]; then
   # Avoid error when direct source this file (reload)
-  which debug_echo && debug_echo "Loading Homebrew..."
+  which debug_echo > /dev/null 2>&1 && debug_echo "Loading Homebrew..."
   eval "$($HOMEBREW_PREFIX shellenv)"
 fi
 
