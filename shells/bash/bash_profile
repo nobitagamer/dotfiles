@@ -16,7 +16,8 @@ source ~/.config/common/init_functions.sh
 
 # This does NOT work on macOS, use [[ "$-" =~ 'i' ]] instead
 # iatest=$(expr index "$-" i)
-shopt -q login_shell && echo "$(debug_timestamp)This Bash Shell is a Login Shell" || echo "$(debug_timestamp)This Bash Shell is NOT a Login Shell"
+# !BUG: Do NOT output anything in non-interative shelll that cause rsync error: protocol incompatibility (code 2),
+shopt -q login_shell && echo "$(debug_timestamp)This Bash Shell is a Login Shell" || debug_echo "This Bash Shell is NOT a Login Shell"
 
 # XDG stuff
 XDG_CACHE_HOME=$HOME/.cache

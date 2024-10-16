@@ -334,7 +334,8 @@ export GREP_COLOR MANWIDTH
 
 # ===== Dircolors (does not work on macOS, see https://github.com/seebi/dircolors-solarized/issues/10#issuecomment-2641754)
 # https://github.com/seebi/dircolors-solarized
-if [[ "$(tput colors)" == "256" ]] &&  [[ "$OSTYPE" != darwin* ]]; then
+# !BUG: check `tput` in login shell only to avoid ssh error `tput: No value for $TERM and no -T specified`
+if [[ -o login ]] && [[ "$OSTYPE" != darwin* ]] && [[ "$(tput colors)" == "256" ]]; then
   [[ -d $XDG_CONFIG_HOME/plugins/dircolors-solarized ]] \
     && eval $(dircolors =(cat $XDG_CONFIG_HOME/plugins/dircolors-solarized/dircolors.256dark $XDG_CONFIG_HOME/plugins/dircolors.extra))
 fi
@@ -353,4 +354,5 @@ export SHELL_SESSIONS_DISABLE=1
 # Make Zsh the default shell
 [[ $SHELL =~ "zsh" ]] || export SHELL=`builtin which zsh`
 
-[[ -o login ]] && echo "$(debug_timestamp)This ZSH Shell is a Login Shell" || echo "$(debug_timestamp)This ZSH Shell is Not a Login Shell"
+# !BUG: Do NOT output anything in non-interative shelll that cause rsync error: protocol incompatibility (code 2)
+[[ -o login ]] && echo "$(debug_timestamp)This ZSH Shell is a Login Shell" || debug_echo "This ZSH Shell is Not a Login Shell"

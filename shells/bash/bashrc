@@ -21,7 +21,7 @@ case $- in
     echo "$(debug_timestamp)This Bash Shell is an Interactive Shell"
     bind "set bell-style visible"
     ;;
-  # Do NOT output anything in non-interative shelll that cause rsync error: protocol incompatibility (code 2),
+  # !BUG: Do NOT output anything in non-interative shelll that cause rsync error: protocol incompatibility (code 2),
   # see https://serverfault.com/questions/304125/rsync-seems-incompatible-with-bashrc-causes-is-your-shell-clean/308604
   *)
     debug_echo This Bash Shell is NOT an Interactive Shell
