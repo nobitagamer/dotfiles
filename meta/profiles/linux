@@ -15,7 +15,6 @@ bash
 zsh
 vim.linux
 tmux
-smartcd.linux
 lsd
 nano
 micro

@@ -34,6 +34,7 @@
     command: |
 
       sudo sed -i '/eval .*starship/ s/^#*/#/' /etc/bash.bashrc
+      sudo sed -i '/eval .*starship/ s/^#*/#/' /etc/bashrc
 
 # - shell++:
 #   - description: Installing Starship

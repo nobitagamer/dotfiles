@@ -67,6 +67,18 @@ appendshell() {
 	start)
 		add='echo "Setting up Dotbot. Please do not ^C." >&2;'
 		;;
+	centosfixeol)
+		add="sudo sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo;"
+		;;
+  # Install require pacakages for WSL Rocky Linux 9 from Docker
+	rockywsl)
+    # !BUG: WSL1: error on importing (any) GPG key, see https://github.com/mishamosher/CentOS-WSL/issues/14
+		add="sudo sed -i '/gpgcheck/ s/^#*/#/' /etc/dnf/dnf.conf; sudo dnf install -y procps glibc-langpack-en git which gettext;"
+		;;
+	enablepasswordless)
+		# shellcheck disable=SC2016
+		add='sudo bash -c "echo \"$USER ALL=(ALL) NOPASSWD: ALL\" > /etc/sudoers.d/$USER";'
+		;;
 	mkprefix)
 		add="mkdir -p $2; cd $2;"
 		;;
@@ -128,13 +140,16 @@ appendshell() {
 	esac
 
   if [ -z "$setupshell" ]; then
-	  setupshell='  '$add
+    setupshell="  $add"
   else
-	  setupshell=$setupshell'   '$add
+    setupshell="$setupshell   $add"
   fi
 }
 
 # See https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
+# 0) op='=';;
+# 1) op='>';;
+# 2) op='<';;
 vercomp () {
     if [[ $1 == $2 ]]
     then
@@ -269,15 +284,22 @@ unamestr=$(uname)
 
 case $unamestr in
 'Linux')
-  if grep -q Microsoft /proc/version; then
-  	platform='wsl.ubuntu'
-  else
-    # Detect CentOS distro
-    if [ -f /etc/redhat-release ]; then
+  # Detect CentOS distro
+  if [ -f /etc/rocky-release ]; then
+    platform='rocky'
+  elif [ -f /etc/centos-release ]; then
+    platform='rocky'
+    osver=$(. /etc/os-release; echo $VERSION_ID)
+    vercomp $osver 8.0
+    if [ $? -eq 2 ]; then # CentOS <8.0 use yum, >=8.0 use dnf
       platform='centos'
-    else
-      platform='linux'
     fi
+  else
+    platform='linux'
+  fi
+
+  if grep -q Microsoft /proc/version; then
+    platform="$platform wsl"
   fi
 	;;
 'Darwin')
@@ -306,7 +328,7 @@ request_sudo
 $(which git >&/dev/null)
 
 if [ $? -eq 1 ]; then
-  if [ $platform = "centos" ]; then
+  if [[ $platform == *"centos"* ]]; then
     echoerr red       "Detected $(cat /etc/centos-release)but Git (required by Homebrew) was not found!"
     centos_update_git
   else
@@ -316,7 +338,7 @@ if [ $? -eq 1 ]; then
   fi
 fi
 
-if [ $platform = "centos" ]; then
+if [[ $platform == *"centos"* ]]; then
   # Require Git's version >=2.7.0
   gitver=$(git --version | sed -ne 's/[^0-9]*\(\([0-9]\.\)\{0,4\}[0-9][^.]*\)/\1/p')
   vercomp $gitver 2.7.0
@@ -329,7 +351,7 @@ if [ $platform = "centos" ]; then
   curlver=$(curl --version | head -n 1 | awk '{ print $2 }')
   vercomp $curlver 7.41.0
   if [ $? -eq 2 ]; then
-    updatecmd='sudo yum -y install http://www.city-fan.org/ftp/contrib/yum-repo/city-fan.org-release-3-14.rhel7.noarch.rpm; sudo yum check-update; sudo yum -y --enablerepo="epel,city-fan.org" install curl'
+    updatecmd='sudo yum -y install http://www.city-fan.org/ftp/contrib/yum-repo/city-fan.org-release-3-15.rhel7.noarch.rpm; sudo yum check-update; sudo yum -y install epel-release; sudo yum -y --enablerepo="epel,city-fan.org" install curl'
     echoerr red       "Detected $(cat /etc/centos-release)but CURL version is $curlver < 7.41.0 required by Homebrew!"
     echoerr darkcyan  "Auto run cURL package update command (see https://serverfault.com/questions/321321/upgrade-curl-to-latest-on-centos):"
     echoerr blue      "  $updatecmd"
@@ -338,8 +360,15 @@ if [ $platform = "centos" ]; then
 fi
 
 appendshell start
-if [ $platform = "macos" ]; then
+appendshell enablepasswordless
+if [[ $platform == *"macos"* ]]; then
   appendshell osxcmdinstall
+fi
+if [[ $platform == *"centos"* ]]; then
+  appendshell centosfixeol
+fi
+if [[ $platform == *"wsl"* ]] && [[ $platform == *"rocky"* ]]; then
+  appendshell rockywsl
 fi
 
 prefix="~/.dotfiles"
@@ -476,6 +505,7 @@ exit 0
 # shellcheck disable=SC2093
 # exec sudo -u "$USER" -i
 
+# shellcheck disable=SC2317
 function runDots() {
 	git clone --recursive https://github.com/nobitagamer/dotfiles .dotfiles
 	cd ~/.dotfiles && . ./install-profile $@

@@ -25,6 +25,11 @@
     - hyperfine # Command-line benchmarking tool
     - mtr       # 'traceroute' and 'ping' in a single tool
     - xsv       # Fast CSV toolkit written in Rust
+    - jq
+    - git
+    - wget
+    - ca-certificates
+    - make      # Require for ble.sh and ruby-build
 
 - link:
     ~/.screenrc: apps/screen/screenrc

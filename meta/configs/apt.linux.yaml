@@ -29,7 +29,7 @@
     - python3-pip
     - ruby
     # Python and Ruby build requirements, see https://github.com/pyenv/pyenv/wiki/Common-build-problems
-    - wget curl make llvm build-essential xz-utils libffi-dev liblzma-dev
+    - curl make llvm build-essential xz-utils libffi-dev liblzma-dev
     - python3-openssl
 - aptget:
     - >-

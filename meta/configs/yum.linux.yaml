@@ -13,8 +13,8 @@
 
 - yum:
   - epel-release
-  - wget
   - ca-certificates
+  - wget
 
 # See https://stackoverflow.com/questions/47676980/curl-60-peers-certificate-issuer-is-not-recognized
 - shell++:
@@ -46,46 +46,13 @@
 
       sudo update-ca-trust force-enable
 
-- shell++:
-  - description: Remove old default git version on CentOS 7
-    condition: '[[ $(git --version) == "git version 1.8.3.1" ]] || false'
-  - stderr: true
-    command: |
-
-      sudo yum -y remove git
-      sudo yum -y remove git-*.
-      sudo yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
-
-- shell++:
-  - description: Update latest Git that required by linuxbrew
-    condition: 'true'
-  - stderr: true
-    command: |
-
-      sudo yum install git
-      git --version
-
-- shell++:
-  - description: Update latest Curl that required by linuxbrew
-    condition: 'true'
-  - stderr: true
-    command: |
-
-      # !BUG: GPG Keys failed, see https://community.centminmod.com/threads/city-fan-repo-gpg-repo-keys-error-when-updating.23337/
-      sudo rpm --import https://mirror.city-fan.org/ftp/contrib/GPG-KEYS/RPM-GPG-KEY-city-fan.org-rhel-7
-      sudo rpm -Uvh http://www.city-fan.org/ftp/contrib/yum-repo/rhel7/x86_64/city-fan.org-release-3-14.rhel7.noarch.rpm
-      sudo yum install -y yum-utils
-      sudo yum-config-manager --disable city-fan.org
-      sudo yum --enablerepo=city-fan.org -y install curl libcurl libcurl-devel
-      curl --version
-
 - yum:
     - >-
-      git gcc
+      gcc
       zlib-devel bzip2 bzip2-devel readline-devel sqlite
       sqlite-devel openssl11-devel xz xz-devel libffi-devel findutils
 
-- yum: [bash-completion, bash-completion-extras, hstr, jq, ccze, ncdu, screen]
+- yum: [bash-completion-extras, ccze]
 
 # Require for alias_tips
 - yum:

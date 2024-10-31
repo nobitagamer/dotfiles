@@ -23,7 +23,7 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="dotbot-plugins"
 PROFILE_PLUGIN_DIR="${PLUGIN_DIR}/$1"
 
-if [[ "$1" = "macos" ]]; then
+if [[ $1 = "macos" ]]; then
   # Install Xcode command line tools first before use git command
   xcode-select --install || echo Xcode command line tools installed.
 fi
@@ -59,8 +59,11 @@ if ! which brew; then
   fi
 fi
 
-if ! which python2.7; then
-  if [ "$1" = "macos" ]; then
+# Require to use alias in script, see https://askubuntu.com/questions/98782/how-to-run-an-alias-in-a-shell-script
+shopt -s expand_aliases
+
+if [[ $1 == *"macos"* ]]; then
+  if ! which python2.7; then
     echo "Installing Python2 to avoid 'SyntaxWarning for 'is' with literals' on Python 3.8.5 from MacOS Catalina..."
 
     cat <<- "EOF" > ~/install-python2-monterey.sh
@@ -73,32 +76,42 @@ if ! which python2.7; then
 EOF
 
     chmod +x ~/install-python2-monterey.sh && ~/install-python2-monterey.sh
-fi
-
+  fi
+elif [[ $1 == *"centos"* ]] || [[ $1 == *"rocky"* ]]; then
+  if [ "$(. /etc/os-release; echo ${VERSION_ID:0:1})" -gt "7" ] && ! which python3; then
+    sudo dnf install -y python3-pip
+  fi
 fi
 
 # Write update-dotfiles to use later
 UPDATE_FILE=~/update-dotfiles.sh
 # !BUG: do NOT use source `. .dots` that cause error if source from ZSH.
-echo 'cd ~/ && curl -O https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots && bash .dots' | tee ${UPDATE_FILE}
+# shellcheck disable=SC2016
+echo 'cd ~/; rm -f .dots; curl https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots?token=$(date +%s) >.dots && bash .dots' | tee ${UPDATE_FILE}
 chmod +x ${UPDATE_FILE}
 
-while IFS= read -r config; do
+for profile in "${@}"; do
+  echo -e "\nReading profile $profile..."
+
+  if [[ $profile != *".yaml" ]]; then
+    while IFS= read -r config; do
     CONFIGS+=" ${config}"
-done < "${META_DIR}/${PROFILES_DIR}/$1"
+    done < "${META_DIR}/${PROFILES_DIR}/$1"
 
-shift
-
-# Require to use alias in script, see https://askubuntu.com/questions/98782/how-to-run-an-alias-in-a-shell-script
-shopt -s expand_aliases
+    shift
+  else
+    CONFIGS+=" $profile"
+  fi
+done
 
 # Force use Python2 to avoid `SyntaxWarning for 'is' with literals` on Python 3.8.5 from MacOS Catalina
 # See https://adamj.eu/tech/2020/01/21/why-does-python-3-8-syntaxwarning-for-is-literal/
-which python3 >/dev/null 2>&1 && alias python=python3
-which python2 >/dev/null 2>&1 && alias python=python2
-which python2.7 >/dev/null 2>&1 && alias python=python2.7
+which python3 2>/dev/null && alias python=python3
+which python2 2>/dev/null && alias python=python2
+which python2.7 2>/dev/null && alias python=python2.7
 python --version
 
+installcmd=$(cat <<EOF
 python "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
     -d "${BASE_DIR}"                                  \
     --plugin-dir "${META_DIR}/${PLUGIN_DIR}"          \
@@ -106,22 +119,17 @@ python "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
     --plugin-dir "${META_DIR}/dotbot-brew"            \
     --plugin-dir "${META_DIR}/dotbot-pip"             \
     --plugin-dir "${META_DIR}/dotbot-yum"             \
-    -c "${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}"
-
+    --plugin-dir "${META_DIR}/dotbot-dnf"
+EOF
+)
     # --plugin-dir "${META_DIR}/dotbot-brewfile"        \
 
+_cmd="$installcmd -c \"${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}\""
+echo - Base install cmd: $_cmd
+echo - Config will install: $CONFIGS
+eval $_cmd
 for config in ${CONFIGS} "${@}"; do
     echo -e "\nConfiguring $config..."
 
-    python "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
-        -d "${BASE_DIR}"                                  \
-        --plugin-dir "${META_DIR}/${PLUGIN_DIR}"          \
-        --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}"  \
-        --plugin-dir "${META_DIR}/dotbot-brew"            \
-        --plugin-dir "${META_DIR}/dotbot-pip"             \
-        --plugin-dir "${META_DIR}/dotbot-yum"             \
-        -c "${META_DIR}/${CONFIG_DIR}/${config}${CONFIG_SUFFIX}"
-
-        # --plugin-dir "${META_DIR}/dotbot-brewfile"        \
-
+    eval "$installcmd -c \"${META_DIR}/${CONFIG_DIR}/${config}${CONFIG_SUFFIX}\""
 done
