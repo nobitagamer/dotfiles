@@ -58,7 +58,15 @@
     ~/zsh-import-bash-history.sh: shells/plugins/zsh-import-bash-history.sh
 
 - brew:
-    - source-highlight
     - zsh
+    - source-highlight
     # # !NOTE: need for Zinit ice, require openssl@3
     # - svn
+
+- shell++:
+  - description: Allow installed ZSH shell to use
+    condition: 'which zsh 2>/dev/null && ! grep $(which zsh) /etc/shells'
+  - stderr: true
+    command: |
+
+      echo "$(which zsh)" | sudo tee -a /etc/shells
