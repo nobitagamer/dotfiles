@@ -78,9 +78,8 @@ EOF
     chmod +x ~/install-python2-monterey.sh && ~/install-python2-monterey.sh
   fi
 elif [[ $1 == *"centos"* ]] || [[ $1 == *"rocky"* ]]; then
-  if [ "$(. /etc/os-release; echo ${VERSION_ID:0:1})" -gt "7" ] && ! which python3; then
-    sudo dnf install -y python3-pip
-  fi
+  # !NOTE: do NOT use dnf because latest version switch to use SQLite that can't work on WSL1
+  sudo yum install -y python3-pip
 fi
 
 # Write update-dotfiles to use later
@@ -126,7 +125,7 @@ EOF
 
 _cmd="$installcmd -c \"${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}\""
 echo - Base install cmd: $_cmd
-echo - Config will install: $CONFIGS
+echo -e "\e[1;32m- Config will install: $CONFIGS\e[0m"
 eval $_cmd
 for config in ${CONFIGS} "${@}"; do
     echo -e "\nConfiguring $config..."

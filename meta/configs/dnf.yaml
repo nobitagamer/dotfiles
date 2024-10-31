@@ -1,20 +1,20 @@
-# See https://github.com/rbrauner/dotbot-dnf
-- defaults:
-    dnf:
-        options: "-q -y"
-        stdout: False
-        stderr: True
-        sudo: True
+# # See https://github.com/rbrauner/dotbot-dnf
+# - defaults:
+#     dnf:
+#         options: "-q -y"
+#         stdout: False
+#         stderr: True
+#         sudo: True
 
-- dnf:
-  - epel-release
-  - ca-certificates
+# - dnf:
+#   - epel-release
+#   - ca-certificates
 
-- dnf:
-  - ccze
-  - python3-pip # Require for alias_tips
-  - gcc
-  - >-
-    zlib-devel bzip2 bzip2-devel readline-devel
-    sqlite sqlite-devel openssl-devel
-    xz xz-devel libffi-devel findutils
+# - dnf:
+#   - ccze
+#   - python3-pip # Require for alias_tips
+#   - gcc
+#   - >-
+#     zlib-devel bzip2 bzip2-devel readline-devel
+#     sqlite sqlite-devel openssl-devel
+#     xz xz-devel libffi-devel findutils

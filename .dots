@@ -73,7 +73,8 @@ appendshell() {
   # Install require pacakages for WSL Rocky Linux 9 from Docker
 	rockywsl)
     # !BUG: WSL1: error on importing (any) GPG key, see https://github.com/mishamosher/CentOS-WSL/issues/14
-		add="sudo sed -i '/gpgcheck/ s/^#*/#/' /etc/dnf/dnf.conf; sudo dnf install -y procps glibc-langpack-en git which gettext;"
+    # sudo sed -i '/gpgcheck/ s/^#*/#/' /etc/dnf/dnf.conf;
+		add="sudo yum install -y procps glibc-langpack-en git which gettext;"
 		;;
 	enablepasswordless)
 		# shellcheck disable=SC2016
@@ -285,20 +286,24 @@ unamestr=$(uname)
 case $unamestr in
 'Linux')
   # Detect CentOS distro
-  if [ -f /etc/rocky-release ]; then
-    platform='rocky'
-  elif [ -f /etc/centos-release ]; then
-    platform='rocky'
-    osver=$(. /etc/os-release; echo $VERSION_ID)
-    vercomp $osver 8.0
-    if [ $? -eq 2 ]; then # CentOS <8.0 use yum, >=8.0 use dnf
-      platform='centos'
+  if [ -f /etc/redhat-release ]; then
+    platform='centos'
+    if [ -f /etc/centos-release ]; then
+      osver=$(. /etc/os-release; echo $VERSION_ID)
+      vercomp $osver 8.0
+      if [ $? -eq 2 ]; then # CentOS 7 need separated profile
+        platform="$platform centos7"
+      else
+        platform="$platform rocky" # Treat CentOS Stream 8/9+ as Rocky Linux (use `dnf`)
+      fi
+    elif [ -f /etc/rocky-release ]; then
+      platform="$platform rocky"
     fi
   else
     platform='linux'
   fi
 
-  if grep -q Microsoft /proc/version; then
+  if grep -q Microsoft /proc/version || grep -q WSL2 /proc/version; then
     platform="$platform wsl"
   fi
 	;;

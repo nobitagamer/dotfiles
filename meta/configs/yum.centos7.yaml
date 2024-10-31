@@ -1,0 +1,51 @@
+# See https://gitlab.com/flyingchipmunk/dotbot-yum
+- defaults:
+    yum:
+      options: "-q -y"
+      sudo: True
+      stdout: False
+      stderr: True
+
+# See https://stackoverflow.com/questions/47676980/curl-60-peers-certificate-issuer-is-not-recognized
+- shell++:
+  - description: Update CA trust for old CentOS 7
+    condition: '[ ! -f /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem.bak ]'
+  - stderr: true
+    command: |
+
+      cd /etc/pki/ca-trust/extracted/pem
+      sudo mv tls-ca-bundle.pem tls-ca-bundle.pem.bak
+      sudo wget --no-check-certificate https://curl.se/ca/cacert.pem
+      sudo mv cacert.pem tls-ca-bundle.pem
+
+      # See https://serverfault.com/questions/791205/centos7-dont-trust-certificate-issued-by-lets-encrypt
+
+      cd /etc/pki/ca-trust/source/anchors
+
+      # Let’s Encrypt Root CAs self-signed
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/isrgrootx1.pem
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/isrg-root-x2.pem
+
+      # Subordinate (Intermediate) CAs signed by ISRG Root X1
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/2024/r10.pem
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/2024/r11.pem
+
+      # Subordinate (Intermediate) CAs signed by ISRG Root X2
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/2024/e5.pem
+      sudo wget --no-check-certificate  https://letsencrypt.org/certs/2024/e6.pem
+
+      sudo update-ca-trust force-enable
+
+- yum:
+    - openssl11-devel bash-completion-extras
+
+- shell++:
+  - description: Add the Microsoft package signing key and the Microsoft package repository
+    condition: 'true'
+  - stderr: true
+    command: |
+      sudo rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+
+# # Install .NET Core runtime
+# - yum:
+#   - aspnetcore-runtime-2.1
