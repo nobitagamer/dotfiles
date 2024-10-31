@@ -17,14 +17,14 @@
   - wget
 
 - yum:
-    - >-
-      gcc findutils
-      zlib-devel readline-devel libffi-devel
-      bzip2 bzip2-devel sqlite sqlite-devel xz xz-devel
+  - >-
+    gcc findutils
+    zlib-devel readline-devel libffi-devel
+    bzip2 bzip2-devel sqlite sqlite-devel xz xz-devel
+
+- yum:
+  - python3-pip # Require for alias_tips
+  - perl-FindBin perl-File-Compare # Require by ruby-build for openssl-1.1
 
 - yum:
   - ccze
-
-# Require for alias_tips
-- yum:
-  - python3-pip
