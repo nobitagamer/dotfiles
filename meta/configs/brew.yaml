@@ -33,3 +33,23 @@
 
 - link:
     ~/.screenrc: apps/screen/screenrc
+
+# - shell++:
+#   - description: Include Hombrew PATH for all users (cause permission issue when install softwares using root)
+#     condition: '[ ! -f /etc/profile.d/homebrewpath.sh ]'
+#   - stderr: true
+#     command: |
+
+#       BREW_PREFIX=$(brew --prefix)
+#       sudo tee /etc/profile.d/homebrewpath.sh > /dev/null <<EOF
+#       if ! echo \${PATH} | /bin/grep -q ${BREW_PREFIX}/bin ; then
+#         PATH=${BREW_PREFIX}/bin:\${PATH}
+#       fi
+#       if ! echo \${PATH} | /bin/grep -q ${BREW_PREFIX}/sbin ; then
+#         if [ \`/usr/bin/id -u\` = 0 ] ; then
+#           PATH=${BREW_PREFIX}/sbin:\${PATH}
+#         fi
+#       fi
+#       EOF
+
+#       sudo chmod +x /etc/profile.d/homebrewpath.sh
