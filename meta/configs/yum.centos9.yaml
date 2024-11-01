@@ -1,0 +1,7 @@
+# See https://gitlab.com/flyingchipmunk/dotbot-yum
+- defaults:
+    yum:
+      options: "-q -y"
+      sudo: True
+      stdout: False
+      stderr: True

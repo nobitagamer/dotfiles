@@ -70,6 +70,16 @@ appendshell() {
 	centosfixeol)
 		add="sudo sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo;"
 		;;
+  # !BUG: WSL1: fix `RPM: error: db5 error(-30969) from dbenv->open: BDB0091 DB_VERSION_MISMATCH: Database environment version mismatch`, see https://github.com/WhitewaterFoundry/Fedora-Remix-for-WSL/issues/47#issuecomment-531762785
+	streamwsl)
+    add="sudo yum -y upgrade --refresh rpm glibc; \
+    sudo rm /var/lib/rpm/.rpm.lock; \
+    sudo yum -y upgrade dnf;"
+		;;
+  #  # Require by ruby-build for openssl-1.1 on CentOS Stream/Rocky Linux 9
+	stream9wsl)
+		add="sudo yum install -y perl-FindBin perl-File-Compare;"
+		;;
   # Install require pacakages for WSL Rocky Linux 9 from Docker
 	rockywsl)
     # !BUG: WSL1: error on importing (any) GPG key, see https://github.com/mishamosher/CentOS-WSL/issues/14
@@ -141,9 +151,9 @@ appendshell() {
 	esac
 
   if [ -z "$setupshell" ]; then
-    setupshell="  $add"
+    setupshell="    $add"
   else
-    setupshell="$setupshell   $add"
+    setupshell="$setupshell     $add"
   fi
 }
 
@@ -288,15 +298,13 @@ case $unamestr in
   # Detect CentOS distro
   if [ -f /etc/redhat-release ]; then
     platform='centos'
-    if [ -f /etc/centos-release ]; then
-      osver=$(. /etc/os-release; echo $VERSION_ID)
-      vercomp $osver 8.0
-      if [ $? -eq 2 ]; then # CentOS 7 need separated profile
-        platform="$platform centos7"
-      else
-        platform="$platform rocky" # Treat CentOS Stream 8/9+ as Rocky Linux (use `dnf`)
-      fi
-    elif [ -f /etc/rocky-release ]; then
+    osver=$(. /etc/os-release; echo ${VERSION_ID:0:1})
+    if [ -f /etc/centos-release ] || [ -f /etc/rocky-release ]; then
+      platform="$platform centos$osver"
+    fi
+
+    # Treat CentOS Stream 8/9+ as Rocky Linux (use `dnf`)
+    if [ -f /etc/rocky-release ] || [ "$osver" -ge "8" ]; then
       platform="$platform rocky"
     fi
   else
@@ -371,6 +379,12 @@ if [[ $platform == *"macos"* ]]; then
 fi
 if [[ $platform == *"centos"* ]]; then
   appendshell centosfixeol
+  if [[ $platform == *"wsl"* ]] && [[ $platform != *"centos7"* ]]; then
+    appendshell streamwsl
+  fi
+  if [[ $platform == *"wsl"* ]] && [[ $platform == *"centos9"* ]]; then
+    appendshell stream9wsl
+  fi
 fi
 if [[ $platform == *"wsl"* ]] && [[ $platform == *"rocky"* ]]; then
   appendshell rockywsl

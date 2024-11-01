@@ -24,7 +24,6 @@
 
 - yum:
   - python3-pip # Require for alias_tips
-  - perl-FindBin perl-File-Compare # Require by ruby-build for openssl-1.1
 
 - yum:
   - ccze
