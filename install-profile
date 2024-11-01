@@ -79,7 +79,7 @@ EOF
   fi
 elif [[ $1 == *"centos"* ]] || [[ $1 == *"rocky"* ]]; then
   # !NOTE: do NOT use dnf because latest version switch to use SQLite that can't work on WSL1
-  sudo yum install -y python3-pip
+  sudo yum --nogpgcheck -y install python3-pip
 fi
 
 # Write update-dotfiles to use later

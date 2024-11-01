@@ -1,7 +1,7 @@
 # See https://gitlab.com/flyingchipmunk/dotbot-yum
 - defaults:
     yum:
-      options: "-q -y"
+      options: "-q -y --nogpgcheck"
       sudo: True
       stdout: False
       stderr: True
