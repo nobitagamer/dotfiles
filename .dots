@@ -75,8 +75,8 @@ appendshell() {
 	centosfixeol)
 		add="sudo sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo;"
 		;;
-  # Install require pacakages for WSL CentOS/Rocky Linux 9 from Docker
-	centoswsl)
+	fedorawsl)
+    # Install require pacakages Fedora distros on WSL
 		add="sudo yum --nogpgcheck -y install procps glibc-langpack-en git which gettext;"
 		;;
 	streamwsl)
@@ -296,24 +296,25 @@ echoerr
 # Try to detect platform
 # ----------------------------------
 platform='unknown'
+osversion=$(. /etc/os-release; echo "$VERSION_ID" | cut -d '.' -f1)
 unamestr=$(uname)
 
 case $unamestr in
 'Linux')
-  # Detect CentOS distro
+  platform=$(. /etc/os-release; echo "$ID_LIKE $ID")
+  # Detect RedHat distros
   if [ -f /etc/redhat-release ]; then
-    platform='centos'
-    osver=$(. /etc/os-release; echo ${VERSION_ID:0:1})
     if [ -f /etc/centos-release ] || [ -f /etc/rocky-release ] || [ -f /etc/almalinux-release ]; then
-      platform="$platform centos$osver"
+      platform="centos$osversion $platform"
     fi
 
     # Treat CentOS Stream 8/9+ as Rocky Linux (use `dnf`)
-    if [ -f /etc/rocky-release ] || [ -f /etc/almalinux-release ] || [ "$osver" -ge "8" ]; then
-      platform="$platform rocky"
+    if [ -f /etc/almalinux-release ] || [ -f /etc/centos-release ] && [ "$osversion" -ge "8" ]; then
+      platform="rocky $platform"
     fi
   else
-    platform='linux'
+    # !TODO: support debian distros (non-Ubuntu)
+    platform="linux $platform"
   fi
 
   if grep -q Microsoft /proc/version || grep -q WSL2 /proc/version; then
@@ -398,17 +399,22 @@ appendshell enablepasswordless
 if [[ $platform == *"macos"* ]]; then
   appendshell osxcmdinstall
 fi
-if [[ $platform == *"centos"* ]]; then
-  appendshell centosfixeol
-  if [[ $platform == *"centos9"* ]]; then
+
+if [[ $platform == *"fedora"* ]]; then
+  # Fedora 28 = CentOS Stream 8, Fedora 34 = CentOS Stream 9, see https://superuser.com/questions/215993/which-version-of-fedora-rhel-correspond-to-which-version-of-centos
+  if [[ $platform == *"centos9"* ]] || [ "$osversion" -ge "33" ]; then
     appendshell stream9
   fi
+fi
+
+if [[ $platform == *"centos"* ]]; then
+  appendshell centosfixeol
   if [[ $platform == *"wsl"* ]] && [[ $platform != *"centos7"* ]]; then
     appendshell streamwsl
   fi
 fi
-if [[ $platform == *"wsl"* ]] && [[ $platform == *"centos"* ]]; then
-  appendshell centoswsl
+if [[ $platform == *"wsl"* ]] && [[ $platform == *"fedora"* ]]; then
+  appendshell fedorawsl
 fi
 
 prefix="~/.dotfiles"

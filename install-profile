@@ -86,20 +86,25 @@ fi
 UPDATE_FILE=~/update-dotfiles.sh
 # !BUG: do NOT use source `. .dots` that cause error if source from ZSH.
 # shellcheck disable=SC2016
-echo 'cd ~/; rm -f .dots; curl https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots?token=$(date +%s) >.dots && bash .dots' | tee ${UPDATE_FILE}
+echo 'cd ~/; rm -f .dots; curl "https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots?token=$(date +%s)" >.dots && bash .dots' | tee ${UPDATE_FILE}
 chmod +x ${UPDATE_FILE}
 
+CONFIGS=("")
 for profile in "${@}"; do
   echo -e "\nReading profile $profile..."
 
   if [[ $profile != *".yaml" ]]; then
-    while IFS= read -r config; do
-    CONFIGS+=" ${config}"
-    done < "${META_DIR}/${PROFILES_DIR}/$1"
+    if [ -f "${META_DIR}/${PROFILES_DIR}/$profile" ]; then
+      while IFS= read -r config; do
+        CONFIGS+=("$config")
+      done < ${META_DIR}/${PROFILES_DIR}/$1
+    else
+      echo -e "  [$profile] profile NOT FOUND!"
+    fi
 
     shift
   else
-    CONFIGS+=" $profile"
+    CONFIGS+=("$profile")
   fi
 done
 
@@ -123,11 +128,19 @@ EOF
 )
     # --plugin-dir "${META_DIR}/dotbot-brewfile"        \
 
+# !BUG: sort will make configs apply in wrong order.
+# Sort configs before apply, see https://stackoverflow.com/questions/7442417/how-to-sort-an-array-in-bash
+# IFS=$'\n' CONFIGS=($(sort <<<"${CONFIGS[*]}"))
+# unset IFS
+
+# Join remaining args to configs
+CONFIGS=(${CONFIGS[*]} ${@})
+
 _cmd="$installcmd -c \"${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}\""
 echo - Base install cmd: $_cmd
-echo -e "\e[1;32m- Config will install: $CONFIGS\e[0m"
+echo -e "\e[1;32m- Config will install: ${CONFIGS[*]}\e[0m"
 eval $_cmd
-for config in ${CONFIGS} "${@}"; do
+for config in ${CONFIGS[*]}; do
     echo -e "\nConfiguring $config..."
 
     eval "$installcmd -c \"${META_DIR}/${CONFIG_DIR}/${config}${CONFIG_SUFFIX}\""

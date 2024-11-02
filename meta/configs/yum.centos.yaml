@@ -13,17 +13,3 @@
 
 - yum:
   - epel-release
-  - ca-certificates
-  - wget
-
-- yum:
-  - >-
-    gcc findutils
-    zlib-devel readline-devel libffi-devel
-    bzip2 bzip2-devel sqlite sqlite-devel xz xz-devel
-
-- yum:
-  - python3-pip # Require for alias_tips
-
-- yum:
-  - ccze
