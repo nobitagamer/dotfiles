@@ -87,9 +87,9 @@ appendshell() {
     sudo rm /var/lib/rpm/.rpm.lock; \
     sudo yum --nogpgcheck -y upgrade dnf;"
 		;;
-  #  # Require by ruby-build for openssl-1.1 on CentOS Stream/Rocky Linux 9
-	stream9wsl)
-		add="sudo yum --nogpgcheck -y install perl-FindBin perl-File-Compare;"
+	stream9)
+    # Require by ruby-build for openssl-1.1 on CentOS Stream/Rocky Linux 9
+		add="sudo yum --nogpgcheck -y install perl-lib perl-FindBin perl-File-Compare;"
 		;;
 	enablepasswordless)
 		# shellcheck disable=SC2016
@@ -400,11 +400,11 @@ if [[ $platform == *"macos"* ]]; then
 fi
 if [[ $platform == *"centos"* ]]; then
   appendshell centosfixeol
+  if [[ $platform == *"centos9"* ]]; then
+    appendshell stream9
+  fi
   if [[ $platform == *"wsl"* ]] && [[ $platform != *"centos7"* ]]; then
     appendshell streamwsl
-  fi
-  if [[ $platform == *"wsl"* ]] && [[ $platform == *"centos9"* ]]; then
-    appendshell stream9wsl
   fi
 fi
 if [[ $platform == *"wsl"* ]] && [[ $platform == *"centos"* ]]; then
