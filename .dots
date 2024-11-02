@@ -511,18 +511,26 @@ echoerrcolor darkred
 read -p "${warningmessage}This is your last chance to press ^C before actions are taken that should not be interrupted. "
 echoerrnocolor
 
-request_sudo
+result=0
 if ! (($testmode)); then
+  request_sudo
 	eval $setupshell
+  result=$?
 fi
 
-echoerr green 'Install completed, Use the following command to reloading your current shell:'
-# shellcheck disable=SC2016
-echoerr blue '    exec sudo -u $USER -i'
-exit 0
+if [ $result -eq 0 ]; then
+  # echoerr green 'Install completed, Use the following command to reloading your current shell:'
+  # shellcheck disable=SC2016
+  # echoerr blue '    exec sudo -u $USER -i'
 
-# shellcheck disable=SC2093
-# exec sudo -u "$USER" -i
+  echoerr green "Reloading current shell, see you soon..."
+  # shellcheck disable=SC2093
+  exec sudo -u "$USER" -i
+
+  exit 0
+else
+  exit $result
+fi
 
 # shellcheck disable=SC2317
 function runDots() {
