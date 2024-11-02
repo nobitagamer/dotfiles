@@ -70,6 +70,10 @@ appendshell() {
 	centosfixeol)
 		add="sudo sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo;"
 		;;
+  # Install require pacakages for WSL CentOS/Rocky Linux 9 from Docker
+	centoswsl)
+		add="sudo yum --nogpgcheck -y install procps glibc-langpack-en git which gettext;"
+		;;
 	streamwsl)
     # !BUG: WSL1: fix `RPM: error: db5 error(-30969) from dbenv->open: BDB0091 DB_VERSION_MISMATCH: Database environment version mismatch`, see https://github.com/WhitewaterFoundry/Fedora-Remix-for-WSL/issues/47#issuecomment-531762785
     # !BUG: WSL1: error on importing (any) GPG key, see https://github.com/mishamosher/CentOS-WSL/issues/14
@@ -81,10 +85,6 @@ appendshell() {
   #  # Require by ruby-build for openssl-1.1 on CentOS Stream/Rocky Linux 9
 	stream9wsl)
 		add="sudo yum --nogpgcheck -y install perl-FindBin perl-File-Compare;"
-		;;
-  # Install require pacakages for WSL Rocky Linux 9 from Docker
-	rockywsl)
-		add="sudo yum --nogpgcheck -y install procps glibc-langpack-en git which gettext;"
 		;;
 	enablepasswordless)
 		# shellcheck disable=SC2016
@@ -340,12 +340,12 @@ request_sudo
 
 $(which git >&/dev/null)
 
-if [ $? -eq 1 ]; then
+if [ $? -ne 0 ]; then
   if [[ $platform == *"centos"* ]]; then
     echoerr red       "Detected $(cat /etc/centos-release)but Git (required by Homebrew) was not found!"
     centos_update_git
   else
-    # Not support yet!
+    # !TODO: Not support yet.
     echoerr red "Git not found! Confirm it is indeed installed and reachable."
     exit
   fi
@@ -386,8 +386,8 @@ if [[ $platform == *"centos"* ]]; then
     appendshell stream9wsl
   fi
 fi
-if [[ $platform == *"wsl"* ]] && [[ $platform == *"rocky"* ]]; then
-  appendshell rockywsl
+if [[ $platform == *"wsl"* ]] && [[ $platform == *"centos"* ]]; then
+  appendshell centoswsl
 fi
 
 prefix="~/.dotfiles"
