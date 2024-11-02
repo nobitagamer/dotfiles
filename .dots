@@ -65,7 +65,12 @@ author='nobitagamer'
 appendshell() {
 	case "$1" in
 	start)
-		add='echo "Setting up Dotbot. Please do not ^C." >&2;'
+		add="echo 'Setting up Dotbot. Please do not ^C.' >&2;"
+		;;
+	exportproxy)
+		add="export http_proxy https_proxy ALL_PROXY; \
+    grep -q 'http_proxy=' /etc/environment || echo \"http_proxy=$http_proxy\" | sudo tee -a /etc/environment; \
+    grep -q 'https_proxy=' /etc/environment || echo \"https_proxy=$https_proxy\" | sudo tee -a /etc/environment;"
 		;;
 	centosfixeol)
 		add="sudo sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo;"
@@ -373,6 +378,22 @@ if [[ $platform == *"centos"* ]]; then
 fi
 
 appendshell start
+if [ -n "$http_proxy" ] || [ -n "$https_proxy" ]; then
+  echoerr darkgreen "Found PROXY settings: http_proxy=$http_proxy, https_proxy=$https_proxy"
+
+  # Export proxy settings for Homebrew
+  if [ -n "$http_proxy" ]; then
+    export ALL_PROXY=$http_proxy
+    [ -z "$https_proxy" ] && export https_proxy=$http_proxy
+  fi
+
+  if [ -n "$https_proxy" ]; then
+    export ALL_PROXY=$https_proxy
+    [ -z "$http_proxy" ] && export http_proxy=$https_proxy
+  fi
+
+  appendshell exportproxy
+fi
 appendshell enablepasswordless
 if [[ $platform == *"macos"* ]]; then
   appendshell osxcmdinstall
