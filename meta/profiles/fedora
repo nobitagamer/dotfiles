@@ -1,6 +1,5 @@
 yum.fedora
 brew
-brew.linux
 git
 atuin
 starship.xshell

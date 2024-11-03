@@ -1,6 +1,5 @@
-apt.linux
+apt.debian
 brew
-brew.linux
 git
 dev
 node

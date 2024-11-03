@@ -21,7 +21,6 @@ DOTBOT_BIN="bin/dotbot"
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 PLUGIN_DIR="dotbot-plugins"
-PROFILE_PLUGIN_DIR="${PLUGIN_DIR}/$1"
 
 if [[ $1 = "macos" ]]; then
   # Install Xcode command line tools first before use git command
@@ -90,11 +89,13 @@ echo 'cd ~/; rm -f .dots; curl "https://raw.githubusercontent.com/nobitagamer/do
 chmod +x ${UPDATE_FILE}
 
 CONFIGS=("")
+PROFILES=("")
 for profile in "${@}"; do
   echo -e "\nReading profile $profile..."
 
   if [[ $profile != *".yaml" ]]; then
     if [ -f "${META_DIR}/${PROFILES_DIR}/$profile" ]; then
+      PROFILES+=("$profile")
       while IFS= read -r config; do
         CONFIGS+=("$config")
       done < ${META_DIR}/${PROFILES_DIR}/$1
@@ -108,25 +109,30 @@ for profile in "${@}"; do
   fi
 done
 
-# Force use Python2 to avoid `SyntaxWarning for 'is' with literals` on Python 3.8.5 from MacOS Catalina
+# !Obsoleted: force use Python2 to avoid `SyntaxWarning for 'is' with literals` on Python 3.8.5 from MacOS Catalina
 # See https://adamj.eu/tech/2020/01/21/why-does-python-3-8-syntaxwarning-for-is-literal/
-which python3 2>/dev/null && alias python=python3
 which python2 2>/dev/null && alias python=python2
 which python2.7 2>/dev/null && alias python=python2.7
+which python3 2>/dev/null && alias python=python3
 python --version
 
 installcmd=$(cat <<EOF
 python "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
     -d "${BASE_DIR}"                                  \
     --plugin-dir "${META_DIR}/${PLUGIN_DIR}"          \
-    --plugin-dir "${META_DIR}/${PROFILE_PLUGIN_DIR}"  \
     --plugin-dir "${META_DIR}/dotbot-brew"            \
     --plugin-dir "${META_DIR}/dotbot-pip"             \
     --plugin-dir "${META_DIR}/dotbot-yum"             \
-    --plugin-dir "${META_DIR}/dotbot-dnf"
+    --plugin-dir "${META_DIR}/dotbot-dnf"             \
+    --plugin-dir "${META_DIR}/dotbot-if"
 EOF
 )
     # --plugin-dir "${META_DIR}/dotbot-brewfile"        \
+
+# Allow override for specific profile
+for profile in ${PROFILES[*]}; do
+  [ -d "${META_DIR}/${PLUGIN_DIR}/$profile" ] && installcmd+=" --plugin-dir \"${META_DIR}/${PLUGIN_DIR}/$profile\""
+done
 
 # !BUG: sort will make configs apply in wrong order.
 # Sort configs before apply, see https://stackoverflow.com/questions/7442417/how-to-sort-an-array-in-bash

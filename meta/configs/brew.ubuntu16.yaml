@@ -1,0 +1,36 @@
+- brew:
+    # - neofetch # Ubuntu 16.04 only
+
+# - shell++:
+#   - description: Build and install latest curl on Ubuntu 16.04
+#     condition: '[ "$(. /etc/os-release; echo $VERSION_ID)" = "16.04" ]'
+#   - stdout: true
+#     stderr: true
+#     command: |
+#       # Enable apt-get build-dep See https://askubuntu.com/questions/496549/error-you-must-put-some-source-uris-in-your-sources-list
+#       sudo cp /etc/apt/sources.list /etc/apt/sources.list~
+#       sudo sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
+#       sudo apt-get update
+
+#       CURL_VERSION=7.83.1
+
+#       sudo apt-get build-dep -y curl
+#       mkdir ~/curl
+#       cd ~/curl
+#       wget http://curl.haxx.se/download/curl-${CURL_VERSION}.tar.bz2
+#       tar -xvjf curl-${CURL_VERSION}.tar.bz2
+#       cd curl-${CURL_VERSION}
+#       ./configure --prefix=/usr --with-openssl=$(brew --prefix openssl@1.1)
+#       make
+#       sudo make install
+#       sudo ldconfig
+#       curl --version
+
+# - shell++:
+#   - description: Install latest fzf on Ubuntu 16.04/18.04
+#     condition: '[ "$(. /etc/os-release; echo $VERSION_ID)" = "16.04" ]'
+#   - stdout: true
+#     stderr: true
+#     command: |
+#       git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+#       ~/.fzf/install --all --xdg --no-key-bindings --no-update-rc

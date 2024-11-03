@@ -75,6 +75,10 @@ appendshell() {
 	centosfixeol)
 		add="sudo sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo;"
 		;;
+	debianwsl)
+    # Install require pacakages Debian distros on WSL
+		add="sudo apt update && sudo TZ=Asia/Ho_Chi_Minh DEBIAN_FRONTEND=noninteractive apt install -y git python3-pip locales procps gettext gawk tzdata;"
+		;;
 	fedorawsl)
     # Install require pacakages Fedora distros on WSL
 		add="sudo yum --nogpgcheck -y install procps glibc-langpack-en git which gettext;"
@@ -96,7 +100,8 @@ appendshell() {
 		add='sudo bash -c "echo \"$USER ALL=(ALL) NOPASSWD: ALL\" > /etc/sudoers.d/$USER";'
 		;;
 	mkprefix)
-		add="mkdir -p $2; cd $2;"
+		add="mkdir -p $2;
+    cd $2;"
 		;;
 	useprefix)
 		add="cd $2;"
@@ -108,7 +113,8 @@ appendshell() {
 		add='git fetch && git reset --hard origin/master;'
 		;;
 	ensureparentdirs)
-		add="mkdir -p $2; rmdir $2;"
+		add="mkdir -p $2; \
+    rmdir $2;"
 		;;
 	mv)
 		add="mv $2 $3;"
@@ -312,8 +318,10 @@ case $unamestr in
     if [ -f /etc/almalinux-release ] || [ -f /etc/centos-release ] && [ "$osversion" -ge "8" ]; then
       platform="rocky $platform"
     fi
+  elif [ -f /etc/lsb-release ]; then
+    platform="ubuntu$osversion $platform"
   else
-    # !TODO: support debian distros (non-Ubuntu)
+    # !TODO: support anything else
     platform="linux $platform"
   fi
 
@@ -413,8 +421,13 @@ if [[ $platform == *"centos"* ]]; then
     appendshell streamwsl
   fi
 fi
-if [[ $platform == *"wsl"* ]] && [[ $platform == *"fedora"* ]]; then
-  appendshell fedorawsl
+
+if [[ $platform == *"wsl"* ]]; then
+  if [[ $platform == *"debian"* ]]; then
+    appendshell debianwsl
+  elif [[ $platform == *"fedora"* ]]; then
+    appendshell fedorawsl
+  fi
 fi
 
 prefix="~/.dotfiles"

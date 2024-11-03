@@ -9,6 +9,7 @@
 - yum:
   - ca-certificates
   - wget
+  - glibc-locale-source # Require for localedef used in bash config
 
 - yum:
   - >-

@@ -1,0 +1,18 @@
+# - aptget:
+    # !Obsoleted by Homebrew
+    # neovim:
+    #   ppa_source: 'ppa:neovim-ppa/stable'
+    # git:
+    #   ppa_source: 'ppa:git-core/ppa'
+    # !Obsoleted by Homebrew, use zoxide from zinit instead
+    # fasd:
+    #   ppa_source: 'ppa:aacebedo/fasd'
+    # !Obsoleted by Homebrew, use fzf instead
+    # hstr:
+    #   ppa_source: 'ppa:ultradvorka/ppa'
+    # python3: # Python 3.9+
+    #   ppa_source: 'ppa:deadsnakes/ppa'
+    # fish:
+    #   ppa_source: 'ppa:c/release-2'
+# - aptget:
+#     - python-openssl # Not found on Ubuntu 18.04+

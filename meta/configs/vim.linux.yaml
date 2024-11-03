@@ -32,9 +32,15 @@
       - Re-link tcl headers
 - brew:
     - neovim
-- aptget:
-    # See https://github.com/fsharp/zarchive-vim-fsharp/issues/96#issuecomment-1194243502
-    - python3-pynvim # Not FOUND on Ubuntu 18.04 (it's named python3-neot=0;35mvim/bionic 0.2.0-1 all)
+
+# python3-pynvim only available on Ubuntu 20+/Debian 11+
+- if:
+    cond: "[ \"$(. /etc/lsb-release; echo $DISTRIB_RELEASE | cut -d '.' -f1)\" -ge \"20\" ] 2>/dev/null || [ \"$(cat /etc/debian_version | cut -d '.' -f1)\" -ge \"11\" ] 2>/dev/null"
+    met:
+    - aptget:
+      # See https://github.com/fsharp/zarchive-vim-fsharp/issues/96#issuecomment-1194243502
+      - python3-pynvim # Not FOUND on Ubuntu 18.04 (it's named python3-neot=0;35mvim/bionic 0.2.0-1 all)
+
 - shell++:
     # - - pip2 install neovim
     #   - Installing Python 2 NeoVim plugin

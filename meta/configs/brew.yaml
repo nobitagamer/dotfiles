@@ -11,6 +11,11 @@
     - gcc
     - make      # Require for ble.sh and ruby-build
     - wget
+    # Require libs for pyenv doctor -v
+    - readline
+    - sqlite
+    # Update to latest openssl for python-pyenv-doctor
+    # - openssl@1.1
 
 # See https://nixos-and-flakes.thiscute.world/nixos-with-flakes/start-using-home-manager
 - brew:

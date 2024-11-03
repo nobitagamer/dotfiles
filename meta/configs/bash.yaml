@@ -3,9 +3,11 @@
       create: true
       relink: true
       force: true
+
 - clean:
     - ~/.config/bash
     - ~/.config/bash/.bash_prompt # WORKAROUND for ssh tput: `No value for $TERM and no -T specified`
+
 - link:
     ~/.bashrc: shells/bash/bashrc
     ~/.inputrc: shells/bash/inputrc
@@ -14,6 +16,11 @@
     # ~/.config/bash/.bash_prompt: shells/bash/config/bash/bash_prompt
     ~/.config/bash/sensible.bash: shells/bash/config/bash/sensible.bash
     ~/.config/bash/bashmarks.sh: shells/bash/config/bash/bashmarks.sh
+
+- shell++:
+  # See https://gist.github.com/nicks9188/a19f39d62780055a68c22b89a9799c25?permalink_comment_id=4191284
+  - - sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+    - 'Fix warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory'
 
 - brew:
   - bash
@@ -24,6 +31,7 @@
   - stdout: true
     stderr: true
     command: |
+
       # curl https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
       if [ ! -d ~/.bash_it ]; then
         git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it
@@ -43,6 +51,7 @@
   - stdout: true
     stderr: true
     command: |
+
       if [ ! -f ~/.local/share/blesh/ble.sh ]; then
         cd ~
         git clone --recursive https://github.com/akinomyoga/ble.sh.git
