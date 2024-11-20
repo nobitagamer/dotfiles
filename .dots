@@ -73,7 +73,7 @@ appendshell() {
     grep -q 'https_proxy=' /etc/environment || echo \"https_proxy=$https_proxy\" | sudo tee -a /etc/environment;"
 		;;
 	centosfixeol)
-		add="sudo sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo;"
+		add="sudo sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo || true;"
 		;;
 	debianwsl)
     # Install require pacakages Debian distros on WSL
@@ -355,9 +355,15 @@ request_sudo
 $(which git >&/dev/null)
 
 if [ $? -ne 0 ]; then
-  if [[ $platform == *"centos"* ]]; then
+  if [[ $platform == *"centos7"* ]]; then
     echoerr red       "Detected $(cat /etc/centos-release)but Git (required by Homebrew) was not found!"
     centos_update_git
+  elif [[ $platform == *"rhel"* ]]; then
+    installcmd='sudo yum check-update; sudo yum -y install epel-release; sudo yum install -y git'
+    echoerr red       "Detected $(cat /etc/redhat-release) but Git (required by Homebrew) was not found!"
+    echoerr darkcyan  "Auto run git package install command:"
+    echoerr blue      "  $installcmd"
+    eval $installcmd
   else
     # !TODO: Not support yet.
     echoerr red "Git not found! Confirm it is indeed installed and reachable."
@@ -365,7 +371,7 @@ if [ $? -ne 0 ]; then
   fi
 fi
 
-if [[ $platform == *"centos"* ]]; then
+if [[ $platform == *"centos7"* ]]; then
   # Require Git's version >=2.7.0
   gitver=$(git --version | sed -ne 's/[^0-9]*\(\([0-9]\.\)\{0,4\}[0-9][^.]*\)/\1/p')
   vercomp $gitver 2.7.0
@@ -415,7 +421,7 @@ if [[ $platform == *"fedora"* ]]; then
   fi
 fi
 
-if [[ $platform == *"centos"* ]]; then
+if [[ $platform == *"centos7"* ]] || [[ $platform == *"centos8"* ]]; then
   appendshell centosfixeol
   if [[ $platform == *"wsl"* ]] && [[ $platform != *"centos7"* ]]; then
     appendshell streamwsl
