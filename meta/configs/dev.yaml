@@ -14,6 +14,23 @@
     - azure-cli
     - helm
     - sops
+    # Require for `mk`, see https://pipx.pypa.io/stable/
+    - pipx
+    - go-task
+    # Require for `mk containers`
+    - gh
+    # Password manager, require by git-credential-manager
+    - pass
+
+- shell++:
+  - description: Install mk
+    condition: '! hash mk 2>/dev/null || test -h $(which mk)'
+  - stdout: true
+    stderr: true
+    command: |
+
+      # See https://github.com/pycontribs/mk?tab=readme-ov-file#installation
+      pipx install mk
 
 - link:
     ~/.editorconfig: development/editorconfig

@@ -10,7 +10,8 @@
 	default = matching
 
 [credential]
-	helper = "netrc -f ~/.netrc.asc -v"
+	credentialStore = gpg
+	helper = /home/ubuntu/.dotnet/tools/git-credential-manager
 
 [hub]
 protocol = https
@@ -90,3 +91,24 @@ protocol = https
 # Allow local customizations in the .gitconfig_local file
 [include]
 	path = ~/.gitconfig_local
+[credential "https://dev.azure.com"]
+	useHttpPath = true
+[credential "https://git-gst.mto.zing.vn"]
+	provider = generic
+[safe]
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/gitlab-agent-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/gitlab-agent-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/cert-manager-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
+	directory = /mnt/c/Projects/VNG/MPS/DevOps/vault-chart

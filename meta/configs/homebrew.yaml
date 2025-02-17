@@ -38,7 +38,6 @@
 - brew:
   # For git-restore-mtime (replace git-settimes.pl)
   - git-tools
-  - git-credential-manager # Require for Apple Silicon, see https://github.com/git-ecosystem/git-credential-manager/issues/574
   - mas
   - git-extras
   # - git-flow-avh
@@ -79,6 +78,8 @@
   - iterm2
   - visual-studio-code
   - gitkraken
+  - git-credential-manager # macOS only, require for Apple Silicon, see https://github.com/git-ecosystem/git-credential-manager/issues/574
+
   # Obsoleted, use official install scripts instead
   # - dotnet
   # - kdiff3 # not available any more
