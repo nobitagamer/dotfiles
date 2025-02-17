@@ -123,7 +123,6 @@ python "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
     --plugin-dir "${META_DIR}/dotbot-brew"            \
     --plugin-dir "${META_DIR}/dotbot-pip"             \
     --plugin-dir "${META_DIR}/dotbot-yum"             \
-    --plugin-dir "${META_DIR}/dotbot-dnf"             \
     --plugin-dir "${META_DIR}/dotbot-if"
 EOF
 )

@@ -16,9 +16,6 @@
 [submodule "meta/dotbot-yum"]
 	path = meta/dotbot-yum
 	url = https://gitlab.com/flyingchipmunk/dotbot-yum.git
-[submodule "meta/dotbot-dnf"]
-	path = meta/dotbot-dnf
-	url = https://github.com/rbrauner/dotbot-dnf.git
 [submodule "meta/dotbot-if"]
 	path = meta/dotbot-if
 	url = https://github.com/wonderbeyond/dotbot-if.git
