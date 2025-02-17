@@ -5,3 +5,5 @@ legacy_version_file = true                     # enabled by default (unlike asdf
 #legacy_version_file_disable_tools = ['python'] # disable for specific tools
 
 asdf_compat = true # set to true to ensure .tool-versions will be compatible with asdf, see `MISE_ASDF_COMPAT`
+
+env_file = '.envrc' # load env vars from a dotenv file, see `MISE_ENV_FILE`
