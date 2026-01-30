@@ -5,6 +5,12 @@
 # unset DEBUG # Disable debug
 # DEBUG=1 # Enable debug
 
+if [[ "$BASH_RC_LOADED" == "1" ]]; then
+  return 0
+else
+  export BASH_RC_LOADED=1
+fi
+
 # !NOTE: force replace Interactive Non-Login shell (exec `bash`) with Interactive Login shell to load .bash_profile.
 # shopt -q login_shell || exec $SHELL -l # !BUG: use this will exit `screen` on disconnect
 shopt -q login_shell || {
