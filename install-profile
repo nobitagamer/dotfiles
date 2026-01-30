@@ -85,7 +85,7 @@ fi
 UPDATE_FILE=~/update-dotfiles.sh
 # !BUG: do NOT use source `. .dots` that cause error if source from ZSH.
 # shellcheck disable=SC2016
-echo 'cd ~/; rm -f .dots; curl "https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots?token=$(date +%s)" >.dots && bash .dots' | tee ${UPDATE_FILE}
+echo 'cd ~/; rm -f .dots; curl "https://raw.githubusercontent.com/nobitagamer/dotfiles/master/.dots" >.dots && bash .dots' | tee ${UPDATE_FILE}
 chmod +x ${UPDATE_FILE}
 
 CONFIGS=("")
