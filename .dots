@@ -428,13 +428,14 @@ if [[ $platform == *"centos7"* ]] || [[ $platform == *"centos8"* ]]; then
   fi
 fi
 
-if [[ $platform == *"wsl"* ]]; then
+# !NOTE: use the same variant for WSL and real Linux distros
+# if [[ $platform == *"wsl"* ]]; then
   if [[ $platform == *"debian"* ]]; then
     appendshell debianwsl
   elif [[ $platform == *"fedora"* ]]; then
     appendshell fedorawsl
   fi
-fi
+# fi
 
 prefix="~/.dotfiles"
 prefixfull="${prefix/\~/${HOME}}"
