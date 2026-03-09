@@ -96,19 +96,4 @@ protocol = https
 [credential "https://git-gst.mto.zing.vn"]
 	provider = generic
 [safe]
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/gitlab-agent-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/gitlab-agent-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/confluence-data-center-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/cert-manager-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/argocd-chart
-	directory = /mnt/c/Projects/VNG/MPS/DevOps/vault-chart
+	directory = *

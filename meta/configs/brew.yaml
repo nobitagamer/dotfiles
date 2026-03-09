@@ -36,7 +36,7 @@
     - hwatch    # Modern alternative to the watch command
     - hyperfine # Command-line benchmarking tool
     - mtr       # 'traceroute' and 'ping' in a single tool
-    - xsv       # Fast CSV toolkit written in Rust
+    # - xsv       # Fast CSV toolkit written in Rust (DEPRECATED)
     - jq
     - git
 

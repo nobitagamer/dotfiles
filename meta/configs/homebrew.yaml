@@ -42,7 +42,7 @@
   - git-extras
   # - git-flow-avh
   # - fish
-  - tmate
+  # - tmate (DEPRECATED)
   # - curl --with-openssl
   - wget
   - curl
