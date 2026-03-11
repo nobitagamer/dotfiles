@@ -71,7 +71,7 @@ if [[ $1 == *"macos"* ]]; then
       export NONINTERACTIVE=1
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-      brew install kamilturek/python2/python@2
+      # brew install kamilturek/python2/python@2
 EOF
 
     chmod +x ~/install-python2-monterey.sh && ~/install-python2-monterey.sh
