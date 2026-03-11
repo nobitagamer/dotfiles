@@ -7,7 +7,7 @@
 # Install common dependencies
 - brew:
     - ca-certificates
-    - glibc
+    # - glibc     # Linux is required for this software.
     - gcc
     - make      # Require for ble.sh and ruby-build
     - wget
