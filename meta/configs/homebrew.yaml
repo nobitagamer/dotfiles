@@ -140,7 +140,7 @@
       sudo xcodebuild -license accept
 
       # Install Slack
-      mas install 803453959
+      # mas install 803453959
 
       # Install OneDrive
-      mas install 823766827
+      # mas install 823766827
