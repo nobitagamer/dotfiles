@@ -11,7 +11,7 @@
 
 - shell++:
   - description: Uninstall fastlane gem to force use brew's fastlane
-    condition: 'true'
+    condition: 'hash rbenv 2>/dev/null'
   - stdout: true
     stderr: true
     command: 'rbenv exec gem uninstall fastlane --all --executables || true'
