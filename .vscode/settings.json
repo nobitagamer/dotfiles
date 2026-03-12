@@ -1,5 +1,6 @@
 {
     "python.formatting.provider": "autopep8",
     "python.pythonPath": "C:\\Python27\\python.exe",
-    "compile-hero.disable-compile-files-on-did-save-code": true
+    "compile-hero.disable-compile-files-on-did-save-code": true,
+    "python-envs.defaultEnvManager": "ms-python.python:pyenv"
 }
