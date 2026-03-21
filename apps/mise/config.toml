@@ -10,7 +10,7 @@ env_file = '.envrc' # load env vars from a dotenv file, see `MISE_ENV_FILE`
 idiomatic_version_file_enable_tools = ["terraform", "ruby", "node", "python"]
 
 [tools]
-node = "22.17.0"
-"npm:@google/gemini-cli" = "0.1.5"
+node = "22.22.1"
+ruby = "3.4.9"
 websocat = "1.14.1"
-
+"npm:@google/gemini-cli" = "0.1.5"

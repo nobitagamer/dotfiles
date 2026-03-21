@@ -157,7 +157,8 @@
       chmod +x ~/install-unity.sh
 
       # Usage: install-unity.sh <version> <changeset>
-      ~/install-unity.sh 2022.3.20f1 61c2feb0970d # ORC, DT
+      ~/install-unity.sh 2022.3.62f2 7670c08855a9 # All products
+      # ~/install-unity.sh 2022.3.20f1 61c2feb0970d # ORC, DT
       # ~/install-unity.sh 2021.3.15f1 e8e88683f834 # DWW
       # ~/install-unity.sh 2021.3.11f1 0a5ca18544bf # DT2, MZ, MAM, SZ/SZ2
 
