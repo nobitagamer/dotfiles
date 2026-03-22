@@ -14,6 +14,7 @@
   # - openjdk@17 # For android-commandlinetools cask
   - temurin@17 # For android-commandlinetools cask
   # - rbenv
+  - pcre # Required by build-xcode.sh (pcregrep)
 
 - shell++:
   - description: Create symlink to allow system Java wrappers to find JDK 11
